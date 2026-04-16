@@ -119,15 +119,17 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 			std::cerr << "send failed" << std::endl;
 		}
 
-		char buffer[6];
-		int bytesRecieved = recv(clientSocket, buffer, 4, 0);
-		if (bytesRecieved <= 0)
+		char buffer[1024];
+		int bytesRecieved = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+
+		if (bytesRecieved > 0)
 		{
-			std::cerr << "recv failed" << std::endl;
+			buffer[bytesRecieved] = '\0';
+			std::cout << "Recieved from client: " << buffer << std::endl;
 		}
 		else
 		{
-			std::cout << "Recieved from client: " << buffer << std::endl;
+			std::cerr << "recv failed: " << WSAGetLastError() << std::endl;
 		}
 
 		// Closing the socket (in the level of the TCP protocol)

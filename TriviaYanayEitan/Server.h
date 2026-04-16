@@ -9,7 +9,6 @@
 
 #include "Communicator.h"
 
-#define PORT 9000
 
 class Server
 {

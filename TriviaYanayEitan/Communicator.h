@@ -1,14 +1,16 @@
 #pragma once
 
+#include <WinSock2.h>
 #include <map>
 #include <string>
 #include <iostream>
 #include <thread>
 #include <mutex>
 
-#include "Server.h"
 #include "IRequestHandler.h"
 #include "LoginRequestHandler.h"
+
+#define PORT 9000
 
 class Communicator
 {
