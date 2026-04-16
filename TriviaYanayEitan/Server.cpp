@@ -1,28 +1,27 @@
 #include "Server.h"
-#include <exception>
-#include <iostream>
-#include <string>
-#include <thread>
 
-Server::Server()
+/*
+	This Method is the main thread of the multi-threaded server
+	input: no input values
+	output: no return values
+*/
+
+void Server::run()
 {
+	// spawn the connector thread
+	std::thread connector(&Communicator::startHandleRequests, &this->m_communicator);
+	connector.detach();
 
-	// this server use TCP. that why SOCK_STREAM & IPPROTO_TCP
-	// if the server use UDP we will use: SOCK_DGRAM & IPPROTO_UDP
-	_serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	std::string str = "";
 
-	if (_serverSocket == INVALID_SOCKET)
-		throw std::exception(__FUNCTION__ " - socket");
-}
-
-Server::~Server()
-{
-	try
+	// main thread loop
+	while (true)
 	{
-		// the only use of the destructor should be for freeing 
-		// resources that was allocated in the constructor
-		closesocket(_serverSocket);
+		std::getline(std::cin, str);
+		if (str == "EXIT")
+		{
+			std::cout << "EXIT was entered, exiting program." << std::endl;
+			exit(0);
+		}
 	}
-	catch (...) {}
 }
-
