@@ -2,17 +2,18 @@
 
 #include <WinSock2.h>
 #include <Windows.h>
+#include "Communicator.h"
 
 class Server
 {
 private:
-	void acceptClient();
-	void clientHandler(SOCKET clientSocket);
-
-	SOCKET _serverSocket;
+	// fields
+	Communicator m_communicator;
 
 public:
+	// methods
 	Server();
 	~Server();
-	void serve(int port);
+
+	void run();
 };
