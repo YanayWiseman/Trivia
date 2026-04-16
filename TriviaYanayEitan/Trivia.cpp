@@ -10,9 +10,9 @@ int main(void)
 	try
 	{
 		WSAInitializer wsaInit;
-		Server myServer;
+		Server triviaServer;
 
-		myServer.run();
+		triviaServer.run();
 	}
 	catch (std::exception& error)
 	{

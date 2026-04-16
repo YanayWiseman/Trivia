@@ -8,6 +8,7 @@
 
 #include "Server.h"
 #include "IRequestHandler.h"
+#include "LoginRequestHandler.h"
 
 class Communicator
 {

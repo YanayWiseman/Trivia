@@ -101,18 +101,34 @@ void Communicator::startHandleRequests()
 void Communicator::handleNewClient(SOCKET clientSocket)
 {
 	std::cout << "Client Connected!" << std::endl;
+
+	// add to the map
+	IRequestHandler* handler = new LoginRequestHandler();
+
+	// now we use the comminicator's mutex and lock it in order to add it to the map
+	{
+		std::lock_guard<std::mutex> lock(this->m_clientsMutex);
+		this->m_clients[clientSocket] = handler;
+	}
+
 	try
 	{
-		std::string str = "Welcome! What is your name (4 bytes)? ";
-		send(clientSocket, str.c_str(), str.size(), 0);  // last parameter: flag. for us will be 0.
+		std::string str = "Hello";
+		if (send(clientSocket, str.c_str(), str.size(), 0) == SOCKET_ERROR)  // last parameter: flag. for us will be 0.
+		{
+			std::cerr << "send failed" << std::endl;
+		}
 
-		char m[5];
-		recv(clientSocket, m, 4, 0);
-		m[4] = 0;
-		std::cout << "Client name is: " << m << std::endl;
-
-		str = "Bye";
-		send(clientSocket, str.c_str(), str.size(), 0);
+		char buffer[6];
+		int bytesRecieved = recv(clientSocket, buffer, 4, 0);
+		if (bytesRecieved <= 0)
+		{
+			std::cerr << "recv failed" << std::endl;
+		}
+		else
+		{
+			std::cout << "Recieved from client: " << buffer << std::endl;
+		}
 
 		// Closing the socket (in the level of the TCP protocol)
 		closesocket(clientSocket);
@@ -121,4 +137,13 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 	{
 		closesocket(clientSocket);
 	}
+
+	// remove from the map
+	{
+		std::lock_guard<std::mutex> lock(this->m_clientsMutex);
+		delete this->m_clients[clientSocket];
+		this->m_clients.erase(clientSocket);
+	}
+
+	std::cout << "Client disconnected" << std::endl;
 }

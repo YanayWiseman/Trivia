@@ -2,7 +2,6 @@
 
 #include "IRequestHandler.h"
 
-class LoginRequestHandler : IRequestHandler
+class LoginRequestHandler : public IRequestHandler
 {
-
 };
