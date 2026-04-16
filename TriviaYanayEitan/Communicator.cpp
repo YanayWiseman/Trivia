@@ -35,6 +35,12 @@ Communicator::~Communicator()
 	catch (...) {}
 }
 
+/*
+	Method to bind and listen into the port we have decided (9000)
+	input: no input values
+	output: no return values
+*/
+
 void Communicator::bindAndListen()
 {
 	struct sockaddr_in sa = { 0 };
@@ -55,33 +61,46 @@ void Communicator::bindAndListen()
 		throw std::exception(__FUNCTION__ " - listen");
 	}
 	std::cout << "Listening on port " << PORT << std::endl;
-
-	while (true)
-	{
-		// the main thread is only accepting clients 
-		// and add then to the list of handlers
-		std::cout << "Waiting for client connection request" << std::endl;
-		handleNewClient();
-	}
 }
+
+/*
+	This method the the thread method of the connector thread, accepting clients infinitly
+	input: no input values
+	output: no return values
+*/
 
 void Communicator::startHandleRequests()
 {
-	// this accepts the client and create a specific socket from server to this client
-	// the process will not continue until a client connects to the server
-	SOCKET client_socket = accept(this->m_serverSocket, NULL, NULL);
-	if (client_socket == INVALID_SOCKET)
-	{
-		throw std::exception(__FUNCTION__);
-	}
+	// first we set up the socket
+	bindAndListen();
 
-	std::cout << "Client accepted. Server and client can speak" << std::endl;
-	// the function that handle the conversation with the client
-	handleNewClient(client_socket);
+	while (true)
+	{
+		// this accepts the client and create a specific socket from server to this client
+		// the process will not continue until a client connects to the server
+		SOCKET clientSocket = accept(this->m_serverSocket, NULL, NULL);
+		if (clientSocket == INVALID_SOCKET)
+		{
+			std::cerr << "Failed accepting client." << std::endl;
+			continue;
+		}
+
+		// now we spawn the client thread function
+		std::thread clientThread(&Communicator::handleNewClient, this, clientSocket);
+		clientThread.detach();
+	}
 }
+
+/*
+	This method the the client thread's thread function, that operates the interaction between
+	the server and the client
+	input: the client's socket for communication
+	output: no return values
+*/
 
 void Communicator::handleNewClient(SOCKET clientSocket)
 {
+	std::cout << "Client Connected!" << std::endl;
 	try
 	{
 		std::string str = "Welcome! What is your name (4 bytes)? ";

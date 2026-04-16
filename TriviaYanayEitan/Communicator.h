@@ -9,8 +9,6 @@
 #include "Server.h"
 #include "IRequestHandler.h"
 
-#define PORT 9000
-
 class Communicator
 {
 private:
