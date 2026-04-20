@@ -6,8 +6,25 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LoginResopnse& logi
 
 	response["status"] = loginResponse.status;
 
-	std::vector<std::uint8_t> bResponse = json::to_bson(response);
-	Buffer buffer = bResponse;
+	std::string jsonStr = response.dump();
+
+	Buffer buffer;
+
+	buffer.push_back((Byte)LOGIN_RESPONSE);
+
+	int size = jsonStr.size();
+
+	buffer.push_back((size >> 24) & 0xFF);
+	buffer.push_back((size >> 16) & 0xFF);
+	buffer.push_back((size >> 8) & 0xFF);
+	buffer.push_back(size & 0xFF);
+
+	int i = 0;
+
+	for (i = 0; i < size; i++)
+	{
+		buffer.push_back((unsigned char)jsonStr[i]);
+	}
 
 	return buffer;
 }
@@ -18,8 +35,25 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const SignupResopnse& sig
 
 	response["status"] = signupResponse.status;
 
-	std::vector<std::uint8_t> bResponse = json::to_bson(response);
-	Buffer buffer = bResponse;
+	std::string jsonStr = response.dump();
+
+	Buffer buffer;
+
+	buffer.push_back((Byte)LOGIN_RESPONSE);
+
+	int size = jsonStr.size();
+
+	buffer.push_back((size >> 24) & 0xFF);
+	buffer.push_back((size >> 16) & 0xFF);
+	buffer.push_back((size >> 8) & 0xFF);
+	buffer.push_back(size & 0xFF);
+
+	int i = 0;
+
+	for (i = 0; i < size; i++)
+	{
+		buffer.push_back((unsigned char)jsonStr[i]);
+	}
 
 	return buffer;
 }
@@ -30,8 +64,25 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const ErrorResponse& erro
 
 	response["message"] = errorResponse.error;
 
-	std::vector<std::uint8_t> bResponse = json::to_bson(response);
-	Buffer buffer = bResponse;
+	std::string jsonStr = response.dump();
+
+	Buffer buffer;
+
+	buffer.push_back((Byte)LOGIN_RESPONSE);
+
+	int size = jsonStr.size();
+
+	buffer.push_back((size >> 24) & 0xFF);
+	buffer.push_back((size >> 16) & 0xFF);
+	buffer.push_back((size >> 8) & 0xFF);
+	buffer.push_back(size & 0xFF);
+
+	int i = 0;
+
+	for (i = 0; i < size; i++)
+	{
+		buffer.push_back((unsigned char)jsonStr[i]);
+	}
 
 	return buffer;
 }

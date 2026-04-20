@@ -2,17 +2,17 @@
 
 #include <string>
 
-typedef struct LoginResopnse
+typedef struct LoginResponse
 {
 	unsigned int status;
 } LoginResponse;
 
-typedef struct SignupResopnse
+typedef struct SignupResponse
 {
 	unsigned int status;
 } SignupResponse;
 
-typedef struct ErrorResopnse
+typedef struct ErrorRespones
 {
 	std::string error;
 } ErrorResponse;
