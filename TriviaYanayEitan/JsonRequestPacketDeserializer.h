@@ -1,5 +1,7 @@
 #pragma once
 
+#include <exception>
+#include <cstring>
 #include "RequestStructs.h"
 #include "json.hpp"
 #include "typedefs.h"
@@ -10,6 +12,6 @@ class JsonRequestPacketDeserializer
 {
 public:
 	// methods
-	LoginRequest deserializeLoginRequest(Buffer buffer);
-	SignupRequest deserializeSignupRequest(Buffer buffer);
+	static LoginRequest deserializeLoginRequest(const Buffer& buffer);
+	static SignupRequest deserializeSignupRequest(const Buffer& buffer);
 };
