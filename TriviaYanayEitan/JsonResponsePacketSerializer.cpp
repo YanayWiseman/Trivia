@@ -1,14 +1,37 @@
 #include "JsonResponsePacketSerializer.h"
 
-Buffer JsonResponsePacketSerializer::serializeResponse(ErrorResponse errorResponse)
+Buffer JsonResponsePacketSerializer::serializeResponse(const LoginResopnse& loginResponse)
 {
-	return Buffer();
+	json response;
+
+	response["status"] = loginResponse.status;
+
+	std::vector<std::uint8_t> bResponse = json::to_bson(response);
+	Buffer buffer = bResponse;
+
+	return buffer;
 }
-Buffer JsonResponsePacketSerializer::serializeResponse(LoginResponse loginResponse)
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const SignupResopnse& signupResponse)
 {
-	return Buffer();
+	json response;
+
+	response["status"] = signupResponse.status;
+
+	std::vector<std::uint8_t> bResponse = json::to_bson(response);
+	Buffer buffer = bResponse;
+
+	return buffer;
 }
-Buffer JsonResponsePacketSerializer::serializeResponse(SignupResponse signupResponse)
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const ErrorResponse& errorResponse)
 {
-	return Buffer();
+	json response;
+
+	response["message"] = errorResponse.error;
+
+	std::vector<std::uint8_t> bResponse = json::to_bson(response);
+	Buffer buffer = bResponse;
+
+	return buffer;
 }
