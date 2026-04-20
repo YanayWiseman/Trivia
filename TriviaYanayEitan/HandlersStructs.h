@@ -14,6 +14,6 @@ typedef struct RequestResult
 typedef struct RequestInfo
 {
 	Byte id;
-	time_t recievalTime;
+	time_t receivalTime;
 	Buffer buffer;
 } RequestInfo;
