@@ -5,6 +5,6 @@
 class LoginRequestHandler : public IRequestHandler
 {
 public:
-	bool isRequestRelevant(RequestInfo requestInfo) const override;
-	RequestResult handleRequest(RequestInfo requestInfo) const override;
+	bool isRequestRelevant(const RequestInfo& requestInfo) const override;
+	RequestResult handleRequest(const RequestInfo& requestInfo) const override;
 };
