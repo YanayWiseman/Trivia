@@ -114,7 +114,7 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 	try
 	{
 		std::string str = "Hello";
-		if (send(clientSocket, str.c_str(), str.size(), 0) == SOCKET_ERROR)  // last parameter: flag. for us will be 0.
+		if (send(clientSocket, str.c_str(), (int)str.size(), 0) == SOCKET_ERROR)  // last parameter: flag. for us will be 0.
 		{
 			std::cerr << "send failed" << std::endl;
 		}
