@@ -13,7 +13,7 @@ LoginRequest JsonRequestPacketDeserializer::deserializeLoginRequest(const Buffer
 	// message is built like this (according to the protocol)
 	// code -> data len -> data
 
-	if (JsonRequestPacketDeserializer::isBufferValid(buffer, 1))
+	if (JsonRequestPacketDeserializer::isBufferValid(buffer, LOGIN_REQUEST))
 	{
 		// uint32_t guarantes 4 bytes only (data length)
 		uint32_t dataLen =
@@ -63,7 +63,7 @@ SignupRequest JsonRequestPacketDeserializer::deserializeSignupRequest(const Buff
 {
 	SignupRequest request;
 
-	if (JsonRequestPacketDeserializer::isBufferValid(buffer, 3))
+	if (JsonRequestPacketDeserializer::isBufferValid(buffer, SIGNUP_REQUEST))
 	{
 		uint32_t dataLen =
 			(buffer[1] << 24) |

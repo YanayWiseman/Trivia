@@ -6,6 +6,7 @@
 #include "RequestStructs.h"
 #include "json.hpp"
 #include "typedefs.h"
+#include "Constants.h"
 
 using json = nlohmann::json;
 
