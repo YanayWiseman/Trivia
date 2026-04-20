@@ -1,8 +1,10 @@
 #pragma once
 
+#include <vector>
 #include "ResponseStructs.h"
 #include "json.hpp"
 #include "typedefs.h"
+#include "Constants.h"
 
 using json = nlohmann::json;
 
@@ -10,7 +12,7 @@ class JsonResponsePacketSerializer
 {
 public:
 	// methods
-	Buffer serializeResponse(ErrorResponse errorResponse);
-	Buffer serializeResponse(LoginResponse loginResponse);
-	Buffer serializeResponse(SignupResponse signupResponse);
+	static Buffer serializeResponse(const ErrorResponse& errorResponse);
+	static Buffer serializeResponse(const LoginResponse& loginResponse);
+	static Buffer serializeResponse(const SignupResponse& signupResponse);
 };
