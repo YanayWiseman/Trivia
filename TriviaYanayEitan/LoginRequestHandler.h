@@ -3,7 +3,8 @@
 #include <iostream>
 #include "IRequestHandler.h"
 #include "JsonRequestPacketDeserializer.h"
-
+#include "JsonResponsePacketSerializer.h"
+#include "ResponseStructs.h"
 
 class LoginRequestHandler : public IRequestHandler
 {

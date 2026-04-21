@@ -114,88 +114,82 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 	try
 	{
 		char cBuffer[BUFFER_SIZE];
-		int bytesRecieved = recv(clientSocket, cBuffer, sizeof(cBuffer) - 1, 0);
 
-		if (bytesRecieved > 0)
+		while (true)
 		{
-			// Create handler and turn buffer from chars to Bytes
+			int bytesRecieved = recv(clientSocket, cBuffer, sizeof(cBuffer) - 1, 0);
 
-			LoginRequestHandler handler;
-			cBuffer[bytesRecieved] = '\0';
-
-			Buffer buffer;
-			int i = 0;
-
-			for (i = 0; i < BUFFER_SIZE; i++)
+			if (bytesRecieved > 0)
 			{
-				buffer.push_back((Byte)cBuffer[i]);
-			}
+				// Create handler and turn buffer from chars to Bytes
 
+				cBuffer[bytesRecieved] = '\0';
 
-			// Create requestInfo and handle request
+				Buffer buffer;
+				int i = 0;
 
-			RequestInfo requestInfo;
-			requestInfo.id = buffer[0];
-			requestInfo.buffer = buffer;
-
-			time_t now = time(nullptr);
-			requestInfo.receivalTime = now;
-
-
-			// Check if request is relevnat and send it to handler
-
-			if (handler.isRequestRelevant(requestInfo))
-			{
-				RequestResult resultBuffer = handler.handleRequest(requestInfo);
-				Buffer response;
-
-				int code = resultBuffer.response[0];
-				std::string result(resultBuffer.response.begin(), resultBuffer.response.end());
-
-
-				// Serialize response according to response type and send it
-
-				if (code == LOGIN_RESPONSE)
+				for (i = 0; i < bytesRecieved; i++)
 				{
-					LoginResponse loginResp;
-					loginResp.status = std::stoi(result);
-					response = JsonResponsePacketSerializer::serializeResponse(loginResp);
-				}
-				else if (code == SIGNUP_RESPONSE)
-				{
-					SignupResponse signupResp;
-					signupResp.status = std::stoi(result);
-					response = JsonResponsePacketSerializer::serializeResponse(signupResp);
-				}
-				else if (code == ERROR_RESPONSE)
-				{
-					ErrorResponse errResp;
-					errResp.error = result;
-					response = JsonResponsePacketSerializer::serializeResponse(errResp);
-				}
-				else
-				{
-					throw std::exception("error: Couldn't serialize response!");
+					buffer.push_back((Byte)cBuffer[i]);
 				}
 
-				if (send(clientSocket, reinterpret_cast<const char*>(response.data()), (int)response.size(), 0) == SOCKET_ERROR)  // last parameter: flag. for us will be 0.
+
+				// Create requestInfo and handle request
+
+				RequestInfo requestInfo;
+				requestInfo.id = buffer[0];
+				requestInfo.buffer = buffer;
+
+				time_t now = time(nullptr);
+				requestInfo.receivalTime = now;
+
+
+				// Get current handler from map
 				{
-					std::cerr << "send failed" << std::endl;
+					std::lock_guard<std::mutex> lock(this->m_clientsMutex);
+					handler = this->m_clients[clientSocket];
+				}
+
+				// Check if request is relevnat and send it to handler
+
+				if (handler->isRequestRelevant(requestInfo))
+				{
+					RequestResult resultBuffer = handler->handleRequest(requestInfo);
+					
+					if (send(clientSocket, reinterpret_cast<const char*>(resultBuffer.response.data()), (int)resultBuffer.response.size(), 0) == SOCKET_ERROR)
+					{
+						std::cerr << "send failed" << std::endl;
+						break;
+					}
+
+					// Update handler if needed
+
+					if (resultBuffer.newHandler != handler)
+					{
+						std::lock_guard<std::mutex> lock(this->m_clientsMutex);
+						delete this->m_clients[clientSocket];
+						this->m_clients[clientSocket] = resultBuffer.newHandler;
+						handler = resultBuffer.newHandler;
+					}
 				}
 			}
+			else if (bytesRecieved == 0)
+			{
+				break;
+			}
+			else
+			{
+				std::cerr << "recv failed: " << WSAGetLastError() << std::endl;
+				break;
+			}
 		}
-		else
-		{
-			std::cerr << "recv failed: " << WSAGetLastError() << std::endl;
-		}
-
-		// Closing the socket (in the level of the TCP protocol)
-		closesocket(clientSocket);
 	}
 	catch (const std::exception& error)
 	{
-		closesocket(clientSocket);
+		std::cerr << error.what() << std::endl;
 	}
+
+	closesocket(clientSocket);
 
 	// remove from the map
 	{
