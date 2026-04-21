@@ -6,11 +6,15 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <iostream>
+#include <string>
 
 #include "IRequestHandler.h"
 #include "LoginRequestHandler.h"
+#include "JsonResponsePacketSerializer.h"
 
 #define PORT 9000
+#define BUFFER_SIZE 1024
 
 class Communicator
 {
