@@ -8,7 +8,7 @@
 
 bool LoginRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 {
-	if (requestInfo.buffer[0] > 0 && requestInfo.buffer[0] < 6)  // TEMP
+	if (requestInfo.buffer[0] == LOGIN_REQUEST && requestInfo.buffer[0] == SIGNUP_REQUEST)
 	{
 		return true;
 	}
