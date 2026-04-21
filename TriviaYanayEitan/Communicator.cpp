@@ -175,7 +175,6 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 			}
 			else if (bytesRecieved == 0)
 			{
-				std::cerr << "error: empty message" << std::endl;
 				break;
 			}
 			else
