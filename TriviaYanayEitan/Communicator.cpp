@@ -175,11 +175,12 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 			}
 			else if (bytesRecieved == 0)
 			{
+				std::cerr << "error: empty message" << std::endl;
 				break;
 			}
 			else
 			{
-				std::cerr << "recv failed: " << WSAGetLastError() << std::endl;
+				std::cerr << "error: recv failed: " << WSAGetLastError() << std::endl;
 				break;
 			}
 		}
