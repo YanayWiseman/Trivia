@@ -8,7 +8,7 @@
 
 bool LoginRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 {
-	if (requestInfo.buffer[0] == LOGIN_REQUEST && requestInfo.buffer[0] == SIGNUP_REQUEST)
+	if (requestInfo.buffer[0] == LOGIN_REQUEST || requestInfo.buffer[0] == SIGNUP_REQUEST)
 	{
 		return true;
 	}
@@ -30,11 +30,13 @@ RequestResult LoginRequestHandler::handleRequest(const RequestInfo& requestInfo)
 		{
 			case LOGIN_REQUEST:
 			{
-				// return LoginRequestHandler::login();
+				LoginRequest loginRequest = JsonRequestPacketDeserializer::deserializeLoginRequest(requestInfo.buffer);
+				std::cout << "Calling Login..." << std::endl;
 			}
 			case SIGNUP_REQUEST:
 			{
-				// return LoginRequestHandler::signup();
+				SignupRequest signupRequest = JsonRequestPacketDeserializer::deserializeSignupRequest(requestInfo.buffer);
+				std::cout << "Calling Signup..." << std::endl;
 			}
 		}
 	}

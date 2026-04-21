@@ -25,14 +25,6 @@ LoginRequest JsonRequestPacketDeserializer::deserializeLoginRequest(const Buffer
 
 		Buffer data(buffer.begin() + 1 + sizeof(uint32_t), buffer.begin() + 1 + sizeof(uint32_t) + dataLen);
 
-		// create requestInfo
-		RequestInfo requestInfo;
-		requestInfo.id = buffer[0];
-		requestInfo.buffer = data;
-
-		time_t now = time(nullptr);
-		requestInfo.receivalTime = now;
-
 		try
 		{
 			json jsonData = json::parse(data);

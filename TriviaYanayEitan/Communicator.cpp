@@ -113,19 +113,76 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 
 	try
 	{
-		std::string str = "Hello";
-		if (send(clientSocket, str.c_str(), (int)str.size(), 0) == SOCKET_ERROR)  // last parameter: flag. for us will be 0.
-		{
-			std::cerr << "send failed" << std::endl;
-		}
-
-		char buffer[1024];
-		int bytesRecieved = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+		char cBuffer[BUFFER_SIZE];
+		int bytesRecieved = recv(clientSocket, cBuffer, sizeof(cBuffer) - 1, 0);
 
 		if (bytesRecieved > 0)
 		{
-			buffer[bytesRecieved] = '\0';
-			std::cout << "Recieved from client: " << buffer << std::endl;
+			// Create handler and turn buffer from chars to Bytes
+
+			LoginRequestHandler handler;
+			cBuffer[bytesRecieved] = '\0';
+
+			Buffer buffer;
+			int i = 0;
+
+			for (i = 0; i < BUFFER_SIZE; i++)
+			{
+				buffer.push_back((Byte)cBuffer[i]);
+			}
+
+
+			// Create requestInfo and handle request
+
+			RequestInfo requestInfo;
+			requestInfo.id = buffer[0];
+			requestInfo.buffer = buffer;
+
+			time_t now = time(nullptr);
+			requestInfo.receivalTime = now;
+
+
+			// Check if request is relevnat and send it to handler
+
+			if (handler.isRequestRelevant(requestInfo))
+			{
+				RequestResult resultBuffer = handler.handleRequest(requestInfo);
+				Buffer response;
+
+				int code = resultBuffer.response[0];
+				std::string result(resultBuffer.response.begin(), resultBuffer.response.end());
+
+
+				// Serialize response according to response type and send it
+
+				if (code == LOGIN_RESPONSE)
+				{
+					LoginResponse loginResp;
+					loginResp.status = std::stoi(result);
+					response = JsonResponsePacketSerializer::serializeResponse(loginResp);
+				}
+				else if (code == SIGNUP_RESPONSE)
+				{
+					SignupResponse signupResp;
+					signupResp.status = std::stoi(result);
+					response = JsonResponsePacketSerializer::serializeResponse(signupResp);
+				}
+				else if (code == ERROR_RESPONSE)
+				{
+					ErrorResponse errResp;
+					errResp.error = result;
+					response = JsonResponsePacketSerializer::serializeResponse(errResp);
+				}
+				else
+				{
+					throw std::exception("error: Couldn't serialize response!");
+				}
+
+				if (send(clientSocket, reinterpret_cast<const char*>(response.data()), (int)response.size(), 0) == SOCKET_ERROR)  // last parameter: flag. for us will be 0.
+				{
+					std::cerr << "send failed" << std::endl;
+				}
+			}
 		}
 		else
 		{
