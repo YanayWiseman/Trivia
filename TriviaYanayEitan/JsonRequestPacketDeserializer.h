@@ -14,10 +14,12 @@ class JsonRequestPacketDeserializer
 {
 public:
 	// methods
+
 	static LoginRequest deserializeLoginRequest(const Buffer& buffer);
 	static SignupRequest deserializeSignupRequest(const Buffer& buffer);
 
 private:
 	// helper methods
+	static json extractJson(const Buffer& buffer, int expectedCode);
 	static bool isBufferValid(const Buffer& buffer, int code);
 };
