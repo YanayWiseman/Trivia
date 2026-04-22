@@ -2,24 +2,19 @@
 
 
 /*
-	Function serializes Json login response into buffer.
-	Input: loginResponse (const LoginResponse&)
-	Output: Buffer containing login response data according to the protocol.
+	Function serializes json into Buffer.
+	Input: json (const json&), code (const int)
+	Output: Serialized json (Buffer)
 */
 
-Buffer JsonResponsePacketSerializer::serializeResponse(const LoginResponse& loginResponse)
+Buffer JsonResponsePacketSerializer::serializeJson(const json& json, const int code)
 {
-	// Add status to JSON
-
-	json response;
-	response["status"] = loginResponse.status;
-
-	std::string jsonStr = response.dump();
+	std::string jsonStr = json.dump();
 
 	// Serialize to buffer 
 
 	Buffer buffer;
-	buffer.push_back((Byte)LOGIN_RESPONSE);
+	buffer.push_back((Byte)code);
 
 	// Convert size integer to 4 bytes of uchars
 
@@ -40,6 +35,21 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LoginResponse& logi
 	}
 
 	return buffer;
+}
+
+
+/*
+	Function serializes Json login response into buffer.
+	Input: loginResponse (const LoginResponse&)
+	Output: Buffer containing login response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const LoginResponse& loginResponse)
+{
+	json response;
+	response["status"] = loginResponse.status;
+
+	return serializeJson(response, LOGIN_RESPONSE);
 }
 
 
@@ -51,37 +61,10 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LoginResponse& logi
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const SignupResponse& signupResponse)
 {
-	// Add status to JSON
-
 	json response;
 	response["status"] = signupResponse.status;
 
-	std::string jsonStr = response.dump();
-
-	// Serialize to buffer 
-
-	Buffer buffer;
-	buffer.push_back((Byte)SIGNUP_RESPONSE);
-
-	// Convert size integer to 4 bytes of uchars
-
-	int size = jsonStr.size();
-
-	buffer.push_back((Byte)((size >> 24) & 0xFF));
-	buffer.push_back((Byte)((size >> 16) & 0xFF));
-	buffer.push_back((Byte)((size >> 8) & 0xFF));
-	buffer.push_back((Byte)(size & 0xFF));
-
-	// Convert json string to uchars
-
-	int i = 0;
-
-	for (i = 0; i < size; i++)
-	{
-		buffer.push_back((Byte)jsonStr[i]);
-	}
-
-	return buffer;
+	return serializeJson(response, SIGNUP_RESPONSE);
 }
 
 
@@ -93,35 +76,8 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const SignupResponse& sig
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const ErrorResponse& errorResponse)
 {
-	// Add status to JSON
-
 	json response;
 	response["message"] = errorResponse.error;
 
-	std::string jsonStr = response.dump();
-
-	// Serialize to buffer 
-
-	Buffer buffer;
-	buffer.push_back((Byte)ERROR_RESPONSE);
-
-	// Convert size integer to 4 bytes of uchars
-
-	int size = jsonStr.size();
-
-	buffer.push_back((size >> 24) & 0xFF);
-	buffer.push_back((size >> 16) & 0xFF);
-	buffer.push_back((size >> 8) & 0xFF);
-	buffer.push_back(size & 0xFF);
-
-	// Convert json string to uchars
-
-	int i = 0;
-
-	for (i = 0; i < size; i++)
-	{
-		buffer.push_back((Byte)jsonStr[i]);
-	}
-
-	return buffer;
+	return serializeJson(response, ERROR_RESPONSE);
 }

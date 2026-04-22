@@ -151,14 +151,22 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 				}
 
 
-				// Check if request and send it to handler
-
 				RequestResult resultBuffer = handler->handleRequest(requestInfo);
 					
 				if (send(clientSocket, reinterpret_cast<const char*>(resultBuffer.response.data()), (int)resultBuffer.response.size(), 0) == SOCKET_ERROR)
 				{
 					std::cerr << "send failed" << std::endl;
 					break;
+				}
+
+				// Update handler if needed
+
+				if (resultBuffer.newHandler != handler)
+				{
+					std::lock_guard<std::mutex> lock(this->m_clientsMutex);
+					delete this->m_clients[clientSocket];
+					this->m_clients[clientSocket] = resultBuffer.newHandler;
+					handler = resultBuffer.newHandler;
 				}
 
 				// Update handler if needed

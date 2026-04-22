@@ -13,33 +13,15 @@ LoginRequest JsonRequestPacketDeserializer::deserializeLoginRequest(const Buffer
 	// message is built like this (according to the protocol)
 	// code -> data len -> data
 
-	if (JsonRequestPacketDeserializer::isBufferValid(buffer, LOGIN_REQUEST))
+	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, LOGIN_REQUEST);
+	try
 	{
-		// uint32_t guarantes 4 bytes only (data length)
-		uint32_t dataLen =
-			(buffer[1] << 24) |
-			(buffer[2] << 16) |
-			(buffer[3] << 8) |
-			(buffer[4]);
-		// now dataLen contains the 2-5 bytes of thhe buffer
-
-		Buffer data(buffer.begin() + 1 + sizeof(uint32_t), buffer.begin() + 1 + sizeof(uint32_t) + dataLen);
-
-		try
-		{
-			json jsonData = json::parse(data);
-
-			request.username = jsonData.at("username").get<std::string>();
-			request.password = jsonData.at("password").get<std::string>();
-		}
-		catch (const std::exception& error)
-		{
-			throw std::runtime_error("JsonRequestPacketDeserializer::deserializeLoginRequest: error parsing json");
-		}
+		request.username = jsonData.at("username").get<std::string>();
+		request.password = jsonData.at("password").get<std::string>();
 	}
-	else
+	catch (const std::exception& error)
 	{
-		throw std::exception("JsonRequestPacketDeserializer::deserializeLoginRequest: login code wasn't found");
+		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeLoginRequest: error parsing json");
 	}
 
 	return request;
@@ -55,40 +37,17 @@ SignupRequest JsonRequestPacketDeserializer::deserializeSignupRequest(const Buff
 {
 	SignupRequest request;
 
-	if (JsonRequestPacketDeserializer::isBufferValid(buffer, SIGNUP_REQUEST))
+	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, SIGNUP_REQUEST);
+
+	try
 	{
-		uint32_t dataLen =
-			(buffer[1] << 24) |
-			(buffer[2] << 16) |
-			(buffer[3] << 8) |
-			(buffer[4]);
-		// read the data
-		Buffer data(buffer.begin() + 1 + sizeof(uint32_t), buffer.begin() + 1 + sizeof(uint32_t) + dataLen);
-
-		// create requestInfo
-		RequestInfo requestInfo;
-		requestInfo.id = buffer[0];
-		requestInfo.buffer = data;
-
-		time_t now = time(nullptr);
-		requestInfo.receivalTime = now;
-
-		try
-		{
-			json jsonData = json::parse(data);
-
-			request.username = jsonData.at("username").get<std::string>();
-			request.password = jsonData.at("password").get<std::string>();
-			request.email = jsonData.at("email").get<std::string>();
-		}
-		catch (const std::exception& error)
-		{
-			throw std::runtime_error("JsonRequestPacketDeserializer::deserializeSignupRequest: error parsing json");
-		}
+		request.username = jsonData.at("username").get<std::string>();
+		request.password = jsonData.at("password").get<std::string>();
+		request.email = jsonData.at("email").get<std::string>();
 	}
-	else
+	catch (const std::exception& error)
 	{
-		throw std::exception("JsonRequestPacketDeserializer::deserializeSignupRequest: signup code wasn't found");
+		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeSignupRequest: error parsing json");
 	}
 
 	return request;
@@ -128,4 +87,35 @@ bool JsonRequestPacketDeserializer::isBufferValid(const Buffer& buffer, int code
 	}
 
 	return true;
+}
+
+/*
+	Method to extract the json code from the buffer
+	input: the buffer and the expected code
+	output: the extracted json
+*/
+
+json JsonRequestPacketDeserializer::extractJson(const Buffer& buffer, int expectedCode)
+{
+	if (!JsonRequestPacketDeserializer::isBufferValid(buffer, expectedCode))
+	{
+		throw std::runtime_error("invalid buffer or wrong request code");
+	}
+
+	uint32_t dataLen =
+		(buffer[1] << 24) |
+		(buffer[2] << 16) |
+		(buffer[3] << 8) |
+		(buffer[4]);
+
+	Buffer data(buffer.begin() + 1 + sizeof(uint32_t), buffer.begin() + 1 + sizeof(uint32_t) + dataLen);
+
+	try
+	{
+		return json::parse(data);
+	}
+	catch (...)
+	{
+		throw std::runtime_error("Failed to parse JSON");
+	}
 }
