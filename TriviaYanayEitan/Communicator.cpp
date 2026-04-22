@@ -152,7 +152,7 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 
 
 				RequestResult resultBuffer = handler->handleRequest(requestInfo);
-					
+
 				if (send(clientSocket, reinterpret_cast<const char*>(resultBuffer.response.data()), (int)resultBuffer.response.size(), 0) == SOCKET_ERROR)
 				{
 					std::cerr << "send failed" << std::endl;
@@ -177,16 +177,17 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 					delete this->m_clients[clientSocket];
 					this->m_clients[clientSocket] = resultBuffer.newHandler;
 					handler = resultBuffer.newHandler;
-					
-			}
-			else if (bytesRecieved == 0)
-			{
-				break;
-			}
-			else
-			{
-				std::cerr << "error: recv failed: " << WSAGetLastError() << std::endl;
-				break;
+
+				}
+				else if (bytesRecieved == 0)
+				{
+					break;
+				}
+				else
+				{
+					std::cerr << "error: recv failed: " << WSAGetLastError() << std::endl;
+					break;
+				}
 			}
 		}
 	}
