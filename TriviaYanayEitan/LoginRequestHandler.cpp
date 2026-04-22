@@ -71,6 +71,7 @@ RequestResult LoginRequestHandler::handleRequest(const RequestInfo& requestInfo)
 				ErrorResponse errorResponse;
 				errorResponse.error = "error: Wrong request format!";
 				result.response = JsonResponsePacketSerializer::serializeResponse(errorResponse);
+				result.newHandler = nullptr;
 				return result;
 			}
 		}
@@ -80,6 +81,7 @@ RequestResult LoginRequestHandler::handleRequest(const RequestInfo& requestInfo)
 		ErrorResponse errorResponse;
 		errorResponse.error = error.what();
 		result.response = JsonResponsePacketSerializer::serializeResponse(errorResponse);
+		result.newHandler = nullptr;
 		return result;
 	}
 }
