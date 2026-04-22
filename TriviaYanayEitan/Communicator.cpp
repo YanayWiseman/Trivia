@@ -152,25 +152,22 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 
 				// Check if request is relevnat and send it to handler
 
-				if (handler->isRequestRelevant(requestInfo))
-				{
-					RequestResult resultBuffer = handler->handleRequest(requestInfo);
+				RequestResult resultBuffer = handler->handleRequest(requestInfo);
 					
-					if (send(clientSocket, reinterpret_cast<const char*>(resultBuffer.response.data()), (int)resultBuffer.response.size(), 0) == SOCKET_ERROR)
-					{
-						std::cerr << "send failed" << std::endl;
-						break;
-					}
+				if (send(clientSocket, reinterpret_cast<const char*>(resultBuffer.response.data()), (int)resultBuffer.response.size(), 0) == SOCKET_ERROR)
+				{
+					std::cerr << "send failed" << std::endl;
+					break;
+				}
 
-					// Update handler if needed
+				// Update handler if needed
 
-					if (resultBuffer.newHandler != handler)
-					{
-						std::lock_guard<std::mutex> lock(this->m_clientsMutex);
-						delete this->m_clients[clientSocket];
-						this->m_clients[clientSocket] = resultBuffer.newHandler;
-						handler = resultBuffer.newHandler;
-					}
+				if (resultBuffer.newHandler != handler)
+				{
+					std::lock_guard<std::mutex> lock(this->m_clientsMutex);
+					delete this->m_clients[clientSocket];
+					this->m_clients[clientSocket] = resultBuffer.newHandler;
+					handler = resultBuffer.newHandler;
 				}
 			}
 			else if (bytesRecieved == 0)
