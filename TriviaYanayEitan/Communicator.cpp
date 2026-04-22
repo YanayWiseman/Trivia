@@ -150,7 +150,6 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 					handler = this->m_clients[clientSocket];
 				}
 
-				// Check if request is relevnat and send it to handler
 
 				RequestResult resultBuffer = handler->handleRequest(requestInfo);
 					
@@ -169,6 +168,16 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 					this->m_clients[clientSocket] = resultBuffer.newHandler;
 					handler = resultBuffer.newHandler;
 				}
+
+				// Update handler if needed
+
+				if (resultBuffer.newHandler != handler)
+				{
+					std::lock_guard<std::mutex> lock(this->m_clientsMutex);
+					delete this->m_clients[clientSocket];
+					this->m_clients[clientSocket] = resultBuffer.newHandler;
+					handler = resultBuffer.newHandler;
+					
 			}
 			else if (bytesRecieved == 0)
 			{
