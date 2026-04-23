@@ -16,14 +16,14 @@ private:
 public:
 	// C'tor and D'tor
 	SqliteDataBase();
-	~SqliteDataBase();;
+	~SqliteDataBase();
 
 	// methods
 	bool open() override;
 	bool close() override;
 
 	// queries
-	int doesUserExist(const std::string& username) const override;
-	int doesPasswordMatch(const std::string& password1, const std::string& password2) const override;
-	int addNewUser(const std::string& username, const std::string& password, const std::string& mail) const override;
+	bool doesUserExist(const std::string& username) const override;
+	bool doesPasswordMatch(const std::string& password1, const std::string& password2) const override;
+	void addNewUser(const std::string& username, const std::string& password, const std::string& mail) const override;
 };
