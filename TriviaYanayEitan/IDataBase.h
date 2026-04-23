@@ -5,9 +5,11 @@
 class IDataBase
 {
 public:
+	// d'tor
+	virtual ~IDataBase() = default;
 	// methods
-	virtual bool open();
-	virtual bool close();
+	virtual bool open() = 0;
+	virtual bool close() = 0;
 
 	// queries
 	virtual int doesUserExist(const std::string& username) const = 0;
