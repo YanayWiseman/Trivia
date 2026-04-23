@@ -36,7 +36,7 @@ Buffer JsonResponsePacketSerializer::serializeJson(const json& json, const int c
 
 	return buffer;
 }
-
+ 
 
 /*
 	Function serializes Json login response into buffer.
