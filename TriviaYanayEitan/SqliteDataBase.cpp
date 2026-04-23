@@ -11,6 +11,12 @@ SqliteDatabase::SqliteDatabase()
 {
 	// in order to execute queries on the database we need to open it
 	open();
+
+	// now we can create the tables
+	executeSqlQuery("CREATE TABLE IF NOT EXISTS USER ("
+	" USERNAME TEXT PRIMARY KEY,"
+	" PASSWORD TEXT NOT NULL,"
+	" EMAIL TEXT NOT NULL);");
 }
 
 /*
@@ -21,6 +27,7 @@ SqliteDatabase::SqliteDatabase()
 
 SqliteDatabase::~SqliteDatabase()
 {
+	// just close the database
 	close();
 }
 
@@ -32,7 +39,23 @@ SqliteDatabase::~SqliteDatabase()
 
 bool SqliteDatabase::open()
 {
+	// safety check
+	// just in case open() has been called already
+	if (this->m_db != nullptr)
+	{
+		return true;
+	}
 
+	// open the data base
+	int res = sqlite3_open(this->m_dbFile.c_str(), &this->m_db);
+
+	// check if opened
+	if (res != SQLITE_OK)
+	{
+		this->m_db = nullptr;
+		return false;
+	}
+	return true;
 }
 
 /*
@@ -43,7 +66,12 @@ bool SqliteDatabase::open()
 
 bool SqliteDatabase::close()
 {
-
+	// if the database is open
+	if (this->m_db != nullptr)
+	{
+		sqlite3_close(this->m_db);
+		this->m_db = nullptr;
+	}
 }
 
 /*
