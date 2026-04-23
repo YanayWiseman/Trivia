@@ -82,7 +82,25 @@ bool SqliteDatabase::close()
 
 bool SqliteDatabase::doesUserExist(const std::string& username) const
 {
+	sqlite3_stmt* stmt = prepare("SELECT COUNT(*) FROM USER WHERE USERNAME = ?;");
+	if (!stmt)
+	{
+		return false;
+	}
 
+	bool exists = false;
+	// bind the statement
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		// check if the count is bigger then 0
+		exists = (sqlite3_column_int(stmt, 0) > 0);
+	}
+
+	sqlite3_finalize(stmt);
+
+	return exists;
 }
 
 /*

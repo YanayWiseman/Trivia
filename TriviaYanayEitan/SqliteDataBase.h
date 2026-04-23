@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include "sqlite3.h"
+#include "Constants.h"
 #include "IDatabase.h"
 
 #define DB_FILENAME "Trivia.sqlite"
