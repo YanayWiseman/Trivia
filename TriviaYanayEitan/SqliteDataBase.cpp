@@ -1,26 +1,27 @@
 #include "SqliteDataBase.h"
 
 /*
-	Constructor for the SqliteDataBase class, to contsruct the object
+	Constructor for the SqliteDatabase class, to contsruct the object
 	input: no input values
 	output: no return values
 */
 
-SqliteDataBase::SqliteDataBase()
+SqliteDatabase::SqliteDatabase()
 	: m_db(nullptr), m_dbFile(DB_FILENAME)
 {
-
+	// in order to execute queries on the database we need to open it
+	open();
 }
 
 /*
-	Destructor for the SqliteDataBase class, to destruct the object
+	Destructor for the SqliteDatabase class, to destruct the object
 	input: no input values
 	output: no return values
 */
 
-SqliteDataBase::~SqliteDataBase()
+SqliteDatabase::~SqliteDatabase()
 {
-
+	close();
 }
 
 /*
@@ -29,7 +30,7 @@ SqliteDataBase::~SqliteDataBase()
 	output: bool, true if opened and false otherwise
 */
 
-bool SqliteDataBase::open()
+bool SqliteDatabase::open()
 {
 
 }
@@ -40,7 +41,7 @@ bool SqliteDataBase::open()
 	output: no return values
 */
 
-bool SqliteDataBase::close()
+bool SqliteDatabase::close()
 {
 
 }
@@ -51,7 +52,7 @@ bool SqliteDataBase::close()
 	output: true if user exists in database and false otherwise
 */
 
-bool SqliteDataBase::doesUserExist(const std::string& username) const
+bool SqliteDatabase::doesUserExist(const std::string& username) const
 {
 
 }
@@ -62,7 +63,7 @@ bool SqliteDataBase::doesUserExist(const std::string& username) const
 	output: true if passwords match and false otherwise
 */
 
-bool SqliteDataBase::doesPasswordMatch(const std::string& password1, const std::string& password2) const
+bool SqliteDatabase::doesPasswordMatch(const std::string& password1, const std::string& password2) const
 {
 
 }
@@ -73,7 +74,56 @@ bool SqliteDataBase::doesPasswordMatch(const std::string& password1, const std::
 	output: no return values
 */
 
-void SqliteDataBase::addNewUser(const std::string& username, const std::string& password, const std::string& mail) const
+void SqliteDatabase::addNewUser(const std::string& username, const std::string& password, const std::string& mail) const
 {
 
+}
+
+/*
+	Helper method to exectue a given SQL query statement to avoid code duplication 
+	and implement the encapsulation pricple
+	input: the SQL statement as a string
+	output: true if statement succeeded and false otherwise (according to SQLITE_OK)
+*/
+
+bool SqliteDatabase::executeSqlQuery(const std::string& statement) const
+{
+	char* errorMsg = nullptr;
+
+	int res = sqlite3_exec(this->m_db, statement.c_str(), nullptr, nullptr, &errorMsg);
+	if (res != SQLITE_OK)
+	{
+		std::cout << "Error:" << errorMsg << std::endl;
+
+		// if sqlite3 used errorMsg we need to free the memory using their functions
+		if (errorMsg)
+		{
+			sqlite3_free(errorMsg);
+		}
+		return false;
+	}
+
+	return true;
+}
+
+/*
+	Helper method to prepare a given SQL statement
+	input: the statement in char form
+	output: the sqlite3_stmt*
+*/
+
+sqlite3_stmt* SqliteDatabase::prepare(const char* statement) const
+{
+	sqlite3_stmt* stmt = nullptr;
+
+	// prepare the statement
+	int res = sqlite3_prepare_v2(this->m_db, statement, -1, &stmt, nullptr);
+
+	// check for failure
+	if (res != SQLITE_OK)
+	{
+		std::cout << "Error: " << sqlite3_errmsg(this->m_db);
+		return nullptr;
+	}
+	return stmt;
 }

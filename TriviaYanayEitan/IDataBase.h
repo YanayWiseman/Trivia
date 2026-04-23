@@ -2,11 +2,11 @@
 
 #include <string>
 
-class IDataBase
+class IDatabase
 {
 public:
 	// d'tor
-	virtual ~IDataBase() = default;
+	virtual ~IDatabase() = default;
 	// methods
 	virtual bool open() = 0;
 	virtual bool close() = 0;
