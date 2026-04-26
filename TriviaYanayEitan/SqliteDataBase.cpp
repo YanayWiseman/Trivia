@@ -138,7 +138,20 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 
 void SqliteDatabase::addNewUser(const std::string& username, const std::string& password, const std::string& mail) const
 {
+	sqlite3_stmt* stmt = prepare("INSERT INTO USER (USERNAME, PASSWORD, EMAIL) VALUES (?, ?, ?);");
 
+	// bind the values
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 3, mail.c_str(), -1, SQLITE_TRANSIENT);
+
+	// step
+	if (sqlite3_step(stmt) != SQLITE_DONE)
+	{
+		std::cout << "Failed adding a new user: " << username << ", " << password << " - " << mail <<  std::endl;
+	}
+
+	sqlite3_finalize(stmt);
 }
 
 /*
