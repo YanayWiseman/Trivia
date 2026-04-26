@@ -123,9 +123,11 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 	// should be only one row
 	if (sqlite3_step(stmt) == SQLITE_ROW)
 	{
-		// check if the count is bigger then 0
-		exists = (sqlite3_column_int(stmt, 0) > 0);
+		// check if it matches the given password
+		return SqliteDatabase::colText(stmt, 1) == password;
 	}
+
+	return false;
 }
 
 /*
@@ -145,7 +147,7 @@ void SqliteDatabase::addNewUser(const std::string& username, const std::string& 
 	output: the converted string
 */
 
-std::string DatabaseAccess::colText(sqlite3_stmt* stmt, int col)
+std::string SqliteDatabase::colText(sqlite3_stmt* stmt, int col)
 {
 	// extract it from the records
 	const unsigned char* text = sqlite3_column_text(stmt, col);
