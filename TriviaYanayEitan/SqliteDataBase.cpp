@@ -10,7 +10,10 @@ SqliteDatabase::SqliteDatabase()
 	: m_db(nullptr), m_dbFile(DB_FILENAME)
 {
 	// in order to execute queries on the database we need to open it
-	open();
+	if (!open())
+	{
+		throw std::runtime_error("failed opening db");
+	}
 
 	// now we can create the tables
 	executeSqlQuery("CREATE TABLE IF NOT EXISTS USER ("
@@ -52,6 +55,7 @@ bool SqliteDatabase::open()
 	// check if opened
 	if (res != SQLITE_OK)
 	{
+		std::cout << sqlite3_errmsg(this->m_db);
 		this->m_db = nullptr;
 		return false;
 	}
@@ -69,9 +73,13 @@ bool SqliteDatabase::close()
 	// if the database is open
 	if (this->m_db != nullptr)
 	{
-		sqlite3_close(this->m_db);
+		bool ok = sqlite3_close(this->m_db) == SQLITE_OK;
 		this->m_db = nullptr;
+
+		return ok;
 	}
+
+	return true;
 }
 
 /*
@@ -120,14 +128,18 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 	// bind the username
 	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
 
+	bool match = false;
+
 	// should be only one row
 	if (sqlite3_step(stmt) == SQLITE_ROW)
 	{
 		// check if it matches the given password
-		return SqliteDatabase::colText(stmt, 1) == password;
+		match = SqliteDatabase::colText(stmt, 0) == password;
 	}
 
-	return false;
+	sqlite3_finalize(stmt);
+
+	return match;
 }
 
 /*
@@ -136,10 +148,13 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 	output: no return values
 */
 
-void SqliteDatabase::addNewUser(const std::string& username, const std::string& password, const std::string& mail) const
+void SqliteDatabase::addNewUser(const std::string& username, const std::string& password, const std::string& mail)
 {
 	sqlite3_stmt* stmt = prepare("INSERT INTO USER (USERNAME, PASSWORD, EMAIL) VALUES (?, ?, ?);");
-
+	if (!stmt)
+	{
+		return;
+	}
 	// bind the values
 	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_TRANSIENT);
@@ -148,7 +163,7 @@ void SqliteDatabase::addNewUser(const std::string& username, const std::string& 
 	// step
 	if (sqlite3_step(stmt) != SQLITE_DONE)
 	{
-		std::cout << "Failed adding a new user: " << username << ", " << password << " - " << mail <<  std::endl;
+		std::cout << "Failed adding a new user: " << username << " - " << mail <<  std::endl;
 	}
 
 	sqlite3_finalize(stmt);
