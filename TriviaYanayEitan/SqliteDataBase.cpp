@@ -104,14 +104,28 @@ bool SqliteDatabase::doesUserExist(const std::string& username) const
 }
 
 /*
-	Method to check if two given passwords match
-	input: the two passwords
-	output: true if passwords match and false otherwise
+	Method to check if a given password matches its username
+	input: the username and given password
+	output: true if password matches and false otherwise
 */
 
-bool SqliteDatabase::doesPasswordMatch(const std::string& password1, const std::string& password2) const
+bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::string& password) const
 {
+	sqlite3_stmt* stmt = prepare("SELECT PASSWORD FROM USER WHERE USERNAME = ?;");
+	if (!stmt)
+	{
+		return false;
+	}
 
+	// bind the username
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+
+	// should be only one row
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		// check if the count is bigger then 0
+		exists = (sqlite3_column_int(stmt, 0) > 0);
+	}
 }
 
 /*
@@ -123,6 +137,30 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& password1, const std::
 void SqliteDatabase::addNewUser(const std::string& username, const std::string& password, const std::string& mail) const
 {
 
+}
+
+/*
+	Helper static method to convert the const unsigned char* that sqlite3_colums_text() returns
+	input: the statement and the column to convert
+	output: the converted string
+*/
+
+std::string DatabaseAccess::colText(sqlite3_stmt* stmt, int col)
+{
+	// extract it from the records
+	const unsigned char* text = sqlite3_column_text(stmt, col);
+
+	if (text)
+	{
+		// first of all, sqlite3_column_bytes returns the number of bytes in the text column
+		// and this string constructor copies the first text + sqlite3_column_bytes(stmt, col)
+		// from into the text "array"
+		return std::string(text, text + sqlite3_column_bytes(stmt, col));
+	}
+	else
+	{
+		return std::string();
+	}
 }
 
 /*

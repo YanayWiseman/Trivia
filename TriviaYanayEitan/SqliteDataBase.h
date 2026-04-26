@@ -18,6 +18,7 @@ private:
 	// methods
 	bool executeSqlQuery(const std::string& statement) const;
 	sqlite3_stmt* prepare(const char* statement) const;
+	static std::string colText(sqlite3_stmt* stmt, int col);
 
 public:
 	// C'tor and D'tor
@@ -30,6 +31,6 @@ public:
 
 	// queries
 	bool doesUserExist(const std::string& username) const override;
-	bool doesPasswordMatch(const std::string& password1, const std::string& password2) const override;
+	bool doesPasswordMatch(const std::string& username, const std::string& password) const override;
 	void addNewUser(const std::string& username, const std::string& password, const std::string& mail) const override;
 };
