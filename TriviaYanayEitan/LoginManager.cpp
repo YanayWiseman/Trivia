@@ -2,6 +2,18 @@
 
 
 /*
+    Function constructs LoginManager object.
+    Input: database (IDatabase*)
+    Output: None (constructor)
+*/
+
+LoginManager::LoginManager(IDatabase* database)
+{
+    m_database = database;
+}
+
+
+/*
     Function signs user up, adding him to the database.
     Input: username (const std::string&), email (const std::string&), password (const std::string&)
     Output: Whether function succeeded or not (Status)
@@ -9,7 +21,12 @@
 
 Status LoginManager::signup(const std::string& username, const std::string& email, const std::string& password)
 {
-    return this->m_database->addNewUser(username, password, email);
+    if (!this->m_database->doesUserExist(username))
+    {
+        return this->m_database->addNewUser(username, password, email);
+    }
+
+    return Failiure;
 }
 
 

@@ -32,5 +32,5 @@ public:
 	// queries
 	bool doesUserExist(const std::string& username) const override;
 	bool doesPasswordMatch(const std::string& username, const std::string& password) const override;
-	void addNewUser(const std::string& username, const std::string& password, const std::string& mail) override;
+	Status addNewUser(const std::string& username, const std::string& password, const std::string& mail) override;
 };

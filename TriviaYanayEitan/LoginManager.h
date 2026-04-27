@@ -12,6 +12,7 @@ private:
 	std::vector<LoggedUser> m_loggedUsers;
 
 public:
+	LoginManager(IDatabase* database);
 	Status signup(const std::string& username, const std::string& email, const std::string& password);
 	Status login(const std::string& username, const std::string& password);
 	void logout(const std::string& username);
