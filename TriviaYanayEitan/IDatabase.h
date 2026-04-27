@@ -9,8 +9,8 @@ class IDatabase
 public:
 	// methods
 	virtual ~IDatabase() = default;
-	virtual bool open();
-	virtual bool close();
+	virtual bool open() = 0;
+	virtual bool close() = 0;
 
 	// queries
 	virtual bool doesUserExist(const std::string& username) const = 0;

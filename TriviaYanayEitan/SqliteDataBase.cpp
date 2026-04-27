@@ -1,4 +1,4 @@
-#include "SqliteDataBase.h"
+#include "SqliteDatabase.h"
 
 /*
 	Constructor for the SqliteDatabase class, to contsruct the object
