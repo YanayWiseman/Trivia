@@ -46,7 +46,7 @@ bool SqliteDatabase::open()
 	// just in case open() has been called already
 	if (this->m_db != nullptr)
 	{
-		return Success;
+		return true;
 	}
 
 	// open the data base
@@ -57,9 +57,9 @@ bool SqliteDatabase::open()
 	{
 		std::cout << sqlite3_errmsg(this->m_db);
 		this->m_db = nullptr;
-		return Failiure;
+		return false;
 	}
-	return Success;
+	return true;
 }
 
 /*
@@ -79,7 +79,7 @@ bool SqliteDatabase::close()
 		return ok;
 	}
 
-	return Success;
+	return true;
 }
 
 /*
@@ -93,7 +93,7 @@ bool SqliteDatabase::doesUserExist(const std::string& username) const
 	sqlite3_stmt* stmt = prepare("SELECT COUNT(*) FROM USER WHERE USERNAME = ?;");
 	if (!stmt)
 	{
-		return Failiure;
+		return false;
 	}
 
 	bool exists = false;
@@ -122,7 +122,7 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 	sqlite3_stmt* stmt = prepare("SELECT PASSWORD FROM USER WHERE USERNAME = ?;");
 	if (!stmt)
 	{
-		return Failiure;
+		return false;
 	}
 
 	// bind the username
@@ -148,12 +148,12 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 	output: no return values
 */
 
-void SqliteDatabase::addNewUser(const std::string& username, const std::string& password, const std::string& mail)
+Status SqliteDatabase::addNewUser(const std::string& username, const std::string& password, const std::string& mail)
 {
 	sqlite3_stmt* stmt = prepare("INSERT INTO USER (USERNAME, PASSWORD, EMAIL) VALUES (?, ?, ?);");
 	if (!stmt)
 	{
-		return;
+		return Failiure;
 	}
 	// bind the values
 	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
@@ -164,9 +164,11 @@ void SqliteDatabase::addNewUser(const std::string& username, const std::string& 
 	if (sqlite3_step(stmt) != SQLITE_DONE)
 	{
 		std::cout << "Failed adding a new user: " << username << " - " << mail <<  std::endl;
+		return Failiure;
 	}
 
 	sqlite3_finalize(stmt);
+	return Success;
 }
 
 /*
@@ -214,10 +216,10 @@ bool SqliteDatabase::executeSqlQuery(const std::string& statement) const
 		{
 			sqlite3_free(errorMsg);
 		}
-		return Failiure;
+		return false;
 	}
 
-	return Success;
+	return true;
 }
 
 /*
