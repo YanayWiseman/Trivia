@@ -22,13 +22,13 @@ Status LoginManager::login(const std::string& username, const std::string& passw
 
 void LoginManager::logout(const std::string& username)
 {
-    auto it = std::find_if(m_loggedUsers.begin(), m_loggedUsers.end(), [&](const LoggedUser& user)
+    auto it = std::find_if(this->m_loggedUsers.begin(), this->m_loggedUsers.end(), [&](const LoggedUser& user)
     {
         return user.getUsername() == username;
     });
 
-    if (it != m_loggedUsers.end())
+    if (it != this->m_loggedUsers.end())
     {
-        m_loggedUsers.erase(it);
+        this->m_loggedUsers.erase(it);
     }
 }

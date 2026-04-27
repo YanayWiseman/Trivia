@@ -46,7 +46,7 @@ bool SqliteDatabase::open()
 	// just in case open() has been called already
 	if (this->m_db != nullptr)
 	{
-		return true;
+		return Success;
 	}
 
 	// open the data base
@@ -57,9 +57,9 @@ bool SqliteDatabase::open()
 	{
 		std::cout << sqlite3_errmsg(this->m_db);
 		this->m_db = nullptr;
-		return false;
+		return Failiure;
 	}
-	return true;
+	return Success;
 }
 
 /*
@@ -79,7 +79,7 @@ bool SqliteDatabase::close()
 		return ok;
 	}
 
-	return true;
+	return Success;
 }
 
 /*
@@ -93,7 +93,7 @@ bool SqliteDatabase::doesUserExist(const std::string& username) const
 	sqlite3_stmt* stmt = prepare("SELECT COUNT(*) FROM USER WHERE USERNAME = ?;");
 	if (!stmt)
 	{
-		return false;
+		return Failiure;
 	}
 
 	bool exists = false;
@@ -122,7 +122,7 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 	sqlite3_stmt* stmt = prepare("SELECT PASSWORD FROM USER WHERE USERNAME = ?;");
 	if (!stmt)
 	{
-		return false;
+		return Failiure;
 	}
 
 	// bind the username
@@ -214,10 +214,10 @@ bool SqliteDatabase::executeSqlQuery(const std::string& statement) const
 		{
 			sqlite3_free(errorMsg);
 		}
-		return false;
+		return Failiure;
 	}
 
-	return true;
+	return Success;
 }
 
 /*
