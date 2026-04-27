@@ -1,4 +1,5 @@
 #include "Communicator.h"
+#include "RequestHandlerFactory.h"
 
 /*
 	Constructor method to construct the Communicator object by opening the socket
@@ -6,7 +7,7 @@
 	output: no return values
 */
 
-Communicator::Communicator()
+Communicator::Communicator(RequestHandlerFactory& handlerFactory) : m_handlerFactory(handlerFactory)
 {
 	// this server use TCP. that why SOCK_STREAM & IPPROTO_TCP
 	// if the server use UDP we will use: SOCK_DGRAM & IPPROTO_UDP
@@ -103,7 +104,7 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 	std::cout << "Client Connected!" << std::endl;
 
 	// add to the map
-	IRequestHandler* handler = new LoginRequestHandler();
+	IRequestHandler* handler = this->m_handlerFactory.createLoginRequestHandler();
 
 	// now we use the comminicator's mutex and lock it in order to add it to the map
 	{
