@@ -21,6 +21,7 @@ LoginManager::LoginManager(IDatabase* database)
 
 Status LoginManager::signup(const UserInfo& user)
 {
+    if (!isValidEmail(user.email) || !isValidPassword(user.password) || !isValidPhone(user.phone)) return Failiure;
     if (!this->m_database->doesUserExist(user.username))
     {
         return this->m_database->addNewUser(user);
@@ -77,4 +78,32 @@ void LoginManager::logout(const std::string& username)
     {
         this->m_loggedUsers.erase(it);
     }
+}
+
+
+// Helpers
+
+bool validateUserInfo(const UserInfo& user)
+{
+
+}
+bool isPasswordValid(const std::string& password)
+{
+
+}
+bool isEmailValid(const std::string& email)
+{
+
+}
+bool isAddressValid(const std::string& address)
+{
+
+}
+bool isPhoneValid(const std::string& phone)
+{
+
+}
+bool isBirthDateValid(const std::string& birthDate)
+{
+
 }

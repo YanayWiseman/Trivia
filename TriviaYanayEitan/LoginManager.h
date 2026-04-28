@@ -9,10 +9,19 @@
 class LoginManager
 {
 private:
+	// fields
 	IDatabase* m_database;
 	std::vector<LoggedUser> m_loggedUsers;
 
+	// methods
+	bool validateUserInfo(const UserInfo& user);
+	bool isPasswordValid(const std::string& password);
+	bool isEmailValid(const std::string& email);
+	bool isAddressValid(const std::string& address);
+	bool isPhoneValid(const std::string& phone);
+	bool isBirthDateValid(const std::string& birthDate);
 public:
+	// methods
 	LoginManager(IDatabase* database);
 	Status signup(const UserInfo& user);
 	Status login(const std::string& username, const std::string& password);
