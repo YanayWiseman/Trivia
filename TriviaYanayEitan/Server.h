@@ -8,6 +8,9 @@
 #include <thread>
 
 #include "Communicator.h"
+#include "IDatabase.h"
+#include "RequestHandlerFactory.h"
+#include "SqliteDataBase.h"
 
 
 class Server
@@ -15,10 +18,12 @@ class Server
 private:
 	// fields
 	Communicator m_communicator;
+	IDatabase* m_database;
+	RequestHandlerFactory m_handlerFactory;
 
 public:
 	// methods
-	Server() = default;
+	Server();
 	~Server() = default;
 
 	void run();

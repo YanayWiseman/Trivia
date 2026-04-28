@@ -8,7 +8,7 @@ class IRequestHandler;
 typedef struct RequestResult
 {
 	Buffer response;
-	IRequestHandler* newHandler;
+	IRequestHandler* newHandler = nullptr;
 } RequestResult;
 
 typedef struct RequestInfo
