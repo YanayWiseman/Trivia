@@ -21,10 +21,12 @@ LoginManager::LoginManager(IDatabase* database)
 
 Status LoginManager::signup(const UserInfo& user)
 {
-    if (!isValidEmail(user.email) || !isValidPassword(user.password) || !isValidPhone(user.phone)) return Failiure;
-    if (!this->m_database->doesUserExist(user.username))
+    if(isUserInfoValid(user))
     {
-        return this->m_database->addNewUser(user);
+        if (!this->m_database->doesUserExist(user.username))
+        {
+            return this->m_database->addNewUser(user);
+        }
     }
 
     return Failiure;
@@ -60,7 +62,6 @@ Status LoginManager::login(const std::string& username, const std::string& passw
     return Failiure;
 }
 
-
 /*
     Function logs user out of the program, removing him from the logged users vector.
     Input: username (const std::string&)
@@ -83,27 +84,68 @@ void LoginManager::logout(const std::string& username)
 
 // Helpers
 
-bool validateUserInfo(const UserInfo& user)
+/*
+    Method to check if the user's information is valid using regex expressions
+    input: the userInfo struct
+    output: true if valid and false otherwise
+*/
+
+bool LoginManager::isUserInfoValid(const UserInfo& user)
+{
+    return isPasswordValid(user.password) && isEmailValid(user.email) && isAddressValid(user.address) && isPhoneValid(user.phone) && isBirthDateValid(user.birthdate);
+}
+
+/*
+    Method to check if the user's password is valid using regex expressions
+    input: the user's password
+    output: true if valid and false otherwise
+*/
+
+bool LoginManager::isPasswordValid(const std::string& password)
 {
 
 }
-bool isPasswordValid(const std::string& password)
+
+/*
+    Method to check if the user's email is valid using regex expressions
+    input: the user's email
+    output: true if valid and false otherwise
+*/
+
+bool LoginManager::isEmailValid(const std::string& email)
 {
 
 }
-bool isEmailValid(const std::string& email)
+
+/*
+    Method to check if the user's address is valid using regex expressions
+    input: the user's address
+    output: true if valid and false otherwise
+*/
+
+bool LoginManager::isAddressValid(const std::string& address)
 {
 
 }
-bool isAddressValid(const std::string& address)
+
+/*
+    Method to check if the user's phone is valid using regex expressions
+    input: the user's phone
+    output: true if valid and false otherwise
+*/
+
+bool LoginManager::isPhoneValid(const std::string& phone)
 {
 
 }
-bool isPhoneValid(const std::string& phone)
-{
 
-}
-bool isBirthDateValid(const std::string& birthDate)
+/*
+    Method to check if the user's birthdate is valid using regex expressions
+    input: the user's birthdate
+    output: true if valid and false otherwise
+*/
+
+bool LoginManager::isBirthDateValid(const std::string& birthDate)
 {
 
 }

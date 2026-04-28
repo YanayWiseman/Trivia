@@ -14,7 +14,7 @@ private:
 	std::vector<LoggedUser> m_loggedUsers;
 
 	// methods
-	bool validateUserInfo(const UserInfo& user);
+	bool isUserInfoValid(const UserInfo& user);
 	bool isPasswordValid(const std::string& password);
 	bool isEmailValid(const std::string& email);
 	bool isAddressValid(const std::string& address);
