@@ -154,7 +154,11 @@ bool LoginManager::isPasswordValid(const std::string& password)
 
 bool LoginManager::isAddressValid(const std::string& address)
 {
-    static const std::regex pattern();
+    // this is a simple pattern: Street, Apt, City
+    // I have explained mostly what this expression is doing in previous expressions as this is
+    // using the same logic (Yanay)
+    // the + means one or more of the expression that is in the brackets
+    static const std::regex pattern(R"(^[A-Za-z]+, \d+, [A-Za-z]+$)");
     return std::regex_match(address, pattern);
 }
 
@@ -166,7 +170,11 @@ bool LoginManager::isAddressValid(const std::string& address)
 
 bool LoginManager::isPhoneValid(const std::string& phone)
 {
-    static const std::regex pattern();
+    // prefix - number
+    // (0\d{1,2}) - the first char must be a 0, the next part means that there can be any digit 0-9
+    // either once or twice so 07 will be fine and alsoo 053
+    // dash - for the prefix and number seperator and seven digits 0-9
+    static const std::regex pattern(R"(^(0\d{1,2})-\d{7}$)");
     return std::regex_match(phone, pattern);
 }
 
