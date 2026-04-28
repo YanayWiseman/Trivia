@@ -186,6 +186,10 @@ bool LoginManager::isPhoneValid(const std::string& phone)
 
 bool LoginManager::isBirthDateValid(const std::string& birthDate)
 {
-    static const std::regex pattern();
+    // format is DD.MM.YYYY or DD/MM/YYYY
+    // (0[1-9]|[12][0-9]|3[01]) this ensures that the day is between 0 and 31, | is an OR
+    //0[1-9] is 0 through 9, [12][0-9] is 10 through 29  and 3[01] is 30 or 31
+    // then theres a . or a slash, and we continue the same logic for the months and year
+    static const std::regex pattern(R"(^(0[1-9]|[12][0-9]|3[01])[./](0[1-9]|1[0-2])[./]\d{4}$)");
     return std::regex_match(birthDate, pattern);
 }
