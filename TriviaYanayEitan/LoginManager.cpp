@@ -158,7 +158,7 @@ bool LoginManager::isAddressValid(const std::string& address)
     // I have explained mostly what this expression is doing in previous expressions as this is
     // using the same logic (Yanay)
     // the + means one or more of the expression that is in the brackets
-    static const std::regex pattern(R"(^[A-Za-z]+, \d+, [A-Za-z]+$)");
+    static const std::regex pattern(R"(^[A-Za-z ]+, \d+, [A-Za-z ]+$)");
     return std::regex_match(address, pattern);
 }
 

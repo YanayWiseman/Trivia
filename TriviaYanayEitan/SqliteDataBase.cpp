@@ -151,7 +151,7 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 	output: no return values
 */
 
-Status SqliteDatabase::addNewUser(const UserInfo userInfo)
+Status SqliteDatabase::addNewUser(const UserInfo& userInfo)
 {
 	sqlite3_stmt* stmt = prepare("INSERT INTO USER (USERNAME, PASSWORD, EMAIL, ADDRESS, PHONE, BIRTHDATE) "
 		"VALUES (?, ?, ?, ?, ?, ?);"

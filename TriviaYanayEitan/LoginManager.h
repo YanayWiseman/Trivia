@@ -3,9 +3,9 @@
 #include <vector>
 #include <regex>
 #include "IDatabase.h"
-#include "SqliteDataBase.h"
 #include "LoggedUser.h"
 #include "Constants.h"
+#include "UserInfo.h"
 
 class LoginManager
 {

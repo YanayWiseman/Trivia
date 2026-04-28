@@ -5,18 +5,10 @@
 #include "sqlite3.h"
 #include "Constants.h"
 #include "IDatabase.h"
+#include "UserInfo.h"
 
 #define DB_FILENAME "Trivia.sqlite"
 
-typedef struct UserInfo
-{
-	std::string username;
-	std::string password;
-	std::string email;
-	std::string address;
-	std::string phone;
-	std::string birthdate;
-} UserInfo;
 
 class SqliteDatabase : public IDatabase
 {
@@ -42,5 +34,5 @@ public:
 	// queries
 	bool doesUserExist(const std::string& username) const override;
 	bool doesPasswordMatch(const std::string& username, const std::string& password) const override;
-	Status addNewUser(const UserInfo userInfo) override;
+	Status addNewUser(const UserInfo& userInfo) override;
 };
