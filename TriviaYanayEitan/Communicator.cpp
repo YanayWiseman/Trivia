@@ -1,4 +1,5 @@
 #include "Communicator.h"
+#include "RequestHandlerFactory.h"
 
 /*
 	Constructor method to construct the Communicator object by opening the socket
@@ -6,7 +7,7 @@
 	output: no return values
 */
 
-Communicator::Communicator()
+Communicator::Communicator(RequestHandlerFactory& handlerFactory) : m_handlerFactory(handlerFactory)
 {
 	// this server use TCP. that why SOCK_STREAM & IPPROTO_TCP
 	// if the server use UDP we will use: SOCK_DGRAM & IPPROTO_UDP
@@ -103,7 +104,7 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 	std::cout << "Client Connected!" << std::endl;
 
 	// add to the map
-	IRequestHandler* handler = new LoginRequestHandler();
+	IRequestHandler* handler = this->m_handlerFactory.createLoginRequestHandler();
 
 	// now we use the comminicator's mutex and lock it in order to add it to the map
 	{
@@ -153,6 +154,12 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 
 				RequestResult resultBuffer = handler->handleRequest(requestInfo);
 
+				if (resultBuffer.response.empty())
+				{
+					std::cerr << "Error: handler returned empty response" << std::endl;
+					break;
+				}
+
 				if (send(clientSocket, reinterpret_cast<const char*>(resultBuffer.response.data()), (int)resultBuffer.response.size(), 0) == SOCKET_ERROR)
 				{
 					std::cerr << "send failed" << std::endl;
@@ -161,7 +168,7 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 
 				// Update handler if needed
 
-				if (resultBuffer.newHandler != handler)
+				if (resultBuffer.newHandler != nullptr && resultBuffer.newHandler != handler)
 				{
 					std::lock_guard<std::mutex> lock(this->m_clientsMutex);
 					delete this->m_clients[clientSocket];
@@ -169,25 +176,15 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 					handler = resultBuffer.newHandler;
 				}
 
-				// Update handler if needed
-
-				if (resultBuffer.newHandler != handler)
-				{
-					std::lock_guard<std::mutex> lock(this->m_clientsMutex);
-					delete this->m_clients[clientSocket];
-					this->m_clients[clientSocket] = resultBuffer.newHandler;
-					handler = resultBuffer.newHandler;
-
-				}
-				else if (bytesRecieved == 0)
-				{
-					break;
-				}
-				else
-				{
-					std::cerr << "error: recv failed: " << WSAGetLastError() << std::endl;
-					break;
-				}
+			}
+			else if (bytesRecieved == 0)
+			{
+				break;
+			}
+			else
+			{
+				std::cerr << "error: recv failed: " << WSAGetLastError() << std::endl;
+				break;
 			}
 		}
 	}

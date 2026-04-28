@@ -8,3 +8,4 @@
 #define SIGNUP_RESPONSE 4
 #define ERROR_RESPONSE 5
 
+enum Status { Failiure, Success };
