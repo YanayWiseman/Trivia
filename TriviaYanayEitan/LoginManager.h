@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <regex>
 #include "IDatabase.h"
 #include "SqliteDataBase.h"
 #include "LoggedUser.h"
