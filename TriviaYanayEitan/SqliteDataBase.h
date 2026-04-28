@@ -8,7 +8,7 @@
 
 #define DB_FILENAME "Trivia.sqlite"
 
-struct UserInfo
+typedef struct UserInfo
 {
 	std::string username;
 	std::string password;
@@ -16,7 +16,7 @@ struct UserInfo
 	std::string address;
 	std::string phone;
 	std::string birthdate;
-};
+} UserInfo;
 
 class SqliteDatabase : public IDatabase
 {

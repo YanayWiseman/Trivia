@@ -19,11 +19,11 @@ LoginManager::LoginManager(IDatabase* database)
     Output: Whether function succeeded or not (Status)
 */
 
-Status LoginManager::signup(const std::string& username, const std::string& email, const std::string& password)
+Status LoginManager::signup(const UserInfo& user)
 {
-    if (!this->m_database->doesUserExist(username))
+    if (!this->m_database->doesUserExist(user.username))
     {
-        return this->m_database->addNewUser(username, password, email);
+        return this->m_database->addNewUser(user);
     }
 
     return Failiure;

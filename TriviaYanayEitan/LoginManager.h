@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "IDatabase.h"
+#include "SqliteDataBase.h"
 #include "LoggedUser.h"
 #include "Constants.h"
 
@@ -13,7 +14,7 @@ private:
 
 public:
 	LoginManager(IDatabase* database);
-	Status signup(const std::string& username, const std::string& email, const std::string& password);
+	Status signup(const UserInfo& user);
 	Status login(const std::string& username, const std::string& password);
 	void logout(const std::string& username);
 };

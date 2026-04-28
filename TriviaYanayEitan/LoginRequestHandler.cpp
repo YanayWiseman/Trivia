@@ -105,7 +105,16 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& info) const
 	SignupResponse signupResponse;
 	SignupRequest signupRequest = JsonRequestPacketDeserializer::deserializeSignupRequest(info.buffer);
 
-	signupResponse.status = this->m_handlerFactory.getLoginmanager().signup(signupRequest.username, signupRequest.email, signupRequest.password);
+	// create the user's info
+	UserInfo user;
+	user.username = signupRequest.username;
+	user.password = signupRequest.password;
+	user.email = signupRequest.email;
+	user.address = signupRequest.address;
+	user.phone = signupRequest.phone;
+	user.birthdate = signupRequest.birthdate;
+
+	signupResponse.status = this->m_handlerFactory.getLoginmanager().signup(user);
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(signupResponse);
 

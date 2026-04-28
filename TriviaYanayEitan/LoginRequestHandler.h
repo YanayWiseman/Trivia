@@ -5,7 +5,7 @@
 #include "JsonRequestPacketDeserializer.h"
 #include "JsonResponsePacketSerializer.h"
 #include "ResponseStructs.h"
-
+#include "SqliteDataBase.h"
 
 class RequestHandlerFactory;
 
