@@ -34,3 +34,16 @@ void Server::run()
 		}
 	}
 }
+
+
+/*
+	Function creates single instance of server.
+	Input: None
+	Output: New server instance (Server&)
+*/
+
+Server& Server::getInstance()
+{
+	static Server instance;
+	return instance;
+}

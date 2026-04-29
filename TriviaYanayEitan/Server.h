@@ -21,10 +21,17 @@ private:
 	IDatabase* m_database;
 	RequestHandlerFactory m_handlerFactory;
 
+	//methods
+	Server();
+
 public:
 	// methods
-	Server();
 	~Server() = default;
 
 	void run();
+
+	static Server& getInstance();
+
+	Server(const Server& other) = delete;
+	Server& operator=(const Server& other) = delete;
 };
