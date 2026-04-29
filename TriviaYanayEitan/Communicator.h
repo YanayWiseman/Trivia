@@ -26,13 +26,18 @@ private:
 	std::mutex m_clientsMutex;
 
 	// methods
+	Communicator(RequestHandlerFactory& handlerFactory);
 	void bindAndListen();
 	void handleNewClient(SOCKET socket);
 
 public:
 	// methods
-	Communicator(RequestHandlerFactory& handlerFactory);
 	~Communicator();
+
+	static Communicator& getInstance(RequestHandlerFactory& handlerFactory);
+
+	Communicator(const Communicator& other) = delete;
+	Communicator& operator=(const Communicator& other) = delete;
 
 	void startHandleRequests();
 };

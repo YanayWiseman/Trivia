@@ -204,3 +204,16 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 
 	std::cout << "Client disconnected" << std::endl;
 }
+
+
+/*
+	Function creates single instance of Communicator.
+	Input: None
+	Output: New Communicator instance (Communicator&)
+*/
+
+Communicator& Communicator::getInstance(RequestHandlerFactory& handlerFactory)
+{
+	static Communicator instance(handlerFactory);
+	return instance;
+}
