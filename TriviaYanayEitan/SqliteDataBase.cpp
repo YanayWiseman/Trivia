@@ -19,7 +19,10 @@ SqliteDatabase::SqliteDatabase()
 	executeSqlQuery("CREATE TABLE IF NOT EXISTS USER ("
 	" USERNAME TEXT PRIMARY KEY,"
 	" PASSWORD TEXT NOT NULL,"
-	" EMAIL TEXT NOT NULL);");
+	" EMAIL TEXT NOT NULL," 
+	" ADDRESS TEXT NOT NULL,"
+	" PHONE TEXT NOT NULL,"
+	" BIRTHDATE TEXT NOT NULL);");
 }
 
 /*
@@ -144,26 +147,31 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 
 /*
 	Method to add a new user to the database
-	input: the user's name, password and mail
+	input: the user's fields
 	output: no return values
 */
 
-Status SqliteDatabase::addNewUser(const std::string& username, const std::string& password, const std::string& mail)
+Status SqliteDatabase::addNewUser(const UserInfo& userInfo)
 {
-	sqlite3_stmt* stmt = prepare("INSERT INTO USER (USERNAME, PASSWORD, EMAIL) VALUES (?, ?, ?);");
+	sqlite3_stmt* stmt = prepare("INSERT INTO USER (USERNAME, PASSWORD, EMAIL, ADDRESS, PHONE, BIRTHDATE) "
+		"VALUES (?, ?, ?, ?, ?, ?);"
+	);
 	if (!stmt)
 	{
 		return Failiure;
 	}
 	// bind the values
-	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
-	sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_TRANSIENT);
-	sqlite3_bind_text(stmt, 3, mail.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 1, userInfo.username.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 2, userInfo.password.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 3, userInfo.email.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 4, userInfo.address.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 5, userInfo.phone.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 6, userInfo.birthdate.c_str(), -1, SQLITE_TRANSIENT);
 
 	// step
 	if (sqlite3_step(stmt) != SQLITE_DONE)
 	{
-		std::cout << "Failed adding a new user: " << username << " - " << mail <<  std::endl;
+		std::cout << "Failed adding a new user: " << userInfo.username << " - " << userInfo.email <<  std::endl;
 		return Failiure;
 	}
 
@@ -242,4 +250,17 @@ sqlite3_stmt* SqliteDatabase::prepare(const char* statement) const
 		return nullptr;
 	}
 	return stmt;
+}
+
+
+/*
+	Function creates single instance of SqliteDatabase.
+	Input: None
+	Output: New SqliteDatabase instance (SqliteDatabase&)
+*/
+
+SqliteDatabase& SqliteDatabase::getInstance()
+{
+	static SqliteDatabase instance;
+	return instance;
 }

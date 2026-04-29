@@ -81,3 +81,16 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const ErrorResponse& erro
 
 	return serializeJson(response, ERROR_RESPONSE);
 }
+
+
+/*
+	Function creates single instance of JsonResponsePacketSerializer.
+	Input: None
+	Output: New JsonResponsePacketSerializer instance (JsonResponsePacketSerializer&)
+*/
+
+JsonResponsePacketSerializer& JsonResponsePacketSerializer::getInstance()
+{
+	static JsonResponsePacketSerializer instance;
+	return instance;
+}

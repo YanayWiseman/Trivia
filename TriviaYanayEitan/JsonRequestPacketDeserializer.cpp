@@ -44,6 +44,9 @@ SignupRequest JsonRequestPacketDeserializer::deserializeSignupRequest(const Buff
 		request.username = jsonData.at("username").get<std::string>();
 		request.password = jsonData.at("password").get<std::string>();
 		request.email = jsonData.at("email").get<std::string>();
+		request.address = jsonData.at("address").get<std::string>();
+		request.phone = jsonData.at("phone").get<std::string>();
+		request.birthdate = jsonData.at("birthdate").get<std::string>();
 	}
 	catch (const std::exception& error)
 	{
@@ -118,4 +121,17 @@ json JsonRequestPacketDeserializer::extractJson(const Buffer& buffer, int expect
 	{
 		throw std::runtime_error("Failed to parse JSON");
 	}
+}
+
+
+/*
+	Function creates single instance of JsonRequestPacketDeserializer.
+	Input: None
+	Output: New JsonRequestPacketDeserializer instance (JsonRequestPacketDeserializer&)
+*/
+
+JsonRequestPacketDeserializer& JsonRequestPacketDeserializer::getInstance()
+{
+	static JsonRequestPacketDeserializer instance;
+	return instance;
 }
