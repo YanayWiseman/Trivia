@@ -10,7 +10,7 @@
 #include "Communicator.h"
 #include "IDatabase.h"
 #include "RequestHandlerFactory.h"
-#include "SqliteDataBase.h"
+#include "SqliteDatabase.h"
 
 
 class Server

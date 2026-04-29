@@ -12,7 +12,7 @@ typedef struct SignupResponse
 	unsigned int status;
 } SignupResponse;
 
-typedef struct ErrorRespones
+typedef struct ErrorResponse
 {
 	std::string error;
 } ErrorResponse;
