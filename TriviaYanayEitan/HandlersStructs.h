@@ -13,7 +13,7 @@ typedef struct RequestResult
 
 typedef struct RequestInfo
 {
-	Byte id;
-	time_t receivalTime;
+	Byte id = 0;
+	time_t receivalTime = 0;
 	Buffer buffer;
 } RequestInfo;

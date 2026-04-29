@@ -17,9 +17,9 @@ class Server
 {
 private:
 	// fields
-	Communicator m_communicator;
+	Communicator& m_communicator;
 	IDatabase* m_database;
-	RequestHandlerFactory m_handlerFactory;
+	RequestHandlerFactory& m_handlerFactory;
 
 	//methods
 	Server();

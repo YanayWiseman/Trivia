@@ -7,7 +7,8 @@
 	Output: None (constructor)
 */
 
-Server::Server() : m_database(new SqliteDatabase()), m_handlerFactory(m_database), m_communicator(m_handlerFactory) {}
+Server::Server() : m_database(&SqliteDatabase::getInstance()), m_handlerFactory(RequestHandlerFactory::getInstance(m_database)), m_communicator(Communicator::getInstance(m_handlerFactory)) {}
+
 
 /*
 	This Method is the main thread of the multi-threaded server

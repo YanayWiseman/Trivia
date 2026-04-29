@@ -15,6 +15,8 @@ private:
 	std::vector<LoggedUser> m_loggedUsers;
 
 	// methods
+	LoginManager(IDatabase* database);
+
 	bool isUserInfoValid(const UserInfo& user);
 	bool isPasswordValid(const std::string& password);
 	bool isEmailValid(const std::string& email);
@@ -23,8 +25,12 @@ private:
 	bool isBirthDateValid(const std::string& birthDate);
 public:
 	// methods
-	LoginManager(IDatabase* database);
 	Status signup(const UserInfo& user);
 	Status login(const std::string& username, const std::string& password);
 	void logout(const std::string& username);
+
+	static LoginManager& getInstance(IDatabase* database);
+
+	LoginManager(const LoginManager& other) = delete;
+	LoginManager& operator=(const LoginManager& other) = delete;
 };

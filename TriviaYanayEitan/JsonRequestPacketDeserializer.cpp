@@ -122,3 +122,16 @@ json JsonRequestPacketDeserializer::extractJson(const Buffer& buffer, int expect
 		throw std::runtime_error("Failed to parse JSON");
 	}
 }
+
+
+/*
+	Function creates single instance of JsonRequestPacketDeserializer.
+	Input: None
+	Output: New JsonRequestPacketDeserializer instance (JsonRequestPacketDeserializer&)
+*/
+
+JsonRequestPacketDeserializer& JsonRequestPacketDeserializer::getInstance()
+{
+	static JsonRequestPacketDeserializer instance;
+	return instance;
+}
