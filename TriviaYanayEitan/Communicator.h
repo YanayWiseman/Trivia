@@ -13,7 +13,7 @@
 #include "LoginRequestHandler.h"
 #include "JsonResponsePacketSerializer.h"
 
-#define PORT 9000
+#define PORT 12334
 #define BUFFER_SIZE 1024
 
 class Communicator
