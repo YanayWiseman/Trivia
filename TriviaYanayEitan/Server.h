@@ -10,21 +10,28 @@
 #include "Communicator.h"
 #include "IDatabase.h"
 #include "RequestHandlerFactory.h"
-#include "SqliteDataBase.h"
+#include "SqliteDatabase.h"
 
 
 class Server
 {
 private:
 	// fields
-	Communicator m_communicator;
+	Communicator& m_communicator;
 	IDatabase* m_database;
-	RequestHandlerFactory m_handlerFactory;
+	RequestHandlerFactory& m_handlerFactory;
+
+	//methods
+	Server();
 
 public:
 	// methods
-	Server();
 	~Server() = default;
 
 	void run();
+
+	static Server& getInstance();
+
+	Server(const Server& other) = delete;
+	Server& operator=(const Server& other) = delete;
 };
