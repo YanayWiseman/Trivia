@@ -7,7 +7,8 @@
 	Output: None (constructor)
 */
 
-Server::Server() : m_database(new SqliteDatabase()), m_handlerFactory(m_database), m_communicator(m_handlerFactory) {}
+Server::Server() : m_database(&SqliteDatabase::getInstance()), m_handlerFactory(RequestHandlerFactory::getInstance(m_database)), m_communicator(Communicator::getInstance(m_handlerFactory)) {}
+
 
 /*
 	This Method is the main thread of the multi-threaded server
@@ -33,4 +34,17 @@ void Server::run()
 			exit(0);
 		}
 	}
+}
+
+
+/*
+	Function creates single instance of server.
+	Input: None
+	Output: New server instance (Server&)
+*/
+
+Server& Server::getInstance()
+{
+	static Server instance;
+	return instance;
 }

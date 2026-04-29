@@ -18,18 +18,24 @@ private:
 	std::string m_dbFile;  // data base file name
 
 	// methods
+	SqliteDatabase();
+
 	bool executeSqlQuery(const std::string& statement) const;
 	sqlite3_stmt* prepare(const char* statement) const;
 	static std::string colText(sqlite3_stmt* stmt, int col);
 
 public:
-	// C'tor and D'tor
-	SqliteDatabase();
+	// D'tor
 	~SqliteDatabase();
 
 	// methods
 	bool open() override;
 	bool close() override;
+
+	static SqliteDatabase& getInstance();
+
+	SqliteDatabase(const SqliteDatabase& other) = delete;
+	SqliteDatabase& operator=(const SqliteDatabase& other) = delete;
 
 	// queries
 	bool doesUserExist(const std::string& username) const override;

@@ -251,3 +251,16 @@ sqlite3_stmt* SqliteDatabase::prepare(const char* statement) const
 	}
 	return stmt;
 }
+
+
+/*
+	Function creates single instance of SqliteDatabase.
+	Input: None
+	Output: New SqliteDatabase instance (SqliteDatabase&)
+*/
+
+SqliteDatabase& SqliteDatabase::getInstance()
+{
+	static SqliteDatabase instance;
+	return instance;
+}

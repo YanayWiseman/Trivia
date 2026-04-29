@@ -7,7 +7,7 @@
     Output: None (Constructor)
 */
 
-RequestHandlerFactory::RequestHandlerFactory(IDatabase* database) : m_loginManager(database), m_database(database) {}
+RequestHandlerFactory::RequestHandlerFactory(IDatabase* database) : m_loginManager(LoginManager::getInstance(database)), m_database(database) {}
 
 /*
     Function creates a new request handler and returns it.
@@ -30,4 +30,17 @@ LoginRequestHandler* RequestHandlerFactory::createLoginRequestHandler()
 LoginManager& RequestHandlerFactory::getLoginmanager()
 {
     return this->m_loginManager;
+}
+
+
+/*
+    Function creates single instance of RequestHandlerFactory.
+    Input: None
+    Output: New RequestHandlerFactory instance (RequestHandlerFactory&)
+*/
+
+RequestHandlerFactory& RequestHandlerFactory::getInstance(IDatabase* database)
+{
+    static RequestHandlerFactory instance(database);
+    return instance;
 }

@@ -193,3 +193,15 @@ bool LoginManager::isBirthDateValid(const std::string& birthDate)
     static const std::regex pattern(R"(^(0[1-9]|[12][0-9]|3[01])[./](0[1-9]|1[0-2])[./]\d{4}$)");
     return std::regex_match(birthDate, pattern);
 }
+
+/*
+    Function creates single instance of LoginManager.
+    Input: None
+    Output: New LoginManager instance (LoginManager&)
+*/
+
+LoginManager& LoginManager::getInstance(IDatabase* database)
+{
+    static LoginManager instance(database);
+    return instance;
+}
