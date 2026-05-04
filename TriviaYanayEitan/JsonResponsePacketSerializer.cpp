@@ -94,3 +94,80 @@ JsonResponsePacketSerializer& JsonResponsePacketSerializer::getInstance()
 	static JsonResponsePacketSerializer instance;
 	return instance;
 }
+
+/*
+	Method to serialize Json logout response into buffer.
+	Input: LogoutResponse (const LogoutResponse&)
+	Output: Buffer containing logout response data according to the protocol.
+*/
+
+static Buffer serializeResponse(const LogoutResponse& loginResponse)
+{
+
+}
+
+/*
+	Method to serialize Json getRooms response into buffer.
+	Input: GetRoomsResponse (const GetRoomsResponse&)
+	Output: Buffer containing getRooms response data according to the protocol.
+*/
+
+static Buffer serializeResponse(const GetRoomsResponse& errorResponse)
+{
+
+}
+
+/*
+	Method to serialize Json GetPlayersInRoom response into buffer.
+	Input: GetPlayersInRoomResponse (const GetPlayersInRoomResponse&)
+	Output: Buffer containing GetPlayersInRoom response data according to the protocol.
+*/
+
+static Buffer serializeResponse(const GetPlayersInRoomResponse& signupResponse)
+{
+
+}
+
+/*
+	Method to serialize Json getHighScore response into buffer.
+	Input: getHighScoreResponse (const getHighScoreResponse&)
+	Output: Buffer containing getHighScore response data according to the protocol.
+*/
+
+static Buffer serializeResponse(const getHighScoreResponse& errorResponse)
+{
+
+}
+
+/*
+	Method to serialize Json signup response into buffer.
+	Input: signupResponse (const SignupResponse&)
+	Output: Buffer containing signup response data according to the protocol.
+*/
+
+static Buffer serializeResponse(const getPersonalStatsResponse& loginResponse)
+{
+
+}
+
+/*
+	Method to serialize Json signup response into buffer.
+	Input: signupResponse (const SignupResponse&)
+	Output: Buffer containing signup response data according to the protocol.
+*/
+
+static Buffer serializeResponse(const JoinRoomResponse& signupResponse)
+{
+
+}
+
+/*
+	Method to serialize Json signup response into buffer.
+	Input: signupResponse (const SignupResponse&)
+	Output: Buffer containing signup response data according to the protocol.
+*/
+
+static Buffer serializeResponse(const CreateRoomResponse& signupResponse)
+{
+
+}

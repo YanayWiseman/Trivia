@@ -1,18 +1,62 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include "Room.h"
 
-typedef struct LoginResponse
+// V1 response structs
+
+struct LoginResponse
 {
 	unsigned int status;
-} LoginResponse;
+};
 
-typedef struct SignupResponse
+struct SignupResponse
 {
 	unsigned int status;
-} SignupResponse;
+};
 
-typedef struct ErrorResponse
+struct ErrorResponse
 {
 	std::string error;
-} ErrorResponse;
+};
+
+// V2 response structs
+
+struct LogoutResponse
+{
+	unsigned int status;
+};
+
+struct GetRoomsResponse
+{
+	unsigned int status;
+	std::vector<RoomData> rooms;
+}; 
+
+struct GetPlayersInRoomResponse
+{
+	std::vector<std::string> players;
+};
+
+struct getHighScoreResponse
+{
+	unsigned int status;
+	std::vector<std::string> statistics;
+};
+
+struct getPersonalStatsResponse
+{
+	unsigned int status;
+	std::vector<std::string> statistics;
+};
+
+struct JoinRoomResponse
+{
+	unsigned int status;
+};
+
+struct CreateRoomResponse
+{
+	unsigned int status;
+};
