@@ -2,13 +2,15 @@
 
 #include <string>
 
-typedef struct LoginRequest
+//V1
+
+struct LoginRequest
 {
 	std::string username;
 	std::string password;
-} LoginRequest;
+};
 
-typedef struct SignupRequest
+struct SignupRequest
 {
     std::string username;
     std::string password;
@@ -16,5 +18,24 @@ typedef struct SignupRequest
     std::string address;
     std::string phone;
     std::string birthdate;
-} SignupRequest;
+};
 
+// V2
+
+struct GetPlayersInRoomRequest
+{
+    unsigned int roomId;
+};
+
+struct JoinRoomRequest
+{
+    unsigned int roomId;
+};
+
+struct CreateRoomRequest
+{
+    std::string roomName;
+    unsigned int maxUsers;
+    unsigned int questionsCount;
+    unsigned int answerTimeout;
+};

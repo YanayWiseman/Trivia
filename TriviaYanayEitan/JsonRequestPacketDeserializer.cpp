@@ -135,3 +135,17 @@ JsonRequestPacketDeserializer& JsonRequestPacketDeserializer::getInstance()
 	static JsonRequestPacketDeserializer instance;
 	return instance;
 }
+
+// add docstring
+GetPlayersInRoomRequest JsonRequestPacketDeserializer::deserializeGetPlayersRequest(const Buffer& buffer)
+{
+
+}
+JoinRoomRequest JsonRequestPacketDeserializer::deserializeJoinRoomRequest(const Buffer& buffer)
+{
+
+}
+CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(const Buffer& buffer)
+{
+
+}
