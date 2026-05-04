@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <regex>
+#include <mutex>
 #include "IDatabase.h"
 #include "LoggedUser.h"
 #include "Constants.h"
@@ -13,6 +14,7 @@ private:
 	// fields
 	IDatabase* m_database;
 	std::vector<LoggedUser> m_loggedUsers;
+	std::mutex m_mutex;
 
 	// methods
 	LoginManager(IDatabase* database);

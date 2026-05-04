@@ -24,6 +24,7 @@ private:
 	SOCKET m_serverSocket;
 	std::map<SOCKET, IRequestHandler*> m_clients;
 	std::mutex m_clientsMutex;
+	std::mutex m_printMutex;
 
 	// methods
 	Communicator(RequestHandlerFactory& handlerFactory);
