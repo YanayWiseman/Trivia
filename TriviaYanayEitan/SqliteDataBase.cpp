@@ -32,8 +32,8 @@ SqliteDatabase::SqliteDatabase()
 	" USERNAME TEXT PRIMARY KEY,"
 	" NUM_ANSWERED INTEGER NOT NULL,"
 	" CORRECT_ANSWERS INTEGER NOT NULL,"
-	" AVERAGE_TIME INTEGER NOT NULL,"
-	" GAMES_COUNT INTEGER NOT NULL"
+	" AVERAGE_TIME FLOAT NOT NULL,"
+	" GAMES_COUNT INTEGER NOT NULL,"
 	" FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME));");
 }
 
@@ -285,7 +285,30 @@ SqliteDatabase& SqliteDatabase::getInstance()
 
 float SqliteDatabase::getPlayerAverageAnswerTime(std::string& username) const
 {
+	sqlite3_stmt* stmt = prepare("SELECT AVERAGE_TIME FROM STATISTICS WHERE USERNAME = ?;");
+	if (!stmt)
+	{
+		return -1;
+	}
 
+	// bind the username
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+
+	float avg = 0;
+	// step
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		avg = sqlite3_column_int(stmt, 0);
+	}
+	else
+	{
+		std::cout << "Failed getting average answer time of - " << username << std::endl;
+		sqlite3_finalize(stmt);
+		return -1;
+	}
+
+	sqlite3_finalize(stmt);
+	return avg;
 }
 
 /*
@@ -296,7 +319,7 @@ float SqliteDatabase::getPlayerAverageAnswerTime(std::string& username) const
 
 int SqliteDatabase::getNumOfCorrectAnswers(std::string& username) const
 {
-
+	return 0;
 }
 
 /*
@@ -307,7 +330,7 @@ int SqliteDatabase::getNumOfCorrectAnswers(std::string& username) const
 
 int SqliteDatabase::getNumOfTotalAnswers(std::string& username) const
 {
-
+	return 0;
 }
 
 /*
@@ -318,5 +341,5 @@ int SqliteDatabase::getNumOfTotalAnswers(std::string& username) const
 
 int SqliteDatabase::getNumOfPlayerGames(std::string& username) const
 {
-
+	return 0;
 }
