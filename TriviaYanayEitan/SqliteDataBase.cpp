@@ -276,3 +276,47 @@ SqliteDatabase& SqliteDatabase::getInstance()
 	static SqliteDatabase instance;
 	return instance;
 }
+
+/*
+	Method to get a player's average answer time
+	input: the user's name to get the informations of
+	output: the player's average answer time (float)
+*/
+
+float SqliteDatabase::getPlayerAverageAnswerTime(std::string& username) const
+{
+
+}
+
+/*
+	Method to get a player's number of correct answers
+	input: the user's name to get the informations of
+	output: the player's number of correct answers 
+*/
+
+int SqliteDatabase::getNumOfCorrectAnswers(std::string& username) const
+{
+
+}
+
+/*
+	Method to get a player's number of total answers
+	input: the user's name to get the informations of
+	output: the player's number of total answers
+*/
+
+int SqliteDatabase::getNumOfTotalAnswers(std::string& username) const
+{
+
+}
+
+/*
+	Method to get a player's number of games played
+	input: the user's name to get the informations of
+	output: the player's number of games played
+*/
+
+int SqliteDatabase::getNumOfPlayerGames(std::string& username) const
+{
+
+}

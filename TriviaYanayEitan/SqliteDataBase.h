@@ -36,8 +36,14 @@ public:
 	SqliteDatabase(const SqliteDatabase& other) = delete;
 	SqliteDatabase& operator=(const SqliteDatabase& other) = delete;
 
-	// queries
+	// USER operations
 	bool doesUserExist(const std::string& username) const override;
 	bool doesPasswordMatch(const std::string& username, const std::string& password) const override;
 	Status addNewUser(const UserInfo& userInfo) override;
+
+	// STATISTICS operations
+	float getPlayerAverageAnswerTime(std::string& username) const override;
+	int getNumOfCorrectAnswers(std::string& username) const override;
+	int getNumOfTotalAnswers(std::string& username) const override;
+	int getNumOfPlayerGames(std::string& username) const override;
 };
