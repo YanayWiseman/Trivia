@@ -21,6 +21,9 @@ LoginManager::LoginManager(IDatabase* database)
 
 Status LoginManager::signup(const UserInfo& user)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+
     if(isUserInfoValid(user))
     {
         if (!this->m_database->doesUserExist(user.username))
@@ -41,6 +44,8 @@ Status LoginManager::signup(const UserInfo& user)
 
 Status LoginManager::login(const std::string& username, const std::string& password)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     if (this->m_database->doesUserExist(username))
     {
         if (this->m_database->doesPasswordMatch(username, password))
@@ -70,6 +75,8 @@ Status LoginManager::login(const std::string& username, const std::string& passw
 
 void LoginManager::logout(const std::string& username)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     auto it = std::find_if(this->m_loggedUsers.begin(), this->m_loggedUsers.end(), [&](const LoggedUser& user)
     {
         return user.getUsername() == username;

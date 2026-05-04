@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <mutex>
 #include "sqlite3.h"
 #include "Constants.h"
 #include "IDatabase.h"
@@ -16,6 +17,7 @@ private:
 	// fields
 	sqlite3* m_db;  // data base object
 	std::string m_dbFile;  // data base file name
+	mutable std::mutex m_dbMutex;
 
 	// methods
 	SqliteDatabase();

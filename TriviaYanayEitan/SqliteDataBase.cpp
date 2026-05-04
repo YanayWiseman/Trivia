@@ -45,6 +45,8 @@ SqliteDatabase::~SqliteDatabase()
 
 bool SqliteDatabase::open()
 {
+	std::lock_guard<std::mutex> lock(m_dbMutex);
+
 	// safety check
 	// just in case open() has been called already
 	if (this->m_db != nullptr)
@@ -73,6 +75,8 @@ bool SqliteDatabase::open()
 
 bool SqliteDatabase::close()
 {
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
 	// if the database is open
 	if (this->m_db != nullptr)
 	{
@@ -93,6 +97,8 @@ bool SqliteDatabase::close()
 
 bool SqliteDatabase::doesUserExist(const std::string& username) const
 {
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
 	sqlite3_stmt* stmt = prepare("SELECT COUNT(*) FROM USER WHERE USERNAME = ?;");
 	if (!stmt)
 	{
@@ -122,6 +128,8 @@ bool SqliteDatabase::doesUserExist(const std::string& username) const
 
 bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::string& password) const
 {
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
 	sqlite3_stmt* stmt = prepare("SELECT PASSWORD FROM USER WHERE USERNAME = ?;");
 	if (!stmt)
 	{
@@ -153,6 +161,8 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 
 Status SqliteDatabase::addNewUser(const UserInfo& userInfo)
 {
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
 	sqlite3_stmt* stmt = prepare("INSERT INTO USER (USERNAME, PASSWORD, EMAIL, ADDRESS, PHONE, BIRTHDATE) "
 		"VALUES (?, ?, ?, ?, ?, ?);"
 	);
@@ -172,6 +182,7 @@ Status SqliteDatabase::addNewUser(const UserInfo& userInfo)
 	if (sqlite3_step(stmt) != SQLITE_DONE)
 	{
 		std::cout << "Failed adding a new user: " << userInfo.username << " - " << userInfo.email <<  std::endl;
+		sqlite3_finalize(stmt);
 		return Failiure;
 	}
 
@@ -212,6 +223,8 @@ std::string SqliteDatabase::colText(sqlite3_stmt* stmt, int col)
 
 bool SqliteDatabase::executeSqlQuery(const std::string& statement) const
 {
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
 	char* errorMsg = nullptr;
 
 	int res = sqlite3_exec(this->m_db, statement.c_str(), nullptr, nullptr, &errorMsg);
