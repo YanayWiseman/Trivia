@@ -24,7 +24,10 @@ private:
 	mutable std::mutex m_mutex;
 
 public:
-	void addUser(LoggedUser usr);
-	void removeUser(LoggedUser usr);
+	Room(const RoomData& data);
+	~Room() = default;
+	RoomData getData() const;
+	void addUser(const LoggedUser& usr);
+	void removeUser(const LoggedUser& usr);
 	std::vector<std::string> getAllUsers() const;
 };

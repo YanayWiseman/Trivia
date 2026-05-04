@@ -2,12 +2,35 @@
 
 
 /*
+	Function constructs new Room object.
+	Input: data (RoomData)
+	Output: None (constructor)
+*/
+
+Room::Room(const RoomData& data) : m_metadata(data) {}
+
+
+/*
+	Function returns room data.
+	Input: None
+	Output: Room data (RoomData)
+*/
+
+RoomData Room::getData() const
+{
+	std::lock_guard<std::mutex> lock(this->m_mutex);
+
+	return this->m_metadata;
+}
+
+
+/*
 	Function adds user to rooms user vector.
 	Input: usr (LoggedUser)
 	Output: None (void)
 */
 
-void Room::addUser(LoggedUser usr)
+void Room::addUser(const LoggedUser& usr)
 {
 	std::lock_guard<std::mutex> lock(this->m_mutex);
 	m_users.push_back(usr);
@@ -20,7 +43,7 @@ void Room::addUser(LoggedUser usr)
 	Output: None (void)
 */
 
-void Room::removeUser(LoggedUser usr)
+void Room::removeUser(const LoggedUser& usr)
 {
 	std::lock_guard<std::mutex> lock(this->m_mutex);
 	
@@ -50,4 +73,6 @@ std::vector<std::string> Room::getAllUsers() const
 	{
 		users.push_back(it->getUsername());
 	}
+
+	return users;
 }
