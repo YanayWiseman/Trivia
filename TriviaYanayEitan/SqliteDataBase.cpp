@@ -342,6 +342,8 @@ int SqliteDatabase::getNumOfPlayerGames(std::string& username) const
 
 float SqliteDatabase::getStatisticValue(const std::string& username, const std::string& column) const
 {
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
 	std::string query = "SELECT " + column + " FROM STATISTICS WHERE USERNAME = ?;";
 	sqlite3_stmt* stmt = prepare(query.c_str());
 	if (!stmt)
