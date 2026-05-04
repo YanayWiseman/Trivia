@@ -11,16 +11,32 @@ using json = nlohmann::json;
 class JsonResponsePacketSerializer
 {
 public:
-	// methods
+	// c'tor
 	JsonResponsePacketSerializer() = default;
-	static Buffer serializeJson(const json& json, const int code);
+	
+	// methods
+
+	//V1
 	static Buffer serializeResponse(const ErrorResponse& errorResponse);
 	static Buffer serializeResponse(const LoginResponse& loginResponse);
 	static Buffer serializeResponse(const SignupResponse& signupResponse);
 
+	//V2
+	static Buffer serializeResponse(const LogoutResponse& loginResponse);
+	static Buffer serializeResponse(const GetRoomsResponse& errorResponse);
+	static Buffer serializeResponse(const GetPlayersInRoomResponse& signupResponse);
+	static Buffer serializeResponse(const getHighScoreResponse& errorResponse);
+	static Buffer serializeResponse(const getPersonalStatsResponse& loginResponse);
+	static Buffer serializeResponse(const JoinRoomResponse& signupResponse);
+	static Buffer serializeResponse(const CreateRoomResponse& signupResponse);
 
+	// singleton
 	static JsonResponsePacketSerializer& getInstance();
 
 	JsonResponsePacketSerializer(const JsonResponsePacketSerializer& other) = delete;
 	JsonResponsePacketSerializer& operator=(const JsonResponsePacketSerializer& other) = delete;
+private:
+	// helper methods
+	static Buffer serializeJson(const json& json, const int code);
+	static std::string vectorToAmpersandString(const std::vector<std::string>& vec);
 };
