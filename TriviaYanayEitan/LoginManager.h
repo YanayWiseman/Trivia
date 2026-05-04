@@ -27,6 +27,7 @@ private:
 	bool isBirthDateValid(const std::string& birthDate);
 public:
 	// methods
+	~LoginManager() = default;
 	Status signup(const UserInfo& user);
 	Status login(const std::string& username, const std::string& password);
 	void logout(const std::string& username);
