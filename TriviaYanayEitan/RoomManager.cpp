@@ -29,6 +29,13 @@ void RoomManager::deleteRoom(int id)
 	this->m_rooms.erase(id);
 }
 
+
+/*
+	Function return room status using given ID.
+	Input: id (int)
+	Output: Room status (RoomStatus)
+*/
+
 RoomStatus RoomManager::getRoomState(int id)
 {
 	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
@@ -43,9 +50,24 @@ RoomStatus RoomManager::getRoomState(int id)
 	return it->second.getData().status;
 }
 
+
+/*
+	Function returns vector of data of all rooms.
+	Input: None
+	Output: Vector of RoomData of all rooms (std::vector<RoomData>)
+*/
+
 std::vector<RoomData> RoomManager::getRooms()
 {
-	return std::vector<RoomData>();
+	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
+	std::vector<RoomData> rooms;
+
+	for (auto it = this->m_rooms.begin(); it != this->m_rooms.end(); it++)
+	{
+		rooms.push_back(it->second.getData());
+	}
+
+	return rooms;
 }
 
 
