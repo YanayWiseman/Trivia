@@ -10,7 +10,6 @@
 
 #define DB_FILENAME "Trivia.sqlite"
 
-
 class SqliteDatabase : public IDatabase
 {
 private:
@@ -25,6 +24,7 @@ private:
 	bool executeSqlQuery(const std::string& statement) const;
 	sqlite3_stmt* prepare(const char* statement) const;
 	static std::string colText(sqlite3_stmt* stmt, int col);
+	float getStatisticValue(const std::string& username, const std::string& column) const;
 
 public:
 	// D'tor
@@ -39,8 +39,14 @@ public:
 	SqliteDatabase(const SqliteDatabase& other) = delete;
 	SqliteDatabase& operator=(const SqliteDatabase& other) = delete;
 
-	// queries
+	// USER operations
 	bool doesUserExist(const std::string& username) const override;
 	bool doesPasswordMatch(const std::string& username, const std::string& password) const override;
 	Status addNewUser(const UserInfo& userInfo) override;
+
+	// STATISTICS operations
+	float getPlayerAverageAnswerTime(std::string& username) const override;
+	int getNumOfCorrectAnswers(std::string& username) const override;
+	int getNumOfTotalAnswers(std::string& username) const override;
+	int getNumOfPlayerGames(std::string& username) const override;
 };

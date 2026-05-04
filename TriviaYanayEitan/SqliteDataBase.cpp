@@ -15,6 +15,10 @@ SqliteDatabase::SqliteDatabase()
 		throw std::runtime_error("failed opening db");
 	}
 
+	//foreign keys are turned off by default in sqlite, this enables them
+	// which makes ON DELETE CASCADE work propertly
+	executeSqlQuery("PRAGMA foreign_keys = ON;");
+
 	// now we can create the tables
 	executeSqlQuery("CREATE TABLE IF NOT EXISTS USER ("
 	" USERNAME TEXT PRIMARY KEY,"
@@ -23,6 +27,14 @@ SqliteDatabase::SqliteDatabase()
 	" ADDRESS TEXT NOT NULL,"
 	" PHONE TEXT NOT NULL,"
 	" BIRTHDATE TEXT NOT NULL);");
+
+	executeSqlQuery("CREATE TABLE IF NOT EXISTS STATISTICS ("
+	" USERNAME TEXT PRIMARY KEY,"
+	" NUM_ANSWERED INTEGER NOT NULL,"
+	" CORRECT_ANSWERS INTEGER NOT NULL,"
+	" AVERAGE_TIME FLOAT NOT NULL,"
+	" GAMES_COUNT INTEGER NOT NULL,"
+	" FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME));");
 }
 
 /*
@@ -276,4 +288,81 @@ SqliteDatabase& SqliteDatabase::getInstance()
 {
 	static SqliteDatabase instance;
 	return instance;
+}
+
+/*
+	Method to get a player's average answer time
+	input: the user's name to get the informations of
+	output: the player's average answer time (float)
+*/
+
+float SqliteDatabase::getPlayerAverageAnswerTime(std::string& username) const
+{
+	return getStatisticValue(username, "AVERAGE_TIME");
+}
+
+/*
+	Method to get a player's number of correct answers
+	input: the user's name to get the informations of
+	output: the player's number of correct answers 
+*/
+
+int SqliteDatabase::getNumOfCorrectAnswers(std::string& username) const
+{
+	return getStatisticValue(username, "CORRECT_ANSWERS");
+}
+
+/*
+	Method to get a player's number of total answers
+	input: the user's name to get the informations of
+	output: the player's number of total answers
+*/
+
+int SqliteDatabase::getNumOfTotalAnswers(std::string& username) const
+{
+	return getStatisticValue(username, "NUM_ANSWERED");
+}
+
+/*
+	Method to get a player's number of games played
+	input: the user's name to get the informations of
+	output: the player's number of games played
+*/
+
+int SqliteDatabase::getNumOfPlayerGames(std::string& username) const
+{
+	return getStatisticValue(username, "GAMES_COUNT");
+}
+
+/*
+	Method to get a statistic field value, to avoid code duplications
+	input: the username and column to get the value from
+	output: the field, in float so it supports both int and float methods
+*/
+
+float SqliteDatabase::getStatisticValue(const std::string& username, const std::string& column) const
+{
+	std::string query = "SELECT " + column + " FROM STATISTICS WHERE USERNAME = ?;";
+	sqlite3_stmt* stmt = prepare(query.c_str());
+	if (!stmt)
+	{
+		return -1.0;
+	}
+
+	// bind the username
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+
+	int value = -1.0;
+	// step
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		value = static_cast<float>(sqlite3_column_double(stmt, 0));
+	}
+	else
+	{
+		std::cout << "Failed getting " << column << " of - " << username << std::endl;
+	}
+
+	sqlite3_finalize(stmt);
+	return value;
 }
