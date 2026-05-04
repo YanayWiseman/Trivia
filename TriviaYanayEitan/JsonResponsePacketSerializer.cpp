@@ -117,7 +117,9 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LogoutResponse& log
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& getRoomsResponse)
 {
+	json response;
 
+	return JsonResponsePacketSerializer::serializeJson(response, GET_ROOMS_RESPONSE);
 }
 
 /*
@@ -128,7 +130,9 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& g
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const GetPlayersInRoomResponse& getPlayersInRoomResponse)
 {
+	json response;
 
+	return JsonResponsePacketSerializer::serializeJson(response, GET_PLAYERS_IN_ROOM_RESPONSE);
 }
 
 /*
@@ -139,7 +143,9 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetPlayersInRoomRes
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const getHighScoreResponse& getHighScoreResponse)
 {
+	json response;
 
+	return JsonResponsePacketSerializer::serializeJson(response, HIGH_SCORE_RESPONSE);
 }
 
 /*
@@ -150,7 +156,9 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const getHighScoreRespons
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const getPersonalStatsResponse& getPersonalStatsResponse)
 {
+	json response;
 
+	return JsonResponsePacketSerializer::serializeJson(response, GET_PERSONAL_STATS_RESPONSE);
 }
 
 /*
