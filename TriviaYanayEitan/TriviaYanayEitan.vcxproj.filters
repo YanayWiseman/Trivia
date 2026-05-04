@@ -48,7 +48,10 @@
     <ClCompile Include="RequestHandlerFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StatisticsManager.cpp">
+    <ClCompile Include="Room.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SqliteDatabase.cpp">
@@ -110,7 +113,10 @@
     <ClInclude Include="UserInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StatisticsManager.h">
+    <ClInclude Include="Room.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SqliteDatabase.h">
