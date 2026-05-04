@@ -22,6 +22,7 @@ private:
 	bool executeSqlQuery(const std::string& statement) const;
 	sqlite3_stmt* prepare(const char* statement) const;
 	static std::string colText(sqlite3_stmt* stmt, int col);
+	float getStatisticValue(const std::string& username, const std::string& column) const;
 
 public:
 	// D'tor

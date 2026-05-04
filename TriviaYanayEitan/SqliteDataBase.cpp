@@ -285,30 +285,7 @@ SqliteDatabase& SqliteDatabase::getInstance()
 
 float SqliteDatabase::getPlayerAverageAnswerTime(std::string& username) const
 {
-	sqlite3_stmt* stmt = prepare("SELECT AVERAGE_TIME FROM STATISTICS WHERE USERNAME = ?;");
-	if (!stmt)
-	{
-		return -1;
-	}
-
-	// bind the username
-	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
-
-	float avg = 0;
-	// step
-	if (sqlite3_step(stmt) == SQLITE_ROW)
-	{
-		avg = sqlite3_column_int(stmt, 0);
-	}
-	else
-	{
-		std::cout << "Failed getting average answer time of - " << username << std::endl;
-		sqlite3_finalize(stmt);
-		return -1;
-	}
-
-	sqlite3_finalize(stmt);
-	return avg;
+	return getStatisticValue(username, "AVERAGE_TIME");
 }
 
 /*
@@ -319,30 +296,7 @@ float SqliteDatabase::getPlayerAverageAnswerTime(std::string& username) const
 
 int SqliteDatabase::getNumOfCorrectAnswers(std::string& username) const
 {
-	sqlite3_stmt* stmt = prepare("SELECT CORRECT_ANSWERS FROM STATISTICS WHERE USERNAME = ?;");
-	if (!stmt)
-	{
-		return -1;
-	}
-
-	// bind the username
-	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
-
-	int correct = 0;
-	// step
-	if (sqlite3_step(stmt) == SQLITE_ROW)
-	{
-		correct = sqlite3_column_int(stmt, 0);
-	}
-	else
-	{
-		std::cout << "Failed getting amount of correct answers time of - " << username << std::endl;
-		sqlite3_finalize(stmt);
-		return -1;
-	}
-
-	sqlite3_finalize(stmt);
-	return correct;
+	return getStatisticValue(username, "CORRECT_ANSWERS");
 }
 
 /*
@@ -353,30 +307,7 @@ int SqliteDatabase::getNumOfCorrectAnswers(std::string& username) const
 
 int SqliteDatabase::getNumOfTotalAnswers(std::string& username) const
 {
-	sqlite3_stmt* stmt = prepare("SELECT NUM_ANSWERED FROM STATISTICS WHERE USERNAME = ?;");
-	if (!stmt)
-	{
-		return -1;
-	}
-
-	// bind the username
-	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
-
-	int answers = 0;
-	// step
-	if (sqlite3_step(stmt) == SQLITE_ROW)
-	{
-		answers = sqlite3_column_int(stmt, 0);
-	}
-	else
-	{
-		std::cout << "Failed getting number of answers of - " << username << std::endl;
-		sqlite3_finalize(stmt);
-		return -1;
-	}
-
-	sqlite3_finalize(stmt);
-	return answers;
+	return getStatisticValue(username, "NUM_ANSWERED");
 }
 
 /*
@@ -387,28 +318,38 @@ int SqliteDatabase::getNumOfTotalAnswers(std::string& username) const
 
 int SqliteDatabase::getNumOfPlayerGames(std::string& username) const
 {
-	sqlite3_stmt* stmt = prepare("SELECT GAMES_COUNT FROM STATISTICS WHERE USERNAME = ?;");
+	return getStatisticValue(username, "GAMES_COUNT");
+}
+
+/*
+	Method to get a statistic field value, to avoid code duplications
+	input: the username and column to get the value from
+	output: the field, in float so it supports both int and float methods
+*/
+
+float SqliteDatabase::getStatisticValue(const std::string& username, const std::string& column) const
+{
+	std::string query = "SELECT " + column + " FROM STATISTICS WHERE USERNAME = ?;";
+	sqlite3_stmt* stmt = prepare(query.c_str());
 	if (!stmt)
 	{
-		return -1;
+		return -1.0;
 	}
 
 	// bind the username
 	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
 
-	int count = 0;
+	int value = -1.0;
 	// step
 	if (sqlite3_step(stmt) == SQLITE_ROW)
 	{
-		count = sqlite3_column_int(stmt, 0);
+		value = static_cast<float>(sqlite3_column_double(stmt, 0));
 	}
 	else
 	{
-		std::cout << "Failed getting count of games of - " << username << std::endl;
-		sqlite3_finalize(stmt);
-		return -1;
+		std::cout << "Failed getting " << column << " of - " << username << std::endl;
 	}
 
 	sqlite3_finalize(stmt);
-	return count;
+	return value;
 }
