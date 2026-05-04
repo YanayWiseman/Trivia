@@ -11,12 +11,18 @@ private:
 	// fields
 	IDatabase* m_database;
 
-public:
-	// c'tor and d'tor
+	// methods
 	StatisticsManager(IDatabase* database);
+public:
+	// d'tor
 	~StatisticsManager() = default;
 
 	// methods
 	std::vector<std::pair<std::string, int>> getHighScores() const;
 	UserStatistics getUserStatistics(const std::string& username) const;
+
+	static StatisticsManager& getInstance(IDatabase* database);
+
+	StatisticsManager(const StatisticsManager& other) = delete;
+	StatisticsManager& operator=(const StatisticsManager& other) = delete;
 };

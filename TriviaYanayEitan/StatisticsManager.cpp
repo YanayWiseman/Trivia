@@ -40,3 +40,15 @@ UserStatistics StatisticsManager::getUserStatistics(const std::string& username)
 
     return userStats;
 }
+
+/*
+    Method creates single instance of LoginManager.
+    Input: no input values
+    Output: New LoginManager instance (LoginManager&)
+*/
+
+StatisticsManager& StatisticsManager::getInstance(IDatabase* database)
+{
+    static StatisticsManager instance(database);
+    return instance;
+}
