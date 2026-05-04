@@ -18,8 +18,9 @@ public:
     virtual Status addNewUser(const UserInfo& userInfo) = 0;
 
     // STATISTICS operations
-    virtual float getPlayerAverageAnswerTime(std::string& username) const = 0;
-    virtual int getNumOfCorrectAnswers(std::string& username) const = 0;
-    virtual int getNumOfTotalAnswers(std::string& username) const = 0;
-    virtual int getNumOfPlayerGames(std::string& username) const = 0;
+    virtual float getPlayerAverageAnswerTime(const std::string& username) const = 0;
+    virtual int getNumOfCorrectAnswers(const std::string& username) const = 0;
+    virtual int getNumOfTotalAnswers(const std::string& username) const = 0;
+    virtual int getNumOfPlayerGames(const std::string& username) const = 0;
+    virtual std::vector<std::pair<std::string, int>> getHighScores() const = 0;
 };
