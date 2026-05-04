@@ -148,6 +148,22 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetPlayersInRoomRes
 {
 	json response;
 
+	// we need to craft the players in room string
+	std::string playersInRoom = "";
+	int i = 0;
+
+	for (i = 0; i < getPlayersInRoomResponse.players.size(); i++)
+	{
+		playersInRoom += getPlayersInRoomResponse.players[i];
+		if (i != getPlayersInRoomResponse.players.size() - 1)
+		{
+			// the seperator will be &
+			playersInRoom += "&";
+		}
+	}
+
+	response["PlayersInRoom"] = playersInRoom;
+
 	return JsonResponsePacketSerializer::serializeJson(response, GET_PLAYERS_IN_ROOM_RESPONSE);
 }
 
