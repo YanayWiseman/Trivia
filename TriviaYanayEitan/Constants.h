@@ -9,3 +9,4 @@
 #define ERROR_RESPONSE 5
 
 enum Status { Failiure, Success };
+enum RoomStatus { Active, Unactive };

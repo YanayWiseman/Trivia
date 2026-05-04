@@ -152,6 +152,7 @@
     <ClInclude Include="RequestHandlerFactory.h" />
     <ClInclude Include="RequestStructs.h" />
     <ClInclude Include="ResponseStructs.h" />
+    <ClInclude Include="Room.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="typedefs.h" />
