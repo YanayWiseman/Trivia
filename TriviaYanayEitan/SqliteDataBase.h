@@ -9,7 +9,6 @@
 
 #define DB_FILENAME "Trivia.sqlite"
 
-
 class SqliteDatabase : public IDatabase
 {
 private:

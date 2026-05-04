@@ -15,6 +15,10 @@ SqliteDatabase::SqliteDatabase()
 		throw std::runtime_error("failed opening db");
 	}
 
+	//foreign keys are turned off by default in sqlite, this enables them
+	// which makes ON DELETE CASCADE work propertly
+	executeSqlQuery("PRAGMA foreign_keys = ON;");
+
 	// now we can create the tables
 	executeSqlQuery("CREATE TABLE IF NOT EXISTS USER ("
 	" USERNAME TEXT PRIMARY KEY,"
@@ -23,6 +27,14 @@ SqliteDatabase::SqliteDatabase()
 	" ADDRESS TEXT NOT NULL,"
 	" PHONE TEXT NOT NULL,"
 	" BIRTHDATE TEXT NOT NULL);");
+
+	executeSqlQuery("CREATE TABLE IF NOT EXISTS STATISTICS ("
+	" USERNAME TEXT PRIMARY KEY,"
+	" NUM_ANSWERED INTEGER NOT NULL,"
+	" CORRECT_ANSWERS INTEGER NOT NULL,"
+	" AVERAGE_TIME INTEGER NOT NULL,"
+	" GAMES_COUNT INTEGER NOT NULL"
+	" FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME));");
 }
 
 /*
