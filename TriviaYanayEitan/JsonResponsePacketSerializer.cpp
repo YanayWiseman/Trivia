@@ -120,6 +120,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& g
 	json response;
 
 	// we need to craft the room string
+	// we cant use vectorToApmersandString because the vector is a room vector
 	std::string roomsStr = "";
 	int i = 0;
 
@@ -149,20 +150,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetPlayersInRoomRes
 	json response;
 
 	// we need to craft the players in room string
-	std::string playersInRoom = "";
-	int i = 0;
-
-	for (i = 0; i < getPlayersInRoomResponse.players.size(); i++)
-	{
-		playersInRoom += getPlayersInRoomResponse.players[i];
-		if (i != getPlayersInRoomResponse.players.size() - 1)
-		{
-			// the seperator will be &
-			playersInRoom += "&";
-		}
-	}
-
-	response["PlayersInRoom"] = playersInRoom;
+	response["PlayersInRoom"] = JsonResponsePacketSerializer::vectorToAmpersandString(getPlayersInRoomResponse.players);
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_PLAYERS_IN_ROOM_RESPONSE);
 }
@@ -177,6 +165,9 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const getHighScoreRespons
 {
 	json response;
 
+	response["status"] = getHighScoreResponse.status;
+	response["HighScore"] = JsonResponsePacketSerializer::vectorToAmpersandString(getHighScoreResponse.statistics);
+
 	return JsonResponsePacketSerializer::serializeJson(response, HIGH_SCORE_RESPONSE);
 }
 
@@ -189,6 +180,9 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const getHighScoreRespons
 Buffer JsonResponsePacketSerializer::serializeResponse(const getPersonalStatsResponse& getPersonalStatsResponse)
 {
 	json response;
+
+	response["status"] = getPersonalStatsResponse.status;
+	response["UserStatistics"] = JsonResponsePacketSerializer::vectorToAmpersandString(getPersonalStatsResponse.statistics);
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_PERSONAL_STATS_RESPONSE);
 }
@@ -219,4 +213,29 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const CreateRoomResponse&
 	response["status"] = createRoomResponse.status;
 
 	return JsonResponsePacketSerializer::serializeJson(response, CREATE_ROOM_RESPONSE);
+}
+
+/*
+	Helper method to convert a vector into a ampersand seperated string
+	input: the vector
+	output: the string
+*/
+
+std::string JsonResponsePacketSerializer::vectorToAmpersandString(const std::vector<std::string>& vector)
+{
+	int i = 0;
+
+	std::string res = "";
+
+	for (i = 0; i < vector.size(); i++)
+	{
+		res += vector[i];
+		if (i != vector.size() - 1)
+		{
+			// the seperator will be &
+			res += "&";
+		}
+	}
+
+	return res;
 }
