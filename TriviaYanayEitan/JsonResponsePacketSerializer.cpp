@@ -1,6 +1,5 @@
 #include "JsonResponsePacketSerializer.h"
 
-
 /*
 	Function serializes json into Buffer.
 	Input: json (const json&), code (const int)
@@ -223,7 +222,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const CreateRoomResponse&
 
 std::string JsonResponsePacketSerializer::vectorToAmpersandString(const std::vector<std::string>& vector)
 {
-	int i = 0;
+	size_t i = 0;
 
 	std::string res = "";
 
