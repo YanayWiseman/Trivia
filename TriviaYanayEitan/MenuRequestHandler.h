@@ -23,7 +23,7 @@ private:
 
 public:
 	// c'tor
-	MenuRequestHandler(RequestHandlerFactory& handlerFactory);
+	MenuRequestHandler(RequestHandlerFactory& handlerFactory, const std::string& username);
 
 	// methods
 	bool isRequestRelevant(const RequestInfo& requestInfo) const override;

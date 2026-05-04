@@ -2,12 +2,18 @@
 #include "RequestHandlerFactory.h"
 
 /*
+	Constructor for the LoginRequestHandler object
+	input: the handler factory
+	output: no return values
+*/
+
+LoginRequestHandler::LoginRequestHandler(RequestHandlerFactory& handlerFactory) : m_handlerFactory(handlerFactory) {}
+
+/*
 	Method to check if the request code is valid
 	input: the request info
 	output: true if valid and false otherwise
 */
-
-LoginRequestHandler::LoginRequestHandler(RequestHandlerFactory& handlerFactory) : m_handlerFactory(handlerFactory) {}
 
 bool LoginRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 {
