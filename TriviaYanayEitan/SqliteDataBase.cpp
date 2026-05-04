@@ -354,7 +354,7 @@ float SqliteDatabase::getStatisticValue(const std::string& username, const std::
 	// bind the username
 	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
 
-	int value = -1.0;
+	float value = -1.0;
 	// step
 	if (sqlite3_step(stmt) == SQLITE_ROW)
 	{
@@ -367,4 +367,47 @@ float SqliteDatabase::getStatisticValue(const std::string& username, const std::
 
 	sqlite3_finalize(stmt);
 	return value;
+}
+
+/*
+	method to get the top 5 highest scores from the db
+	input: no input values
+	output: a vector of pairs, each pair has the username and its score
+*/
+
+std::vector<std::pair<std::string, int>> SqliteDatabase::getHighScores() const
+{
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
+	std::vector<std::pair<std::string, int>> res;
+
+	// we are not using * to be sure of the order we get the output
+	sqlite3_stmt* stmt = prepare("SELECT USERNAME, NUM_ANSWERED, CORRECT_ANSWERS, AVERAGE_TIME FROM STATISTICS;");
+	if (!stmt)
+	{
+		return res;
+	}
+
+	while (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		// extract the values
+		std::string username = SqliteDatabase::colText(stmt, 0);
+		int total = sqlite3_column_int(stmt, 1);
+		int correct = sqlite3_column_int(stmt, 2);
+		float avgTime = static_cast<float>(sqlite3_column_double(stmt, 3));
+
+		// formula:
+		int score = (100 * correct) - (20 * (total - correct)) - static_cast<int>(10 * avgTime);
+		res.emplace_back(username, score);
+	}
+	sqlite3_finalize(stmt);
+
+	// sort scores by descenfing order
+	std::sort(res.begin(), res.end(),
+		[](const auto& a, const auto& b)
+		{
+			return a.second > b.second;
+		});
+
+	return res;
 }
