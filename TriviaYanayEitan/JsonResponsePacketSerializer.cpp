@@ -119,6 +119,22 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& g
 {
 	json response;
 
+	// we need to craft the room string
+	std::string roomsStr = "";
+	int i = 0;
+
+	for (i = 0; i < getRoomsResponse.rooms.size(); i++)
+	{
+		roomsStr += getRoomsResponse.rooms[i].name;
+		if (i != getRoomsResponse.rooms.size() - 1)
+		{
+			// the seperator will be &
+			roomsStr += "&";
+		}
+	}
+
+	response["Rooms"] = roomsStr;
+
 	return JsonResponsePacketSerializer::serializeJson(response, GET_ROOMS_RESPONSE);
 }
 
