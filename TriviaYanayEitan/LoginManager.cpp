@@ -7,11 +7,10 @@
     Output: None (constructor)
 */
 
-LoginManager::LoginManager(IDatabase* database)
+LoginManager::LoginManager()
 {
-    m_database = database;
+    this->m_database = &SqliteDatabase::getInstance();
 }
-
 
 /*
     Function signs user up, adding him to the database.
@@ -207,8 +206,8 @@ bool LoginManager::isBirthDateValid(const std::string& birthDate)
     Output: New LoginManager instance (LoginManager&)
 */
 
-LoginManager& LoginManager::getInstance(IDatabase* database)
+LoginManager& LoginManager::getInstance()
 {
-    static LoginManager instance(database);
+    static LoginManager instance;
     return instance;
 }

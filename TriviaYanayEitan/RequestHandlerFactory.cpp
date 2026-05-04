@@ -7,8 +7,10 @@
     Output: None (Constructor)
 */
 
-RequestHandlerFactory::RequestHandlerFactory(IDatabase* database) : m_loginManager(LoginManager::getInstance(database)), m_StatisticsManager(StatisticsManager::getInstance(database)), m_database(database) {}
-
+RequestHandlerFactory::RequestHandlerFactory()
+    : m_loginManager(LoginManager::getInstance()),
+    m_StatisticsManager(StatisticsManager::getInstance())
+{}
 /*
     Function creates a new request handler and returns it.
     Input: None
@@ -48,8 +50,8 @@ StatisticsManager& RequestHandlerFactory::getStatisticsManager() const
     Output: New RequestHandlerFactory instance (RequestHandlerFactory&)
 */
 
-RequestHandlerFactory& RequestHandlerFactory::getInstance(IDatabase* database)
+RequestHandlerFactory& RequestHandlerFactory::getInstance()
 {
-    static RequestHandlerFactory instance(database);
+    static RequestHandlerFactory instance;
     return instance;
 }

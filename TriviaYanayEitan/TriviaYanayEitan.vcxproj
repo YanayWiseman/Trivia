@@ -133,7 +133,6 @@
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="SqliteDatabase.cpp" />
-    <ClCompile Include="SqliteDatabase.h" />
     <ClCompile Include="StatisticsManager.cpp" />
     <ClCompile Include="Trivia.cpp" />
     <ClCompile Include="WSAInitializer.cpp" />
@@ -145,7 +144,6 @@
     <ClInclude Include="IDatabase.h" />
     <ClInclude Include="IRequestHandler.h" />
     <ClInclude Include="json.hpp" />
-    <ClInclude Include="JsonRequestPacketDeserializer.h" />
     <ClInclude Include="JsonResponsePacketSerializer.h" />
     <ClInclude Include="LoggedUser.h" />
     <ClInclude Include="LoginManager.h" />
@@ -155,6 +153,7 @@
     <ClInclude Include="ResponseStructs.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="sqlite3.h" />
+    <ClInclude Include="SqliteDatabase.h" />
     <ClInclude Include="StatisticsManager.h" />
     <ClInclude Include="typedefs.h" />
     <ClInclude Include="UserInfo.h" />

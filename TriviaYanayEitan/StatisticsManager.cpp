@@ -6,9 +6,9 @@
     Output: no return values
 */
 
-StatisticsManager::StatisticsManager(IDatabase* database)
+StatisticsManager::StatisticsManager()
 {
-    this->m_database = database;
+    this->m_database = &SqliteDatabase::getInstance();
 }
 
 /*
@@ -47,8 +47,8 @@ UserStatistics StatisticsManager::getUserStatistics(const std::string& username)
     Output: New LoginManager instance (LoginManager&)
 */
 
-StatisticsManager& StatisticsManager::getInstance(IDatabase* database)
+StatisticsManager& StatisticsManager::getInstance()
 {
-    static StatisticsManager instance(database);
+    static StatisticsManager instance;
     return instance;
 }

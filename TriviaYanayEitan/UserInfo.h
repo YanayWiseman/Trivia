@@ -14,9 +14,9 @@ typedef struct UserInfo
 
 typedef struct UserStatistics
 {
-	std::string username;
-	int numAnswered;
-	int correctAnswers;
-	float averageTime;
-	int gamesCount;
+	std::string username = "";
+	int numAnswered = 0;
+	int correctAnswers = 0;
+	float averageTime = 0.0;
+	int gamesCount = 0;
 } UserStatistics;

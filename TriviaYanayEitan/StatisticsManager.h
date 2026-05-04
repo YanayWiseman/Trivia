@@ -4,6 +4,7 @@
 #include <vector>
 #include "IDatabase.h"
 #include "UserInfo.h"
+#include "SqliteDatabase.h"
 
 class StatisticsManager
 {
@@ -12,7 +13,7 @@ private:
 	IDatabase* m_database;
 
 	// methods
-	StatisticsManager(IDatabase* database);
+	StatisticsManager();
 public:
 	// d'tor
 	~StatisticsManager() = default;
@@ -21,7 +22,7 @@ public:
 	std::vector<std::pair<std::string, int>> getHighScores() const;
 	UserStatistics getUserStatistics(const std::string& username) const;
 
-	static StatisticsManager& getInstance(IDatabase* database);
+	static StatisticsManager& getInstance();
 
 	StatisticsManager(const StatisticsManager& other) = delete;
 	StatisticsManager& operator=(const StatisticsManager& other) = delete;

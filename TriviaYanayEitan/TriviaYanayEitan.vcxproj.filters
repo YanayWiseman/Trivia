@@ -39,12 +39,6 @@
     <ClCompile Include="sqlite3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SqliteDatabase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SqliteDatabase.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="LoggedUser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -55,6 +49,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StatisticsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SqliteDatabase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -72,9 +69,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JsonRequestPacketDeserializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="JsonResponsePacketSerializer.h">
@@ -117,6 +111,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StatisticsManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SqliteDatabase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
