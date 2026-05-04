@@ -101,9 +101,12 @@ JsonResponsePacketSerializer& JsonResponsePacketSerializer::getInstance()
 	Output: Buffer containing logout response data according to the protocol.
 */
 
-static Buffer serializeResponse(const LogoutResponse& loginResponse)
+Buffer JsonResponsePacketSerializer::serializeResponse(const LogoutResponse& logoutResponse)
 {
+	json response;
+	response["status"] = logoutResponse.status;
 
+	return JsonResponsePacketSerializer::serializeJson(response, LOGOUT_RESPONSE);
 }
 
 /*
@@ -112,7 +115,7 @@ static Buffer serializeResponse(const LogoutResponse& loginResponse)
 	Output: Buffer containing getRooms response data according to the protocol.
 */
 
-static Buffer serializeResponse(const GetRoomsResponse& errorResponse)
+Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& getRoomsResponse)
 {
 
 }
@@ -123,7 +126,7 @@ static Buffer serializeResponse(const GetRoomsResponse& errorResponse)
 	Output: Buffer containing GetPlayersInRoom response data according to the protocol.
 */
 
-static Buffer serializeResponse(const GetPlayersInRoomResponse& signupResponse)
+Buffer JsonResponsePacketSerializer::serializeResponse(const GetPlayersInRoomResponse& getPlayersInRoomResponse)
 {
 
 }
@@ -134,40 +137,46 @@ static Buffer serializeResponse(const GetPlayersInRoomResponse& signupResponse)
 	Output: Buffer containing getHighScore response data according to the protocol.
 */
 
-static Buffer serializeResponse(const getHighScoreResponse& errorResponse)
+Buffer JsonResponsePacketSerializer::serializeResponse(const getHighScoreResponse& getHighScoreResponse)
 {
 
 }
 
 /*
-	Method to serialize Json signup response into buffer.
-	Input: signupResponse (const SignupResponse&)
-	Output: Buffer containing signup response data according to the protocol.
+	Method to serialize Json getPersonalStats response into buffer.
+	Input: getPersonalStatsResponse (const getPersonalStatsResponse&)
+	Output: Buffer containing getPersonalStats response data according to the protocol.
 */
 
-static Buffer serializeResponse(const getPersonalStatsResponse& loginResponse)
+Buffer JsonResponsePacketSerializer::serializeResponse(const getPersonalStatsResponse& getPersonalStatsResponse)
 {
 
 }
 
 /*
-	Method to serialize Json signup response into buffer.
-	Input: signupResponse (const SignupResponse&)
-	Output: Buffer containing signup response data according to the protocol.
+	Method to serialize Json JoinRoom response into buffer.
+	Input: JoinRoomResponse (const JoinRoomResponse&)
+	Output: Buffer containing JoinRoom response data according to the protocol.
 */
 
-static Buffer serializeResponse(const JoinRoomResponse& signupResponse)
+Buffer JsonResponsePacketSerializer::serializeResponse(const JoinRoomResponse& joinRoomResponse)
 {
+	json response;
+	response["status"] = joinRoomResponse.status;
 
+	return JsonResponsePacketSerializer::serializeJson(response, JOIN_ROOM_RESPONSE);
 }
 
 /*
-	Method to serialize Json signup response into buffer.
-	Input: signupResponse (const SignupResponse&)
-	Output: Buffer containing signup response data according to the protocol.
+	Method to serialize Json CreateRoom response into buffer.
+	Input: CreateRoomResponse (const CreateRoomResponse&)
+	Output: Buffer containing CreateRoom response data according to the protocol.
 */
 
-static Buffer serializeResponse(const CreateRoomResponse& signupResponse)
+Buffer JsonResponsePacketSerializer::serializeResponse(const CreateRoomResponse& createRoomResponse)
 {
+	json response;
+	response["status"] = createRoomResponse.status;
 
+	return JsonResponsePacketSerializer::serializeJson(response, CREATE_ROOM_RESPONSE);
 }
