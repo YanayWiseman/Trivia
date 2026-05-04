@@ -20,7 +20,17 @@ MenuRequestHandler::MenuRequestHandler(RequestHandlerFactory& handlerFactory, co
 
 bool MenuRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 {
+	if (requestInfo.buffer.size() == 0)
+	{
+		return false;
+	}
 
+	if (requestInfo.id >= LOGOUT_RESPONSE && requestInfo.id <= CREATE_ROOM_RESPONSE)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 /*

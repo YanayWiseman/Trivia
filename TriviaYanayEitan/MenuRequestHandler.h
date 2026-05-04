@@ -4,6 +4,7 @@
 #include "LoggedUser.h"
 #include "RequestHandlerFactory.h"
 #include "HandlersStructs.h"
+#include "Constants.h"
 
 class MenuRequestHandler : public IRequestHandler
 {
