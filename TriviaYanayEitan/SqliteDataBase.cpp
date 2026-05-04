@@ -319,7 +319,30 @@ float SqliteDatabase::getPlayerAverageAnswerTime(std::string& username) const
 
 int SqliteDatabase::getNumOfCorrectAnswers(std::string& username) const
 {
-	return 0;
+	sqlite3_stmt* stmt = prepare("SELECT CORRECT_ANSWERS FROM STATISTICS WHERE USERNAME = ?;");
+	if (!stmt)
+	{
+		return -1;
+	}
+
+	// bind the username
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+
+	int correct = 0;
+	// step
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		correct = sqlite3_column_int(stmt, 0);
+	}
+	else
+	{
+		std::cout << "Failed getting amount of correct answers time of - " << username << std::endl;
+		sqlite3_finalize(stmt);
+		return -1;
+	}
+
+	sqlite3_finalize(stmt);
+	return correct;
 }
 
 /*
