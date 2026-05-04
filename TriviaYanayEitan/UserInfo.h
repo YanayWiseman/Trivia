@@ -11,3 +11,12 @@ typedef struct UserInfo
 	std::string phone;
 	std::string birthdate;
 } UserInfo;
+
+typedef struct UserStatistics
+{
+	std::string username;
+	int numAnswered;
+	int correctAnswers;
+	float averageTime;
+	int gamesCount;
+} UserStatistics;

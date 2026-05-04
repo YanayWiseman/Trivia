@@ -296,7 +296,7 @@ SqliteDatabase& SqliteDatabase::getInstance()
 	output: the player's average answer time (float)
 */
 
-float SqliteDatabase::getPlayerAverageAnswerTime(std::string& username) const
+float SqliteDatabase::getPlayerAverageAnswerTime(const std::string& username) const
 {
 	return getStatisticValue(username, "AVERAGE_TIME");
 }
@@ -307,7 +307,7 @@ float SqliteDatabase::getPlayerAverageAnswerTime(std::string& username) const
 	output: the player's number of correct answers 
 */
 
-int SqliteDatabase::getNumOfCorrectAnswers(std::string& username) const
+int SqliteDatabase::getNumOfCorrectAnswers(const std::string& username) const
 {
 	return getStatisticValue(username, "CORRECT_ANSWERS");
 }
@@ -318,7 +318,7 @@ int SqliteDatabase::getNumOfCorrectAnswers(std::string& username) const
 	output: the player's number of total answers
 */
 
-int SqliteDatabase::getNumOfTotalAnswers(std::string& username) const
+int SqliteDatabase::getNumOfTotalAnswers(const std::string& username) const
 {
 	return getStatisticValue(username, "NUM_ANSWERED");
 }
@@ -329,7 +329,7 @@ int SqliteDatabase::getNumOfTotalAnswers(std::string& username) const
 	output: the player's number of games played
 */
 
-int SqliteDatabase::getNumOfPlayerGames(std::string& username) const
+int SqliteDatabase::getNumOfPlayerGames(const std::string& username) const
 {
 	return getStatisticValue(username, "GAMES_COUNT");
 }
@@ -398,6 +398,9 @@ std::vector<std::pair<std::string, int>> SqliteDatabase::getHighScores() const
 
 		// formula:
 		int score = (100 * correct) - (20 * (total - correct)) - static_cast<int>(10 * avgTime);
+
+		// if the score is negative, make it 0
+		score = std::max(0, score);
 		res.emplace_back(username, score);
 	}
 	sqlite3_finalize(stmt);

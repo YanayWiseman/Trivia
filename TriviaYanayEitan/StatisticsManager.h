@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "IDatabase.h"
+#include "UserInfo.h"
 
 class StatisticsManager
 {
@@ -17,5 +18,5 @@ public:
 
 	// methods
 	std::vector<std::pair<std::string, int>> getHighScores() const;
-	std::vector<std::string> getUserStatistics(const std::string& username) const;
+	UserStatistics getUserStatistics(const std::string& username) const;
 };

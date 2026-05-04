@@ -47,9 +47,9 @@ public:
 	Status addNewUser(const UserInfo& userInfo) override;
 
 	// STATISTICS operations
-	float getPlayerAverageAnswerTime(std::string& username) const override;
-	int getNumOfCorrectAnswers(std::string& username) const override;
-	int getNumOfTotalAnswers(std::string& username) const override;
-	int getNumOfPlayerGames(std::string& username) const override;
+	float getPlayerAverageAnswerTime(const std::string& username) const override;
+	int getNumOfCorrectAnswers(const std::string& username) const override;
+	int getNumOfTotalAnswers(const std::string& username) const override;
+	int getNumOfPlayerGames(const std::string& username) const override;
 	std::vector<std::pair<std::string, int>> getHighScores() const override;
 };

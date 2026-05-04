@@ -19,12 +19,24 @@ StatisticsManager::StatisticsManager(IDatabase* database)
 
 std::vector<std::pair<std::string, int>> StatisticsManager::getHighScores() const
 {
-    
+    return this->m_database->getHighScores();
 }
 
+/*
+    Method to get a user's statistics by the username
+    input: the username
+    output: vector of its statistics
+*/
 
-
-std::vector<std::string> StatisticsManager::getUserStatistics(const std::string& username) const
+UserStatistics StatisticsManager::getUserStatistics(const std::string& username) const
 {
+    UserStatistics userStats;
 
+    userStats.username = username;
+    userStats.averageTime = this->m_database->getPlayerAverageAnswerTime(username);
+    userStats.correctAnswers = this->m_database->getNumOfCorrectAnswers(username);
+    userStats.gamesCount = this->m_database->getNumOfPlayerGames(username);
+    userStats.numAnswered = this->m_database->getNumOfTotalAnswers(username);
+
+    return userStats;
 }
