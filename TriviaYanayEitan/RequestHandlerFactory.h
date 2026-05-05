@@ -16,6 +16,7 @@ private:
 	RequestHandlerFactory();
 
 public:
+
 	LoginRequestHandler* createLoginRequestHandler();
 	LoginManager& getLoginmanager() const;
 	StatisticsManager& getStatisticsManager() const;

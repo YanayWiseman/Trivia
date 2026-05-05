@@ -9,8 +9,12 @@
 
 RequestHandlerFactory::RequestHandlerFactory()
     : m_loginManager(LoginManager::getInstance()),
-    m_StatisticsManager(StatisticsManager::getInstance())
-{}
+    m_StatisticsManager(StatisticsManager::getInstance()),
+        m_roomManager(RoomManager::getInstance())
+{
+
+}
+
 /*
     Function creates a new request handler and returns it.
     Input: None
@@ -50,7 +54,7 @@ StatisticsManager& RequestHandlerFactory::getStatisticsManager() const
     Output: room manager
 */
 
-StatisticsManager& RequestHandlerFactory::getRoomManager() const
+RoomManager& RequestHandlerFactory::getRoomManager() const
 {
     return this->m_roomManager;
 }
