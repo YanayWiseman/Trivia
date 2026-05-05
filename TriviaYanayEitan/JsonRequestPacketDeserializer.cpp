@@ -136,17 +136,81 @@ JsonRequestPacketDeserializer& JsonRequestPacketDeserializer::getInstance()
 	return instance;
 }
 
-// add docstring
+
+/*
+	Function returns deserialzed get players request from json buffer.
+	Input: buffer (const Buffer&)
+	Output: Deserialized get players request (GetPlayersInRoomRequest)
+*/
+
 GetPlayersInRoomRequest JsonRequestPacketDeserializer::deserializeGetPlayersRequest(const Buffer& buffer)
 {
-	return GetPlayersInRoomRequest();
+	GetPlayersInRoomRequest request;
+
+	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, GET_PLAYERS_IN_ROOM_REQUEST);
+
+	try
+	{
+		request.roomId = jsonData.at("roomId").get<unsigned int>();
+	}
+	catch (const std::exception& error)
+	{
+		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeGetPlayersRequest: error parsing json");
+	}
+
+	return request;
 }
+
+
+/*
+	Function returns deserialzed join room request from json buffer.
+	Input: buffer (const Buffer&)
+	Output: Deserialized join room request (JoinRoomRequest)
+*/
+
 JoinRoomRequest JsonRequestPacketDeserializer::deserializeJoinRoomRequest(const Buffer& buffer)
 {
-	return JoinRoomRequest();
+	JoinRoomRequest request;
 
+	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, JOIN_ROOM_REQUEST);
+
+	try
+	{
+		request.roomId = jsonData.at("roomId").get<unsigned int>();
+	}
+	catch (const std::exception& error)
+	{
+		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeJoinRoomRequest: error parsing json");
+	}
+
+	return request;
 }
+
+
+/*
+	Function returns deserialized create room request from json buffer.
+	Input: buffer (const Buffer&)
+	Output: Deserialized create room request (CreateRoomRequest)
+*/
+
 CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(const Buffer& buffer)
 {
-	return CreateRoomRequest();
+	CreateRoomRequest request;
+
+	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, CREATE_ROOM_REQUEST);
+
+	try
+	{
+		request.id = jsonData.at("id").get<unsigned int>();
+		request.roomName = jsonData.at("roomName").get<std::string>();
+		request.maxUsers = jsonData.at("maxUsers").get<unsigned int>();
+		request.questionsCount = jsonData.at("questionsCount").get<unsigned int>();
+		request.answerTimeout = jsonData.at("answerTimeout").get<unsigned int>();
+	}
+	catch (const std::exception& error)
+	{
+		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeCreateRoomRequest: error parsing json");
+	}
+
+	return request;
 }
