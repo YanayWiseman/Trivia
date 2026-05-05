@@ -6,6 +6,7 @@
 #include "HandlersStructs.h"
 #include "Constants.h"
 #include "JsonRequestPacketDeserializer.h"
+#include "JsonResponsePacketSerializer.h"
 
 class MenuRequestHandler : public IRequestHandler
 {

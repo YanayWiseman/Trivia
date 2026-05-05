@@ -126,8 +126,13 @@ RequestResult MenuRequestHandler::getPlayersInRoom(const RequestInfo& requestInf
 	GetPlayersInRoomResponse response;
 
 	GetPlayersInRoomRequest request = JsonRequestPacketDeserializer::deserializeGetPlayersRequest(requestInfo.buffer);
-	
-	response.players = this->m_handlerFactory.getInstance
+	int roomId = request.roomId;
+
+	response.players = this->m_handlerFactory.getRoomManager().getRoom(roomId).getAllUsers();
+
+	// build RequestResult struct
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<MenuRequestHandler*>(this);
 
 	return result;
 }
