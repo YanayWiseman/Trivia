@@ -93,8 +93,16 @@ RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo) 
 RequestResult MenuRequestHandler::signout(const RequestInfo& requestInfo) const
 {
 	RequestResult result;
+	LogoutResponse response;
 
-	//TODO
+	std::string username = this->m_user.getUsername();
+
+	this->m_handlerFactory.getLoginmanager().logout(username);
+	response.status = Success;
+
+	// build RequestResult struct
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<MenuRequestHandler*>(this);
 
 	return result;
 }

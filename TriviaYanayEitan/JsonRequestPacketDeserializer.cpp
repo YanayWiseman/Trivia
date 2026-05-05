@@ -150,3 +150,4 @@ CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(co
 {
 	return CreateRoomRequest();
 }
+
