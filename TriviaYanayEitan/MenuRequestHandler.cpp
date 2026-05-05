@@ -184,7 +184,14 @@ RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo) c
 {
 	RequestResult result;
 
-	//TODO
+	getPersonalStatsResponse response;
+
+	response.statistics = this->m_handlerFactory.getStatisticsManager().getUserStatistics(this->m_user.getUsername());
+	response.status = Success;
+
+	// build RequestResult struct
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<MenuRequestHandler*>(this);
 
 	return result;
 }
@@ -198,14 +205,13 @@ RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo) c
 RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 {
 	RequestResult result;
-
+	JoinRoomRequest request;
 	JoinRoomResponse response;
 
-	JoinRoomRequest request = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer);
-	int roomId = request.roomId;
-
-	response.status = this->m_handlerFactory.getRoomManager().getRoom(roomId).addUser(this->m_user);
-
+	int roomId = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer).roomId;
+	this->m_handlerFactory.getRoomManager().getRoom(roomId).addUser(this->m_user.getUsername());
+	response.status = Success;
+	
 	// build RequestResult struct
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
 	result.newHandler = const_cast<MenuRequestHandler*>(this);
