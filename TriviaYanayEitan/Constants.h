@@ -1,8 +1,18 @@
 #pragma once
 
+// requests
 
 #define LOGIN_REQUEST 1
 #define SIGNUP_REQUEST 3
+#define	LOGOUT_REQUEST 13
+#define GET_ROOMS_REQUEST 14
+#define GET_PLAYERS_IN_ROOM_REQUEST 15
+#define HIGH_SCORE_REQUEST 16
+#define GET_PERSONAL_STATS_REQUEST 17
+#define JOIN_ROOM_REQUEST 18
+#define CREATE_ROOM_REQUEST 19
+
+// responses
 
 #define LOGIN_RESPONSE 2
 #define SIGNUP_RESPONSE 4

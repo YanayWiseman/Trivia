@@ -14,13 +14,13 @@ private:
 	RequestHandlerFactory& m_handlerFactory;
 
 	// methods
-	RequestResult signout(const RequestInfo& requestInfo);
-	RequestResult getRooms(const RequestInfo& requestInfo);
-	RequestResult getPlayersInRoom(const RequestInfo& requestInfo);
-	RequestResult getPersonalStats(const RequestInfo& requestInfo);
-	RequestResult getHighScore(const RequestInfo& requestInfo);
-	RequestResult joinRoom(const RequestInfo& requestInfo);
-	RequestResult createRoom(const RequestInfo& requestInfo);
+	RequestResult signout(const RequestInfo& requestInfo) const;
+	RequestResult getRooms(const RequestInfo& requestInfo) const;
+	RequestResult getPlayersInRoom(const RequestInfo& requestInfo) const;
+	RequestResult getPersonalStats(const RequestInfo& requestInfo) const;
+	RequestResult getHighScore(const RequestInfo& requestInfo) const;
+	RequestResult joinRoom(const RequestInfo& requestInfo) const;
+	RequestResult createRoom(const RequestInfo& requestInfo) const;
 	RequestResult getErrorResponse(const std::string& errorMsg) const;
 
 public:

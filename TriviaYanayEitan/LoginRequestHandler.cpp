@@ -38,8 +38,6 @@ bool LoginRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) cons
 
 RequestResult LoginRequestHandler::handleRequest(const RequestInfo& requestInfo) const
 {
-	RequestResult result;
-
 	if (!isRequestRelevant(requestInfo))
 	{
 		return getErrorResponse("error: Invalid request!");

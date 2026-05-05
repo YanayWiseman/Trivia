@@ -25,8 +25,7 @@ bool MenuRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 		return false;
 	}
 
-	if (//CHANGE THIS BASED ON THE MARCO RANGE YOU DECIDED IN DESIRIALIZATION)
-		true)
+	if (requestInfo.id >= LOGOUT_REQUEST && requestInfo.id <= CREATE_ROOM_REQUEST)
 	{
 		return true;
 	}
@@ -42,35 +41,78 @@ bool MenuRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 
 RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo) const
 {
-	RequestResult result;
-
+	// first check if the request is valid
 	if (!isRequestRelevant(requestInfo))
 	{
 		return getErrorResponse("error: Invalid request!");
 	}
 
+
+	// then sort by request id to handle each request
 	try
 	{
 		switch (requestInfo.id)
 		{
-		case LOGIN_REQUEST:
-		{
-			return login(requestInfo);
-		}
-		case SIGNUP_REQUEST:
-		{
-			return signup(requestInfo);
-		}
-		default:
-		{
-			return getErrorResponse("error: Wrong request format!");
-		}
+			case LOGOUT_REQUEST:
+				return signout(requestInfo);
+
+			case GET_ROOMS_REQUEST:
+				return getRooms(requestInfo);
+
+			case GET_PLAYERS_IN_ROOM_REQUEST:
+				return getPlayersInRoom(requestInfo);
+
+			case GET_PERSONAL_STATS_REQUEST:
+				return getPersonalStats(requestInfo);
+
+			case HIGH_SCORE_REQUEST:
+				return getHighScore(requestInfo);
+
+			case JOIN_ROOM_REQUEST:
+				return joinRoom(requestInfo);
+
+			case CREATE_ROOM_REQUEST:
+				return createRoom(requestInfo);
+
+			default:
+				return getErrorResponse("error: Wrong request format!");
 		}
 	}
 	catch (const std::exception& error)
 	{
 		return getErrorResponse(error.what());
 	}
+}
+
+
+RequestResult MenuRequestHandler::signout(const RequestInfo& requestInfo) const
+{
+
+}
+
+RequestResult MenuRequestHandler::getRooms(const RequestInfo& requestInfo) const
+{
+
+}
+RequestResult MenuRequestHandler::getPlayersInRoom(const RequestInfo& requestInfo) const
+{
+
+}
+RequestResult MenuRequestHandler::getPersonalStats(const RequestInfo& requestInfo) const
+{
+
+}
+RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo) const
+{
+
+}
+RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
+{
+
+}
+RequestResult MenuRequestHandler::createRoom(const RequestInfo& requestInfo) const
+{
+
 }
 
 /*
