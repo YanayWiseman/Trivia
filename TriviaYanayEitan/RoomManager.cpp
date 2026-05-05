@@ -4,15 +4,17 @@
 /*
 	Function creates room, adds given user to it and adds it to room map.
 	Input: usr (const LoggedUser&), data (const RoomData&)
-	Output: None (void)
+	Output: Succuss or Failute
 */
 
-void RoomManager::createRoom(const LoggedUser& usr, const RoomData& data)
+Status RoomManager::createRoom(const LoggedUser& usr, const RoomData& data)
 {
 	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
 
 	this->m_rooms.try_emplace(data.id, data);
 	this->m_rooms.at(data.id).addUser(usr);
+
+	return Success;
 }
 
 
@@ -36,7 +38,7 @@ void RoomManager::deleteRoom(int id)
 	Output: Room status (RoomStatus)
 */
 
-RoomStatus RoomManager::getRoomState(int id)
+RoomStatus RoomManager::getRoomState(int id) const
 {
 	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
 
@@ -57,7 +59,7 @@ RoomStatus RoomManager::getRoomState(int id)
 	Output: Vector of RoomData of all rooms (std::vector<RoomData>)
 */
 
-std::vector<RoomData> RoomManager::getRooms()
+std::vector<RoomData> RoomManager::getRooms() const
 {
 	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
 	std::vector<RoomData> rooms;
@@ -70,4 +72,34 @@ std::vector<RoomData> RoomManager::getRooms()
 	return rooms;
 }
 
+/*
+	Method to get a room by its id
+	input: the id
+	output: the room
+*/
 
+Room& RoomManager::getRoom(int id)
+{
+	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
+
+	auto it = this->m_rooms.find(id);
+
+	if (it == this->m_rooms.end())
+	{
+		throw std::exception("Room not found.");
+	}
+
+	return it->second;
+}
+
+/*
+	Function creates single instance of RoomManager.
+	Input: None
+	Output: New RoomManager instance (RoomManager&)
+*/
+
+RoomManager& RoomManager::getInstance()
+{
+	static RoomManager instance;
+	return instance;
+}
