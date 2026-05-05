@@ -2,8 +2,10 @@
 
 #include <vector>
 #include <regex>
+#include <mutex>
 #include "IDatabase.h"
 #include "LoggedUser.h"
+#include "SqliteDatabase.h"
 #include "Constants.h"
 #include "UserInfo.h"
 
@@ -13,9 +15,10 @@ private:
 	// fields
 	IDatabase* m_database;
 	std::vector<LoggedUser> m_loggedUsers;
+	std::mutex m_mutex;
 
 	// methods
-	LoginManager(IDatabase* database);
+	LoginManager();
 
 	bool isUserInfoValid(const UserInfo& user);
 	bool isPasswordValid(const std::string& password);
@@ -25,11 +28,12 @@ private:
 	bool isBirthDateValid(const std::string& birthDate);
 public:
 	// methods
+	~LoginManager() = default;
 	Status signup(const UserInfo& user);
 	Status login(const std::string& username, const std::string& password);
 	void logout(const std::string& username);
 
-	static LoginManager& getInstance(IDatabase* database);
+	static LoginManager& getInstance();
 
 	LoginManager(const LoginManager& other) = delete;
 	LoginManager& operator=(const LoginManager& other) = delete;

@@ -129,11 +129,15 @@
     <ClCompile Include="LoggedUser.cpp" />
     <ClCompile Include="LoginManager.cpp" />
     <ClCompile Include="LoginRequestHandler.cpp" />
+    <ClCompile Include="MenuRequestHandler.cpp" />
+    <ClCompile Include="Question.cpp" />
     <ClCompile Include="RequestHandlerFactory.cpp" />
+    <ClCompile Include="Room.cpp" />
+    <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="SqliteDatabase.cpp" />
-    <ClCompile Include="SqliteDatabase.h" />
+    <ClCompile Include="StatisticsManager.cpp" />
     <ClCompile Include="Trivia.cpp" />
     <ClCompile Include="WSAInitializer.cpp" />
   </ItemGroup>
@@ -149,11 +153,17 @@
     <ClInclude Include="LoggedUser.h" />
     <ClInclude Include="LoginManager.h" />
     <ClInclude Include="LoginRequestHandler.h" />
+    <ClInclude Include="MenuRequestHandler.h" />
+    <ClInclude Include="Question.h" />
     <ClInclude Include="RequestHandlerFactory.h" />
     <ClInclude Include="RequestStructs.h" />
     <ClInclude Include="ResponseStructs.h" />
+    <ClInclude Include="Room.h" />
+    <ClInclude Include="RoomManager.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="sqlite3.h" />
+    <ClInclude Include="SqliteDatabase.h" />
+    <ClInclude Include="StatisticsManager.h" />
     <ClInclude Include="typedefs.h" />
     <ClInclude Include="UserInfo.h" />
     <ClInclude Include="WSAInitializer.h" />

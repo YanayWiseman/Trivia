@@ -7,11 +7,10 @@
     Output: None (constructor)
 */
 
-LoginManager::LoginManager(IDatabase* database)
+LoginManager::LoginManager()
 {
-    m_database = database;
+    this->m_database = &SqliteDatabase::getInstance();
 }
-
 
 /*
     Function signs user up, adding him to the database.
@@ -21,6 +20,9 @@ LoginManager::LoginManager(IDatabase* database)
 
 Status LoginManager::signup(const UserInfo& user)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+
     if(isUserInfoValid(user))
     {
         if (!this->m_database->doesUserExist(user.username))
@@ -41,6 +43,8 @@ Status LoginManager::signup(const UserInfo& user)
 
 Status LoginManager::login(const std::string& username, const std::string& password)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     if (this->m_database->doesUserExist(username))
     {
         if (this->m_database->doesPasswordMatch(username, password))
@@ -70,6 +74,8 @@ Status LoginManager::login(const std::string& username, const std::string& passw
 
 void LoginManager::logout(const std::string& username)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     auto it = std::find_if(this->m_loggedUsers.begin(), this->m_loggedUsers.end(), [&](const LoggedUser& user)
     {
         return user.getUsername() == username;
@@ -200,8 +206,8 @@ bool LoginManager::isBirthDateValid(const std::string& birthDate)
     Output: New LoginManager instance (LoginManager&)
 */
 
-LoginManager& LoginManager::getInstance(IDatabase* database)
+LoginManager& LoginManager::getInstance()
 {
-    static LoginManager instance(database);
+    static LoginManager instance;
     return instance;
 }
