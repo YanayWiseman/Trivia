@@ -92,7 +92,11 @@ RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo) 
 
 RequestResult MenuRequestHandler::signout(const RequestInfo& requestInfo) const
 {
+	RequestResult result;
 
+	//TODO
+
+	return result;
 }
 
 /*
@@ -103,7 +107,11 @@ RequestResult MenuRequestHandler::signout(const RequestInfo& requestInfo) const
 
 RequestResult MenuRequestHandler::getRooms(const RequestInfo& requestInfo) const
 {
+	RequestResult result;
 
+	//TODO
+
+	return result;
 }
 
 /*
@@ -114,7 +122,14 @@ RequestResult MenuRequestHandler::getRooms(const RequestInfo& requestInfo) const
 
 RequestResult MenuRequestHandler::getPlayersInRoom(const RequestInfo& requestInfo) const
 {
+	RequestResult result;
+	GetPlayersInRoomResponse response;
 
+	GetPlayersInRoomRequest request = JsonRequestPacketDeserializer::deserializeGetPlayersRequest(requestInfo.buffer);
+	
+	response.players = this->m_handlerFactory.getInstance
+
+	return result;
 }
 
 /*
@@ -125,7 +140,11 @@ RequestResult MenuRequestHandler::getPlayersInRoom(const RequestInfo& requestInf
 
 RequestResult MenuRequestHandler::getPersonalStats(const RequestInfo& requestInfo) const
 {
+	RequestResult result;
 
+	//TODO
+
+	return result;
 }
 
 /*
@@ -136,7 +155,11 @@ RequestResult MenuRequestHandler::getPersonalStats(const RequestInfo& requestInf
 
 RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo) const
 {
+	RequestResult result;
 
+	//TODO
+
+	return result;
 }
 
 /*
@@ -147,7 +170,11 @@ RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo) c
 
 RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 {
+	RequestResult result;
 
+	//TODO
+
+	return result;
 }
 
 /*
@@ -158,7 +185,11 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 
 RequestResult MenuRequestHandler::createRoom(const RequestInfo& requestInfo) const
 {
+	RequestResult result;
 
+	//TODO
+
+	return result;
 }
 
 /*

@@ -45,6 +45,18 @@ StatisticsManager& RequestHandlerFactory::getStatisticsManager() const
 }
 
 /*
+    Method returns room manager of the handler factory.
+    Input: no input values
+    Output: room manager
+*/
+
+StatisticsManager& RequestHandlerFactory::getRoomManager() const
+{
+    return this->m_roomManager;
+}
+
+
+/*
     Function creates single instance of RequestHandlerFactory.
     Input: None
     Output: New RequestHandlerFactory instance (RequestHandlerFactory&)
