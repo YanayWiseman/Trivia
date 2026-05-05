@@ -36,6 +36,13 @@ int Question::getCorrectAnswerId()
     return this->m_correctAnswerId;
 }
 
+/*
+    Function constructs Question object.
+    Input: qText (std::string), answers (std::vector<std::string>), correctAnsId (int)
+    Output: None (constructor)
+*/
 
+Question::Question(const std::string& qText, const std::vector<std::string>& answers, int correctAnsId) : m_question(qText), m_possibleAnswers(answers), m_correctAnswerId(correctAnsId) 
+{}
 
 

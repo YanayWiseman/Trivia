@@ -11,7 +11,9 @@ private:
 	int m_correctAnswerId;
 
 public:
+	Question(const std::string& qText, const std::vector<std::string>& answers, int correctAnsId);
+	~Question() = default;
+	int getCorrectAnswerId();
 	std::string getQuestion();
 	std::vector <std::string> getPossibleAnswers();
-	int getCorrectAnswerId();
 };
