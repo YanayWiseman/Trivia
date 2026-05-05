@@ -5,14 +5,20 @@
 #include <vector>
 #include <mutex>
 #include <algorithm>
+#include <list>
 #include "sqlite3.h"
 #include "Constants.h"
 #include "IDatabase.h"
 #include "UserInfo.h"
+#include "Question.h"
 
 #define DB_FILENAME "Trivia.sqlite"
 
-#define MAX_GET_HIGH_SCORES 5
+#define QUESTION_ID_COL 0
+#define QUESTION_TEXT_COL 1
+
+#define ANSWER_TEXT_COL 0
+#define IS_CORRECT_COL 1
 
 class SqliteDatabase : public IDatabase
 {
@@ -47,6 +53,10 @@ public:
 	bool doesUserExist(const std::string& username) const override;
 	bool doesPasswordMatch(const std::string& username, const std::string& password) const override;
 	Status addNewUser(const UserInfo& userInfo) override;
+
+	// QUESTIONS operations
+	std::list<Question> getQuestions(int amount);
+
 
 	// STATISTICS operations
 	float getPlayerAverageAnswerTime(const std::string& username) const override;

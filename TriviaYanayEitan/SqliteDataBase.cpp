@@ -35,6 +35,17 @@ SqliteDatabase::SqliteDatabase()
 	" AVERAGE_TIME FLOAT NOT NULL,"
 	" GAMES_COUNT INTEGER NOT NULL,"
 	" FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME));");
+
+	executeSqlQuery("CREATE TABLE IF NOT EXISTS QUESTIONS ("
+		" ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+		" QUESTION TEXT NOT NULL);");
+
+	executeSqlQuery("CREATE TABLE IF NOT EXISTS ANSWERS ("
+		" ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+		" QUESTION_ID INTEGER NOT NULL,"
+		" ANSWER TEXT NOT NULL,"
+		" IS_CORRECT INTEGER NOT NULL CHECK(IS_CORRECT IN (0, 1)),"
+		" FOREIGN KEY (QUESTION_ID) REFERENCES QUESTIONS(ID));");
 }
 
 /*
@@ -200,6 +211,95 @@ Status SqliteDatabase::addNewUser(const UserInfo& userInfo)
 
 	sqlite3_finalize(stmt);
 	return Success;
+}
+
+
+/*
+	Function returns list of certain amount of questions.
+	Input: amount (int)
+	Output: List of questions (std::list<Question>)
+*/
+
+std::list<Question> SqliteDatabase::getQuestions(int amount)
+{
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
+	std::list<Question> questions;
+
+	
+	// Prepare question statement
+
+	sqlite3_stmt* questionStmt = prepare("SELECT ID, QUESTION FROM QUESTIONS ORDER BY RANDOM() LIMIT = ?;");
+	if (!questionStmt)
+	{
+		std::runtime_error err("error: Failed to prepare questions.");
+		throw(err);
+	}
+
+	// Bind the limit
+
+	sqlite3_bind_int(questionStmt, 1, amount);
+
+
+	int questionId;
+	std::string questionText;
+
+	sqlite3_stmt* answerStmt;
+	std::vector<std::string> answers;
+	std::string ansText;
+
+	int isCorrect;
+	int correctAnsId = -1;
+	int ansIndex = 0;
+
+
+	// Go through answers
+
+	while (sqlite3_step(questionStmt) == SQLITE_ROW)
+	{
+		questionId = sqlite3_column_int(questionStmt, QUESTION_ID_COL);
+		questionText = reinterpret_cast<const char*>(sqlite3_column_text(questionStmt, QUESTION_TEXT_COL));
+
+
+		// Prepare answer statement
+
+		answerStmt = prepare("SELECT ANSWER, IS_CORRECT FROM ANSWERS WHERE QUESTIO_ID = ?;");
+
+		if(!questionStmt)
+		{
+			std::runtime_error err("error: Failed to prepare answers.");
+			throw(err);
+		}	
+
+		sqlite3_bind_int(answerStmt, 1, questionId);
+
+		
+		// Go through questions
+
+		while (sqlite3_step(answerStmt) == SQLITE_ROW)
+		{
+			ansText = reinterpret_cast<const char*>(sqlite3_column_text(answerStmt, ANSWER_TEXT_COL));
+			isCorrect = sqlite3_column_int(answerStmt, IS_CORRECT_COL);
+
+			answers.push_back(ansText);
+
+			if (isCorrect == 1)
+			{
+				correctAnsId = ansIndex;
+			}
+
+			ansIndex++;
+		}
+
+		sqlite3_finalize(answerStmt);
+		answerStmt = nullptr;
+
+		questions.push_back(Question(questionText, answers, isCorrect));
+	}
+
+	sqlite3_finalize(questionStmt);
+
+	return questions;
 }
 
 /*
