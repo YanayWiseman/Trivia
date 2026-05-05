@@ -129,6 +129,7 @@
     <ClCompile Include="LoggedUser.cpp" />
     <ClCompile Include="LoginManager.cpp" />
     <ClCompile Include="LoginRequestHandler.cpp" />
+    <ClCompile Include="MenuRequestHandler.cpp" />
     <ClCompile Include="RequestHandlerFactory.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="LoggedUser.h" />
     <ClInclude Include="LoginManager.h" />
     <ClInclude Include="LoginRequestHandler.h" />
+    <ClInclude Include="MenuRequestHandler.h" />
     <ClInclude Include="RequestHandlerFactory.h" />
     <ClInclude Include="RequestStructs.h" />
     <ClInclude Include="ResponseStructs.h" />

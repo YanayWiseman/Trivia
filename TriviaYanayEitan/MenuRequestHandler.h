@@ -21,6 +21,7 @@ private:
 	RequestResult getHighScore(const RequestInfo& requestInfo);
 	RequestResult joinRoom(const RequestInfo& requestInfo);
 	RequestResult createRoom(const RequestInfo& requestInfo);
+	RequestResult getErrorResponse(const std::string& errorMsg) const;
 
 public:
 	// c'tor

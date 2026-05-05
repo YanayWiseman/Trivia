@@ -12,6 +12,8 @@
 
 #define DB_FILENAME "Trivia.sqlite"
 
+#define MAX_GET_HIGH_SCORES 5
+
 class SqliteDatabase : public IDatabase
 {
 private:
@@ -51,5 +53,6 @@ public:
 	int getNumOfCorrectAnswers(const std::string& username) const override;
 	int getNumOfTotalAnswers(const std::string& username) const override;
 	int getNumOfPlayerGames(const std::string& username) const override;
+	int getPlayerScore(const std::string& username) const override;
 	std::vector<std::pair<std::string, int>> getHighScores() const override;
 };
