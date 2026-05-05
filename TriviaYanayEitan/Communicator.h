@@ -7,7 +7,7 @@
 #include <thread>
 #include <mutex>
 #include <iostream>
-#include <string>
+#include <string> 
 
 #include "IRequestHandler.h"
 #include "LoginRequestHandler.h"
@@ -24,9 +24,10 @@ private:
 	SOCKET m_serverSocket;
 	std::map<SOCKET, IRequestHandler*> m_clients;
 	std::mutex m_clientsMutex;
+	std::mutex m_printMutex;
 
 	// methods
-	Communicator(RequestHandlerFactory& handlerFactory);
+	Communicator();
 	void bindAndListen();
 	void handleNewClient(SOCKET socket);
 
@@ -34,7 +35,7 @@ public:
 	// methods
 	~Communicator();
 
-	static Communicator& getInstance(RequestHandlerFactory& handlerFactory);
+	static Communicator& getInstance();
 
 	Communicator(const Communicator& other) = delete;
 	Communicator& operator=(const Communicator& other) = delete;

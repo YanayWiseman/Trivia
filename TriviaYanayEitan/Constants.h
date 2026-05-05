@@ -1,11 +1,29 @@
 #pragma once
 
+// requests
 
 #define LOGIN_REQUEST 1
 #define SIGNUP_REQUEST 3
+#define	LOGOUT_REQUEST 13
+#define GET_ROOMS_REQUEST 14
+#define GET_PLAYERS_IN_ROOM_REQUEST 15
+#define HIGH_SCORE_REQUEST 16
+#define GET_PERSONAL_STATS_REQUEST 17
+#define JOIN_ROOM_REQUEST 18
+#define CREATE_ROOM_REQUEST 19
+
+// responses
 
 #define LOGIN_RESPONSE 2
 #define SIGNUP_RESPONSE 4
 #define ERROR_RESPONSE 5
+#define LOGOUT_RESPONSE 6
+#define GET_ROOMS_RESPONSE 7
+#define GET_PLAYERS_IN_ROOM_RESPONSE 8
+#define HIGH_SCORE_RESPONSE 9
+#define GET_PERSONAL_STATS_RESPONSE 10
+#define JOIN_ROOM_RESPONSE 11
+#define CREATE_ROOM_RESPONSE 12
 
 enum Status { Failiure, Success };
+enum RoomStatus { Open, Closed };

@@ -7,7 +7,7 @@
 	output: no return values
 */
 
-Communicator::Communicator(RequestHandlerFactory& handlerFactory) : m_handlerFactory(handlerFactory)
+Communicator::Communicator() : m_handlerFactory(RequestHandlerFactory::getInstance())
 {
 	// this server use TCP. that why SOCK_STREAM & IPPROTO_TCP
 	// if the server use UDP we will use: SOCK_DGRAM & IPPROTO_UDP
@@ -101,7 +101,10 @@ void Communicator::startHandleRequests()
 
 void Communicator::handleNewClient(SOCKET clientSocket)
 {
-	std::cout << "Client Connected!" << std::endl;
+	{
+		std::lock_guard<std::mutex> lock(this->m_printMutex);
+		std::cout << "Client Connected!" << std::endl;
+	}
 
 	// add to the map
 	IRequestHandler* handler = this->m_handlerFactory.createLoginRequestHandler();
@@ -202,7 +205,10 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 		this->m_clients.erase(clientSocket);
 	}
 
-	std::cout << "Client disconnected" << std::endl;
+	{
+		std::lock_guard<std::mutex> lock(this->m_printMutex);
+		std::cout << "Client disconnected" << std::endl;
+	}
 }
 
 
@@ -212,8 +218,8 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 	Output: New Communicator instance (Communicator&)
 */
 
-Communicator& Communicator::getInstance(RequestHandlerFactory& handlerFactory)
+Communicator& Communicator::getInstance()
 {
-	static Communicator instance(handlerFactory);
+	static Communicator instance;
 	return instance;
 }
