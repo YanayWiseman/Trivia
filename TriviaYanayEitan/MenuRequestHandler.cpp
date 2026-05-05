@@ -84,32 +84,78 @@ RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo) 
 	}
 }
 
+/*
+	Method to process the logout request
+	input: the request's information
+	output: the request's result
+*/
 
 RequestResult MenuRequestHandler::signout(const RequestInfo& requestInfo) const
 {
 
 }
 
+/*
+	Method to process the getRooms request
+	input: the request's information
+	output: the request's result
+*/
+
 RequestResult MenuRequestHandler::getRooms(const RequestInfo& requestInfo) const
 {
 
 }
+
+/*
+	Method to process the getPlayersInRoom request
+	input: the request's information
+	output: the request's result
+*/
+
 RequestResult MenuRequestHandler::getPlayersInRoom(const RequestInfo& requestInfo) const
 {
 
 }
+
+/*
+	Method to process the getPersonalStats request
+	input: the request's information
+	output: the request's result
+*/
+
 RequestResult MenuRequestHandler::getPersonalStats(const RequestInfo& requestInfo) const
 {
 
 }
+
+/*
+	Method to process the getHighScore request
+	input: the request's information
+	output: the request's result
+*/
+
 RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo) const
 {
 
 }
+
+/*
+	Method to process the joinRoom request
+	input: the request's information
+	output: the request's result
+*/
+
 RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 {
 
 }
+
+/*
+	Method to process the createRoom request
+	input: the request's information
+	output: the request's result
+*/
+
 RequestResult MenuRequestHandler::createRoom(const RequestInfo& requestInfo) const
 {
 
