@@ -116,8 +116,15 @@ RequestResult MenuRequestHandler::signout(const RequestInfo& requestInfo) const
 RequestResult MenuRequestHandler::getRooms(const RequestInfo& requestInfo) const
 {
 	RequestResult result;
+	
+	GetRoomsResponse response;
 
-	//TODO
+	response.rooms = this->m_handlerFactory.getRoomManager().getRooms();
+	response.status = Success;
+
+	// build RequestResult struct
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<MenuRequestHandler*>(this);
 
 	return result;
 }
