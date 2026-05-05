@@ -201,7 +201,24 @@ RequestResult MenuRequestHandler::createRoom(const RequestInfo& requestInfo) con
 {
 	RequestResult result;
 
-	//TODO
+	CreateRoomResponse response;
+
+	CreateRoomRequest request = JsonRequestPacketDeserializer::deserializeCreateRoomRequest(requestInfo.buffer);
+	
+	// craft room data
+	RoomData roomData;
+	roomData.id = request.id;
+	roomData.maxPlayers = request.maxUsers;
+	roomData.name = request.roomName;
+	roomData.numOfQuestionsInGame = request.questionsCount;
+	roomData.timePerQuestion = request.answerTimeout;
+	roomData.status = Closed;
+
+	response.status = this->m_handlerFactory.getRoomManager().createRoom(this->m_user, roomData);
+
+	// build RequestResult struct
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<MenuRequestHandler*>(this);
 
 	return result;
 }

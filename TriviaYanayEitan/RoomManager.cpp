@@ -4,15 +4,17 @@
 /*
 	Function creates room, adds given user to it and adds it to room map.
 	Input: usr (const LoggedUser&), data (const RoomData&)
-	Output: None (void)
+	Output: Succuss or Failute
 */
 
-void RoomManager::createRoom(const LoggedUser& usr, const RoomData& data)
+Status RoomManager::createRoom(const LoggedUser& usr, const RoomData& data)
 {
 	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
 
 	this->m_rooms.try_emplace(data.id, data);
 	this->m_rooms.at(data.id).addUser(usr);
+
+	return Success;
 }
 
 

@@ -13,7 +13,7 @@ private:
 	std::mutex m_roomsMutex;
 
 public:
-	void createRoom(const LoggedUser& usr, const RoomData& data);
+	Status createRoom(const LoggedUser& usr, const RoomData& data);
 	void deleteRoom(int id);
 	RoomStatus getRoomState(int id);
 	std::vector<RoomData> getRooms();
