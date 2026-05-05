@@ -1,5 +1,7 @@
 #include "RequestHandlerFactory.h"
-
+#include "LoginRequestHandler.h"
+#include "MenuRequestHandler.h"
+#include "LoggedUser.h"
 
 /*
     Function constructs handler factory.
@@ -16,7 +18,19 @@ RequestHandlerFactory::RequestHandlerFactory()
 }
 
 /*
-    Function creates a new request handler and returns it.
+    Function creates a new menu request handler and returns it.
+    Input: None
+    Output: New MenuRequestHandler object(LoginRequestHandler*)
+*/
+
+MenuRequestHandler* RequestHandlerFactory::createMenuRequestHandler(const LoggedUser& usr)
+{
+    return new MenuRequestHandler(*this, usr.getUsername());
+}
+
+
+/*
+    Function creates a new login request handler and returns it.
     Input: None
     Output: New LoginRequestHandler object (LoginRequestHandler*)
 */

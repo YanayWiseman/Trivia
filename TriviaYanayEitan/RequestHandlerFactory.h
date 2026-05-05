@@ -1,10 +1,15 @@
 #pragma once
 
+
 #include "LoginManager.h"
 #include "StatisticsManager.h"
 #include "IDatabase.h"
-#include "LoginRequestHandler.h"
 #include "RoomManager.h"
+
+class LoginRequestHandler;
+class MenuRequestHandler;
+class LoggedUser;
+
 
 class RequestHandlerFactory
 {
@@ -17,6 +22,7 @@ private:
 
 public:
 
+	MenuRequestHandler* createMenuRequestHandler(const LoggedUser& usr);
 	LoginRequestHandler* createLoginRequestHandler();
 	LoginManager& getLoginmanager() const;
 	StatisticsManager& getStatisticsManager() const;
