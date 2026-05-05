@@ -7,9 +7,7 @@
 #include "ResponseStructs.h"
 #include "UserInfo.h"
 
-
 class RequestHandlerFactory;
-
 
 class LoginRequestHandler : public IRequestHandler
 {

@@ -3,19 +3,29 @@
 #include <map>
 #include <vector>
 #include <mutex>
+#include <exception>
 #include "Room.h"
-
 
 class RoomManager
 {
 private:
+	// fields
 	std::map<int, Room> m_rooms;
-	std::mutex m_roomsMutex;
+	mutable std::mutex m_roomsMutex;
+
+	// methods
+	RoomManager() = default;
 
 public:
-	void createRoom(const LoggedUser& usr, const RoomData& data);
+	// methods
+	Status createRoom(const LoggedUser& usr, const RoomData& data);
 	void deleteRoom(int id);
-	RoomStatus getRoomState(int id);
-	std::vector<RoomData> getRooms();
+	RoomStatus getRoomState(int id) const;
+	std::vector<RoomData> getRooms() const;
 	Room& getRoom(int id);
+
+	static RoomManager& getInstance();
+
+	RoomManager(const RoomManager& other) = delete;
+	RoomManager& operator=(const RoomManager& other) = delete;
 };
