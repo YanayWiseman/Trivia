@@ -177,7 +177,16 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 {
 	RequestResult result;
 
-	//TODO
+	JoinRoomResponse response;
+
+	JoinRoomRequest request = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer);
+	int roomId = request.roomId;
+
+	response.status = this->m_handlerFactory.getRoomManager().getRoom(roomId).addUser(this->m_user);
+
+	// build RequestResult struct
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<MenuRequestHandler*>(this);
 
 	return result;
 }

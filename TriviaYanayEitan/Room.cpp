@@ -27,13 +27,14 @@ RoomData Room::getData() const
 /*
 	Function adds user to rooms user vector.
 	Input: usr (LoggedUser)
-	Output: None (void)
+	Output: success or failure
 */
 
-void Room::addUser(const LoggedUser& usr)
+Status Room::addUser(const LoggedUser& usr)
 {
 	std::lock_guard<std::mutex> lock(this->m_mutex);
 	m_users.push_back(usr);
+	return Success;
 }
 
 
