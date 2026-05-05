@@ -28,17 +28,17 @@ std::vector<std::pair<std::string, int>> StatisticsManager::getHighScores() cons
     output: vector of its statistics
 */
 
-UserStatistics StatisticsManager::getUserStatistics(const std::string& username) const
+std::vector<std::string> StatisticsManager::getUserStatistics(const std::string& username) const
 {
-    UserStatistics userStats;
+    std::vector<std::string> res;
 
-    userStats.username = username;
-    userStats.averageTime = this->m_database->getPlayerAverageAnswerTime(username);
-    userStats.correctAnswers = this->m_database->getNumOfCorrectAnswers(username);
-    userStats.gamesCount = this->m_database->getNumOfPlayerGames(username);
-    userStats.numAnswered = this->m_database->getNumOfTotalAnswers(username);
+    res.push_back(username);
+    res.push_back(std::to_string(this->m_database->getPlayerAverageAnswerTime(username)));
+    res.push_back(std::to_string(this->m_database->getNumOfCorrectAnswers(username)));
+    res.push_back(std::to_string(this->m_database->getNumOfPlayerGames(username)));
+    res.push_back(std::to_string(this->m_database->getNumOfTotalAnswers(username)));
 
-    return userStats;
+    return res;
 }
 
 /*

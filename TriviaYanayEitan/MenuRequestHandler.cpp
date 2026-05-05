@@ -162,7 +162,14 @@ RequestResult MenuRequestHandler::getPersonalStats(const RequestInfo& requestInf
 {
 	RequestResult result;
 
-	//TODO
+	getPersonalStatsResponse response;
+
+	response.statistics = this->m_handlerFactory.getStatisticsManager().getUserStatistics(this->m_user.getUsername());
+	response.status = Success;
+
+	// build RequestResult struct
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<MenuRequestHandler*>(this);
 
 	return result;
 }
