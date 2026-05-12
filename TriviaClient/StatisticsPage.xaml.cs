@@ -28,11 +28,11 @@ namespace TriviaClient
 
         private void MyStatistics_Click(object sender, RoutedEventArgs e)
         {
-            //this.NavigationService.Navigate(new UserStatisticsPage());
+            this.NavigationService.Navigate(new UserStatisticsPage());
         }
         private void BestPlayers_Click(object sender, RoutedEventArgs e)
         {
-            //this.NavigationService.Navigate(new BestPlayersPage());
+            this.NavigationService.Navigate(new BestPlayersPage());
         }
     }
 }
