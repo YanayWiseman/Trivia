@@ -32,5 +32,15 @@ namespace TriviaClient
                 this.NavigationService.GoBack();
             }
         }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            string username = UsernameTextBox.Text;
+            string password = PasswordBox.Password;
+
+            MessageBox.Show("Username: " + username + "\nPassword: " + password);
+
+            this.NavigationService.Navigate(new MenuPage());
+        }
     }
 }
