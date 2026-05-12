@@ -28,5 +28,8 @@
 
         <TextBlock Text="your statistics" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"
                 FontFamily="Permanent Marker" Margin="30,0,30,0" />
+
+        <TextBlock Grid.Row="1" Text="This TextBlock will display the user's statistics" HorizontalAlignment="Center"
+                   VerticalAlignment="Center" FontFamily="Permanent Marker" FontSize="30"/>
     </Grid>
 </Page>
