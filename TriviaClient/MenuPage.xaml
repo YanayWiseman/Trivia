@@ -19,8 +19,8 @@
 
             <StackPanel>
 
-                <TextBlock Text="Machsilim Trivia"
-                           FontSize="34"
+                <TextBlock Text="Machshilim Trivia"
+                           FontSize="32"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
                            FontFamily="Permanent Marker"

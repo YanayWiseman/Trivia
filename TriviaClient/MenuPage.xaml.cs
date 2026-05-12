@@ -24,5 +24,23 @@ namespace TriviaClient
         {
             InitializeComponent();
         }
+        private void CreateRoom_Click(object sender, RoutedEventArgs e)
+        {
+        }
+        private void JoinRoom_Click(object sender, RoutedEventArgs e)
+        {
+        }
+        private void Statistics_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new StatisticsPage());
+        }
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+        }
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            // log out first !!!!!!!!! WE NEED TO ADD THIS
+            Application.Current.Shutdown();
+        }
     }
 }

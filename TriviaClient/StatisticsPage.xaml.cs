@@ -21,7 +21,7 @@ namespace TriviaClient
         {
             InitializeComponent();
         }
-        private void GoToMenu_Click(object sender, RoutedEventArgs e)
+        private void GoBack_Click(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(new MenuPage());
         }
