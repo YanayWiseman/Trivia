@@ -15,14 +15,23 @@ using System.Windows.Shapes;
 
 namespace TriviaClient
 {
-    /// <summary>
-    /// Interaction logic for SignUpPage.xaml
-    /// </summary>
     public partial class SignUpPage : Page
     {
         public SignUpPage()
         {
             InitializeComponent();
+        }
+        private void GoBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.NavigationService.CanGoBack)
+            {
+                this.NavigationService.GoBack();
+            }
+        }
+
+        private void GoToMenu_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new MainPage());
         }
     }
 }
