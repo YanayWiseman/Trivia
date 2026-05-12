@@ -25,5 +25,14 @@ namespace TriviaClient
         {
             this.NavigationService.Navigate(new MenuPage());
         }
+
+        private void MyStatistics_Click(object sender, RoutedEventArgs e)
+        {
+            //this.NavigationService.Navigate(new UserStatisticsPage());
+        }
+        private void BestPlayers_Click(object sender, RoutedEventArgs e)
+        {
+            //this.NavigationService.Navigate(new BestPlayersPage());
+        }
     }
 }
