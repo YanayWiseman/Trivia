@@ -6,17 +6,23 @@
              xmlns:local="clr-namespace:TriviaClient.View.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="600">
-    
+
     <Grid Background="White">
-        <TextBox x:Name="txtInput" VerticalContentAlignment="Center" 
-                 FontSize="40" FontWeight="Light" Background="Transparent"/>
-        
-        <TextBlock x:Name="tbPlaceHolder" Text="Hello World" FontSize="40" FontFamily="Permanent Marker"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="30"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBox x:Name="txtInput" Grid.Column="0" VerticalContentAlignment="Center" 
+                 FontSize="20" FontFamily="Permanent Marker" FontWeight="Light" Background="Transparent" TextChanged="txtInput_TextChanged"/>
+
+        <TextBlock x:Name="tbPlaceHolder" Grid.Column="0" Text="{Binding PlaceHolder}" FontSize="15" FontFamily="Permanent Marker"
                    FontWeight="Light" Foreground="DarkGray" VerticalAlignment="Center"
                    Margin="5,0,0,0" Panel.ZIndex="-1"/>
-        
-        <Button x:Name="btnClear" Width="60" HorizontalAlignment="Right" Content="X" FontSize="40"
+
+        <Button x:Name="btnClear" Grid.Column="1" Content="x" FontSize="25"
                 FontFamily="Permanent Marker" Background="Transparent" 
-                Foreground="LightGray" BorderThickness="0" Click="btnClear_Click"/>
+                Foreground="LightGray" BorderThickness="0" VerticalAlignment="Center"
+                HorizontalAlignment="Center" Click="btnClear_Click"/>
     </Grid>
 </UserControl>
