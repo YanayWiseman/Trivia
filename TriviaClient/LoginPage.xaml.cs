@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace TriviaClient
 {
-    /// <summary>
-    /// Interaction logic for LoginPage.xaml
-    /// </summary>
     public partial class LoginPage : Page
     {
         public LoginPage()
