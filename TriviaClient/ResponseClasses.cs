@@ -24,7 +24,7 @@ namespace TriviaClient
     public class ErrorResponse
     {
         [JsonProperty("message")]
-        public string Error { get; set; }
+        public string? Message { get; set; }
     }
 
     public class LogoutResponse
@@ -33,27 +33,81 @@ namespace TriviaClient
         public uint Status { get; set; }
     }
 
+    // this isnt good bro, the cpp serializer does not seperate using & for the getRoomsResponse
     public class GetRoomsResponse
     {
+        [JsonProperty("status")]
         public uint Status { get; set; }
-        public List<RoomData>? Rooms { get; set; }
+
+        [JsonProperty("rooms")]
+        public string? RoomsRaw { get; set; }
+
+        // method to convert to list
+        public List<string> GetRooms()
+        {
+            if (string.IsNullOrEmpty(RoomsRaw))
+            {
+                return new List<string>();
+            }
+
+            return RoomsRaw.Split('&').ToList();
+        }
     }
 
     public class GetPlayersInRoomResponse
     {
-        public List<string>? Players { get; set; }
+        [JsonProperty("PlayersInRoom")]
+        public string? PlayersRaw { get; set; }
+
+        // Method to convert the string into a list
+        public List<string> GetPlayers()
+        {
+            if (string.IsNullOrEmpty(PlayersRaw))
+            {
+                return new List<string>();
+            }
+
+            return PlayersRaw.Split('&').ToList();
+        }
     }
 
     public class GetHighScoreResponse
     {
+        [JsonProperty("status")]
         public uint Status { get; set; }
-        public List<string> Statistics { get; set; }
+
+        [JsonProperty("HighScore")]
+        public string? StatisticsRaw { get; set; }
+
+        public List<string> GetHighScores()
+        {
+            if (string.IsNullOrEmpty(StatisticsRaw))
+            {
+                return new List<string>();
+            }
+
+            return StatisticsRaw.Split('&').ToList();
+        }
     }
 
     public class GetPersonalStatsResponse
     {
+        [JsonProperty("status")]
         public uint Status { get; set; }
-        public List<string> Statistics { get; set; }
+
+
+        [JsonProperty("UserStatistics")]
+        public string? StatisticsRaw { get; set; }
+
+        public List<string> GetStats()
+        {
+            if (string.IsNullOrEmpty(StatisticsRaw))
+            {
+                return new List<string>();
+            }
+
+            return StatisticsRaw.Split('&').ToList();
+        }
     }
 
     public class JoinRoomResponse
@@ -74,7 +128,7 @@ namespace TriviaClient
         public uint Id { get; set; }
 
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [JsonProperty("maxPlayers")]
         public uint MaxPlayers { get; set; }

@@ -118,7 +118,6 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& g
 {
 	json response;
 
-	// we need to craft the room string
 	json roomsArray = json::array();
 
 	for (const auto& room : getRoomsResponse.rooms)
@@ -136,6 +135,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& g
 	}
 
 	response["rooms"] = roomsArray;
+	response["status"] = getRoomsResponse.status;
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_ROOMS_RESPONSE);
 }
