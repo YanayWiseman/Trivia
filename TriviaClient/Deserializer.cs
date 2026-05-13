@@ -8,5 +8,77 @@ namespace TriviaClient
 {
     internal static class Deserializer
     {
+        public static T DeserializeResponse<T>(byte[] buffer)
+        {
+        }
+    }
+    public class LoginResponse
+    {
+        public uint Status { get; set; }
+    }
+
+    public class SignupResponse
+    {
+        public uint Status { get; set; }
+    }
+
+    public class ErrorResponse
+    {
+        public string Error { get; set; }
+    }
+
+    public class LogoutResponse
+    {
+        public uint Status { get; set; }
+    }
+
+    public class GetRoomsResponse
+    {
+        public uint Status { get; set; }
+        public List<RoomData>? Rooms { get; set; }
+    }
+
+    public class GetPlayersInRoomResponse
+    {
+        public List<string> Players { get; set; }
+    }
+
+    public class GetHighScoreResponse
+    {
+        public uint Status { get; set; }
+        public List<string> Statistics { get; set; }
+    }
+
+    public class GetPersonalStatsResponse
+    {
+        public uint Status { get; set; }
+        public List<string> Statistics { get; set; }
+    }
+
+    public class JoinRoomResponse
+    {
+        public uint Status { get; set; }
+    }
+
+    public class CreateRoomResponse
+    {
+        public uint Status { get; set; }
+    }
+
+    public class RoomData
+    {
+        public uint Id { get; set; }
+        public string Name { get; set; }
+        public uint MaxPlayers { get; set; }
+        public uint NumOfQuestionsInGame { get; set; }
+        public uint TimePerQuestion { get; set; }
+        public RoomStatus Status { get; set; }
+    }
+
+    public enum RoomStatus
+    {
+        Open,
+        Closed
     }
 }
+

@@ -8,12 +8,12 @@ namespace TriviaClient
 {
     internal static class Serializer
     {
-/*        public static LoginRequest serializeLoginRequest(const Buffer& buffer);
-		public static SignupRequest serializeSignupRequest(const Buffer& buffer);
+        /*      public static byte[] serializeLoginRequest(const Buffer& buffer);
+                public static byte[] serializeSignupRequest(const Buffer& buffer);
 
-		//V2
-		public static GetPlayersInRoomRequest serializeGetPlayersRequest(const Buffer& buffer);
-		public static JoinRoomRequest serializeJoinRoomRequest(const Buffer& buffer);
-		public static CreateRoomRequest serializeCreateRoomRequest(const Buffer& buffer);*/
+                //V2
+                public static byte[] serializeGetPlayersRequest(const Buffer& buffer);
+                public static byte[] serializeJoinRoomRequest(const Buffer& buffer);
+                public static byte[] serializeCreateRoomRequest(const Buffer& buffer);*/
     }
 }
