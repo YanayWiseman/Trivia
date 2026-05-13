@@ -32,6 +32,17 @@ namespace TriviaClient.View.UserControls
                 tbPlaceHolder.Text = placeHolder;
             }
         }
+        public string Text
+        {
+            get
+            {
+                return txtInput.Text;
+            }
+            set
+            {
+                txtInput.Text = value;
+            }
+        }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
