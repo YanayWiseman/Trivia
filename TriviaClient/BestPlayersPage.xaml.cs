@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace TriviaClient
 {
-    /// <summary>
-    /// Interaction logic for BestPlayersPage.xaml
-    /// </summary>
     public partial class BestPlayersPage : Page
     {
         public BestPlayersPage()
