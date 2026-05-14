@@ -17,7 +17,7 @@ namespace TriviaClient
             // create the tcp client and connect to the server
             this.m_tcpClient = new TcpClient();
             IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 12334);
-            m_tcpClient.Connect(serverEndPoint);
+            m_tcpClient.Connect(serverEndPoint); 
         }
     }
 }
