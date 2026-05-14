@@ -9,15 +9,15 @@ namespace TriviaClient
 {
     internal static class Serializer
 	{
-        private const int LoginRequest = 1;
-        private const int SignupRequest = 3;
-        private const int LogoutRequest = 13;
-        private const int GetRoomsRequest = 14;
-        private const int GetPlayersInRoomRequest = 15;
-        private const int HighScoreRequest = 16;
-        private const int GetPersonalStatsRequest = 17;
-        private const int JoinRoomRequest = 18;
-        private const int CreateRoomRequest = 19;
+        private const int LoginRequestCode = 1;
+        private const int SignupRequestCode = 3;
+        private const int LogoutRequestCode = 13;
+        private const int GetRoomsRequestCode = 14;
+        private const int GetPlayersInRoomRequestCode = 15;
+        private const int HighScoreRequestCode = 16;
+        private const int GetPersonalStatsRequestCode = 17;
+        private const int JoinRoomRequestCode = 18;
+        private const int CreateRoomRequestCode = 19;
 
 
         /*
@@ -60,7 +60,7 @@ namespace TriviaClient
 
         public static byte[] SerializeLoginRequest(LoginRequest request)
 		{
-            return SerializeJson(request, LoginRequest);
+            return SerializeJson(request, LoginRequestCode);
         }
         /*
             Function Serealizes SignupRequest
@@ -69,7 +69,7 @@ namespace TriviaClient
         */
         public static byte[] serializeSignupRequest(SignupRequest request)
 		{
-            return SerializeJson(request, SignupRequest);
+            return SerializeJson(request, SignupRequestCode);
         }
         /*
             Function Serealizes GetPlayersInRoomRequest
@@ -78,7 +78,7 @@ namespace TriviaClient
         */
         public static byte[] serializeGetPlayersRequest(GetPlayersInRoomRequest request)
 		{
-            return SerializeJson(request, GetPlayersInRoomRequest);
+            return SerializeJson(request, GetPlayersInRoomRequestCode);
         }
         /*
             Function Serealizes JoinRoomRequest
@@ -87,7 +87,7 @@ namespace TriviaClient
         */
         public static byte[] serializeJoinRoomRequest(JoinRoomRequest request)
 		{
-            return SerializeJson(request, JoinRoomRequest);
+            return SerializeJson(request, JoinRoomRequestCode);
         }
         /*
             Function Serealizes CreateRoomRequest
@@ -96,7 +96,7 @@ namespace TriviaClient
         */
         public static byte[] serializeCreateRoomRequest(CreateRoomRequest request)
 		{
-            return SerializeJson(request, CreateRoomRequest);
+            return SerializeJson(request, CreateRoomRequestCode);
         }
     }
 }
