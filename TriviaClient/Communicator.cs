@@ -13,7 +13,7 @@ namespace TriviaClient
         private const int PORT = 12334;
 
         private TcpClient m_tcpClient;
-        NetworkStream m_clientStream;
+        private NetworkStream m_clientStream;
 
         /*
             Constructor method to construct the communicator object
@@ -37,8 +37,8 @@ namespace TriviaClient
         */
         public void Disconnect()
         {
-            this.m_tcpClient.Close();
             this.m_clientStream.Close();
+            this.m_tcpClient.Close();
         }
 
         /*
@@ -58,7 +58,7 @@ namespace TriviaClient
         }
 
         /*
-            Method to send a request to the server
+            Helper method to send a request to the server
             input: the request buffer as a byte array
             output: no return values
         */
@@ -68,18 +68,56 @@ namespace TriviaClient
         }
 
         /*
-            Method to get the response from the server
+            Helper method to get the response from the server
             input: no input values
             output:the response buffer as a byte array 
         */
         private byte[] GetResponse()
         {
-            byte[] response = new byte[4096];
-            int bytesRead = this.m_clientStream.Read(response, 0, 4096);
+            // first read the headers
+            byte[] headers = ReadExactBytes(5);
 
-            return response;
+            // get the json's size
+            int jsonSize = 
+                (headers[1] << 24) |
+                (headers[2] << 16) |
+                (headers[3] << 8) |
+                 headers[4];
+
+            // read exact amount that the response says
+            byte[] response = ReadExactBytes(jsonSize);
+
+            // add it to the headers, convert to byte array and return
+            return headers.Concat(response).ToArray();
         }
 
+        /*
+            Helper method to read the exact amount of bytes asked for from the socket stream
+            input: the size to read
+            output: a byte array the size requested
+        */
+        private byte[] ReadExactBytes(int bytesAmount)
+        {
+            byte[] buffer = new byte[bytesAmount];
 
+            int totalRead = 0;
+
+            // while we still dont have all of the bytes
+            while (totalRead < bytesAmount)
+            {
+                // TCP gurentees whole of the packet will make it, in order
+                // but it doesnt mean that it will be in one go, so we iterate it
+                // TCP is a stream.
+                int bytesRead = this.m_clientStream.Read(buffer, totalRead, bytesAmount - totalRead);
+                if (bytesRead == 0)
+                {
+                    throw new Exception("Failed to read server's response");
+                }
+
+                totalRead += bytesRead;
+            }
+
+            return buffer;
+        }
     }
 }
