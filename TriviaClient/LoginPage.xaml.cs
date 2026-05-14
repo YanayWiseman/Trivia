@@ -32,12 +32,35 @@ namespace TriviaClient
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            string username = UsernameTextBox.Text;
-            string password = PasswordBox.Password;
+            try
+            {
+                // get input from the clearableTextBox's
+                // and craft it into a LoginRequest
+                LoginRequest request = new LoginRequest
+                {
+                    Username = UsernameTextBox.Text,
+                    Password = PasswordBox.Password
+                };
 
-            MessageBox.Show("Username: " + username + "\nPassword: " + password);
+                // now we can serialize the request and send it
+                byte[] requestBytes = Serializer.SerializeLoginRequest(request);
 
-            this.NavigationService.Navigate(new MenuPage());
+                LoginResponse response = AppState.Communicator.SendRequest<LoginResponse>(requestBytes);
+
+                // move to the menu
+                if (response.Status == 1)
+                {
+                    this.NavigationService.Navigate(new MenuPage());
+                }
+                else
+                {
+                    MessageBox.Show("Login failed!\nUser doesn't exist!");
+                }
+            }
+            catch (Exception exepction)
+            {
+                MessageBox.Show("Error: " + exepction.Message);
+            }
         }
     }
 }
