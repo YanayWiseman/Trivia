@@ -15,6 +15,9 @@ namespace TriviaClient
         private TcpClient m_tcpClient;
         private NetworkStream m_clientStream;
 
+        // mutex
+        private readonly object m_lock = new object();
+
         /*
             Constructor method to construct the communicator object
             input: no input values
@@ -48,13 +51,16 @@ namespace TriviaClient
         */
         public T SendRequest<T>(byte[] requestBuffer)
         {
-            // send request and recieve response
-            SendToServer(requestBuffer);
+            lock (this.m_lock)
+            {
+                // send request and recieve response
+                SendToServer(requestBuffer);
 
-            byte[] response = GetResponse();
+                byte[] response = GetResponse();
 
-            // deserialize the response
-            return Deserializer.DeserializeResponse<T>(response);
+                // deserialize the response
+                return Deserializer.DeserializeResponse<T>(response);
+            }
         }
 
         /*
