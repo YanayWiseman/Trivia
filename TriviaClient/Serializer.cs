@@ -19,7 +19,6 @@ namespace TriviaClient
         private const int JoinRoomRequestCode = 18;
         private const int CreateRoomRequestCode = 19;
 
-
         /*
             Function Serializes JSON object into buffer.
             Input: obj (object), code (int)

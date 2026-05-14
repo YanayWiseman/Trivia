@@ -40,13 +40,13 @@
                 <RowDefinition/> <!-- approve -->
             </Grid.RowDefinitions>
 
-            <userControls:ClearableTextBox Grid.Row="0" Width="250" Height="40" PlaceHolder="username..."/>
-            <userControls:ClearableTextBox Grid.Row="1" Width="250" Height="40" PlaceHolder="password..."/>
-            <userControls:ClearableTextBox Grid.Row="2" Width="250" Height="40" PlaceHolder="email (xx@gmail.com)..."/>
-            <userControls:ClearableTextBox Grid.Row="3" Width="250" Height="40" PlaceHolder="address (street, apt, city)..."/>
-            <userControls:ClearableTextBox Grid.Row="4" Width="250" Height="40" PlaceHolder="phone (xx-7digits)..."/>
-            
-            <Border Background="White" Width="250" Height="40" Grid.Row="5">
+            <userControls:ClearableTextBox Grid.Row="0" x:Name="usernameBox" Width="250" Height="40" PlaceHolder="username..."/>
+            <userControls:ClearableTextBox Grid.Row="1" x:Name="passwordBox" Width="250" Height="40" PlaceHolder="password..."/>
+            <userControls:ClearableTextBox Grid.Row="2" x:Name="mailBox" Width="250" Height="40" PlaceHolder="email (xx@gmail.com)..."/>
+            <userControls:ClearableTextBox Grid.Row="3" x:Name="addressBox" Width="250" Height="40" PlaceHolder="address (street, apt, city)..."/>
+            <userControls:ClearableTextBox Grid.Row="4" x:Name="phoneBox" Width="250" Height="40" PlaceHolder="phone (xx-7digits)..."/>
+
+            <Border Background="White" x:Name="BirthdayBox" Width="250" Height="40" Grid.Row="5">
                 <DatePicker x:Name="BirthDatePicker" BorderThickness="0" VerticalContentAlignment="Center"
                 FontFamily="Permanent Marker" FontSize="15" Foreground="DarkGray">
                 </DatePicker>

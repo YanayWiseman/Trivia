@@ -12,9 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TriviaClient;
 
 namespace TriviaClient
 {
+
     public partial class SignUpPage : Page
     {
         public SignUpPage()
@@ -31,7 +33,14 @@ namespace TriviaClient
 
         private void GoToMenu_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new MainPage());
+            try
+            {
+                this.NavigationService.Navigate(new MainPage());
+            }
+            catch
+            {
+
+            }
         }
     }
 }
