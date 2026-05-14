@@ -67,9 +67,19 @@ namespace TriviaClient
             this.m_clientStream.Write(requestBuffer);
         }
 
+        /*
+            Method to get the response from the server
+            input: no input values
+            output:the response buffer as a byte array 
+        */
         private byte[] GetResponse()
         {
+            byte[] response = new byte[4096];
+            int bytesRead = this.m_clientStream.Read(response, 0, 4096);
 
+            return response;
         }
+
+
     }
 }
