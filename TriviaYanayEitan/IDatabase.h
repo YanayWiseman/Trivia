@@ -23,5 +23,5 @@ public:
     virtual int getNumOfTotalAnswers(const std::string& username) const = 0;
     virtual int getNumOfPlayerGames(const std::string& username) const = 0;
     virtual int getPlayerScore(const std::string& username) const = 0;
-    virtual std::vector<std::pair<std::string, int>> getHighScores() const = 0;
+    virtual std::vector<std::string> getHighScores() const = 0;
 };

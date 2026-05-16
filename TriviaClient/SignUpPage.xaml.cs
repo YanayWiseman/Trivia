@@ -67,7 +67,7 @@ namespace TriviaClient
 
                 if (response.Status == 1)
                 {
-                    this.NavigationService.Navigate(new MenuPage());
+                    this.NavigationService.Navigate(new MainPage());
                 }
                 else
                 {

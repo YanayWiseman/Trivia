@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace TriviaClient
 {
@@ -21,6 +22,23 @@ namespace TriviaClient
         public MenuPage()
         {
             InitializeComponent();
+
+            Loaded += MenuPage_Loaded;
+        }
+
+        private void MenuPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            Window parentWindow = Window.GetWindow(this);
+
+            if (parentWindow != null)
+            {
+                parentWindow.Closing -= ParentWindow_Closing;
+                parentWindow.Closing += ParentWindow_Closing;
+            }
+        }
+        private void ParentWindow_Closing(object? sender, CancelEventArgs e)
+        {
+            PerformLogout();
         }
         private void CreateRoom_Click(object sender, RoutedEventArgs e)
         {
@@ -34,33 +52,7 @@ namespace TriviaClient
         {
             this.NavigationService.Navigate(new StatisticsPage());
         }
-        private void Logout_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                byte[] requestBuffer = Serializer.SerializeLogoutRequest();
-
-                LogoutResponse response = ClientSession.Communicator.SendRequest<LogoutResponse>(requestBuffer);
-
-                if (response.Status == 1)
-                {
-                    ClientSession.Communicator.Disconnect();
-                    ClientSession.Communicator = new Communicator();
-
-                    this.NavigationService.Navigate(new MainPage());
-                }
-                else
-                {
-                    MessageBox.Show("Logout failed.");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Server error: " + ex.Message);
-            }
-        }
-
-        private void Exit_Click(object sender, RoutedEventArgs e)
+        private void PerformLogout()
         {
             try
             {
@@ -70,7 +62,6 @@ namespace TriviaClient
             }
             catch
             {
-                // App is closing anyway
             }
 
             try
@@ -80,7 +71,26 @@ namespace TriviaClient
             catch
             {
             }
+        }
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                PerformLogout();
 
+                ClientSession.Communicator = new Communicator();
+
+                this.NavigationService.Navigate(new MainPage());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Server error: " + ex.Message);
+            }
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            PerformLogout();
             Application.Current.Shutdown();
         }
     }

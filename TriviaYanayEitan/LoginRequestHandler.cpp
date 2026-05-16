@@ -128,7 +128,7 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& info) const
 	}
 	else
 	{
-		result.newHandler = this->m_handlerFactory.createMenuRequestHandler(signupRequest.username);
+		// dont create a MenuRequestHandler yet, we need to log in first
 	}
 
 	return result;

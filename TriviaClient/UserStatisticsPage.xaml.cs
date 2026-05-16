@@ -39,16 +39,26 @@ namespace TriviaClient
 
                 List<string> stats = response.GetStats();
 
-                int i = 0;
-                for (i = 0; i < stats.Count; i++)
-                {
-                    UserStatsListBox.Items.Add(stats[i]);
-                }
+                UserStatsListBox.Items.Add("Your name: " + stats[0]);
+                UserStatsListBox.Items.Add("Average Answer Time: " + FixNegativeStat(stats[1]));
+                UserStatsListBox.Items.Add("Num of Correct Answers: " + FixNegativeStat(stats[2]));
+                UserStatsListBox.Items.Add("Games played: " + FixNegativeStat(stats[3]));
+                UserStatsListBox.Items.Add("Total Answers: " + FixNegativeStat(stats[4]));
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Server error: " + ex.Message);
             }
+        }
+        private string FixNegativeStat(string value)
+        {
+            if (int.TryParse(value, out int number))
+            {
+                return number < 0 ? "0" : value;
+            }
+
+            return "0";
         }
 
         private void GoBack_Click(object sender, RoutedEventArgs e)
