@@ -62,6 +62,8 @@ namespace TriviaClient
 		{
             return SerializeJson(request, LoginRequestCode);
         }
+
+
         /*
             Function Serealizes SignupRequest
             Input: request (SignupRequest)
@@ -71,32 +73,72 @@ namespace TriviaClient
 		{
             return SerializeJson(request, SignupRequestCode);
         }
+
+
         /*
             Function Serealizes GetPlayersInRoomRequest
             Input: request (GetPlayersInRoomRequest)
             Output: Byte buffer (byte[])
         */
+
         public static byte[] serializeGetPlayersRequest(GetPlayersInRoomRequest request)
 		{
             return SerializeJson(request, GetPlayersInRoomRequestCode);
         }
+
+
         /*
             Function Serealizes JoinRoomRequest
             Input: request (JoinRoomRequest)
             Output: Byte buffer (byte[])
         */
+
         public static byte[] serializeJoinRoomRequest(JoinRoomRequest request)
 		{
             return SerializeJson(request, JoinRoomRequestCode);
         }
+
+
         /*
             Function Serealizes CreateRoomRequest
             Input: request (CreateRoomRequest)
             Output: Byte buffer (byte[])
         */
+
         public static byte[] serializeCreateRoomRequest(CreateRoomRequest request)
 		{
             return SerializeJson(request, CreateRoomRequestCode);
+        }
+
+
+        /*
+            Function Serealizes LogoutRequest
+            Input: None
+            Output: Byte buffer (byte[])
+        */
+        public static byte[] SerializeLogoutRequest()
+        {
+            return SerializeJson(new { }, LogoutRequestCode);
+        }
+        
+        /*
+         * Function serializes GetRoomsRequest
+         * Input: None
+         * Output: Byte buffer (byte[])
+        */
+        public static byte[] SerializeGetRoomsRequest()
+        {
+            return SerializeJson(new { }, GetRoomsRequestCode);
+        }
+
+        public static byte[] SerializeHighScoreRequest()
+        {
+            return SerializeJson(new { }, HighScoreRequestCode);
+        }
+
+        public static byte[] SerializeGetPersonalStatsRequest()
+        {
+            return SerializeJson(new { }, GetPersonalStatsRequestCode);
         }
     }
 }

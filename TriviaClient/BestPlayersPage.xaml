@@ -32,8 +32,11 @@
         
         <TextBlock Grid.Row="1" Text="Top 3 players scores" HorizontalAlignment="Center" FontWeight="bold"
                    VerticalAlignment="Center" FontFamily="Permanent Marker" FontSize="30"/>
-        
-        <TextBlock Grid.Row="2" Text="This TextBlock will display the user's statistics" HorizontalAlignment="Center"
-                   VerticalAlignment="Center" FontFamily="Permanent Marker" FontSize="30"/>
+
+        <ListBox x:Name="BestPlayersListBox"
+         Width="300"
+         Height="250"
+         FontFamily="Permanent Marker"
+         FontSize="18" Margin="250,25,250,25" Grid.Row="2"/>
     </Grid>
 </Page>

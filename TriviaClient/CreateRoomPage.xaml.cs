@@ -54,6 +54,42 @@ namespace TriviaClient
                 MessageBox.Show("Max players must be a number");
                 return;
             }
+
+            if (questionTime <= 0 || maxPlayers <= 0)
+            {
+                MessageBox.Show("Values must be positive.");
+                return;
+            }
+
+            CreateRoomRequest request = new CreateRoomRequest
+            {
+                Id = 0,
+                RoomName = roomName,
+                MaxUsers = (uint)maxPlayers,
+                QuestionsCount = 10,
+                AnswerTimeout = (uint)questionTime
+            };
+
+            try
+            {
+                byte[] requestBuffer = Serializer.serializeCreateRoomRequest(request);
+
+                CreateRoomResponse response = ClientSession.Communicator.SendRequest<CreateRoomResponse>(requestBuffer);
+
+                if (response.Status == 1)
+                {
+                    MessageBox.Show("Room created successfully.");
+                    this.NavigationService.Navigate(new JoinRoomPage());
+                }
+                else
+                {
+                    MessageBox.Show("Failed to create room.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Server error: " + ex.Message);
+            }
         }
     }
 }

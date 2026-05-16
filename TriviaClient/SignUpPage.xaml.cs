@@ -31,7 +31,53 @@ namespace TriviaClient
 
         private void GoToMenu_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new MainPage());
+            string username = UsernameTextBox.Text;
+            string password = PasswordTextBox.Text;
+            string email = EmailTextBox.Text;
+            string address = AddressTextBox.Text;
+            string phone = PhoneTextBox.Text;
+            string birthdate = "";
+
+            if (BirthDatePicker.SelectedDate != null)
+            {
+                birthdate = BirthDatePicker.SelectedDate.Value.ToString("dd/MM/yyyy");
+            }
+
+            if (username == "" || password == "" || email == "" || address == "" || phone == "" || birthdate == "")
+            {
+                MessageBox.Show("Please fill all fields.");
+                return;
+            }
+
+            SignupRequest request = new SignupRequest
+            {
+                Username = username,
+                Password = password,
+                Email = email,
+                Address = address,
+                Phone = phone,
+                Birthdate = birthdate
+            };
+
+            try
+            {
+                byte[] requestBuffer = Serializer.serializeSignupRequest(request);
+
+                SignupResponse response = ClientSession.Communicator.SendRequest<SignupResponse>(requestBuffer);
+
+                if (response.Status == 1)
+                {
+                    this.NavigationService.Navigate(new MenuPage());
+                }
+                else
+                {
+                    MessageBox.Show("Signup failed.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Server error: " + ex.Message);
+            }
         }
     }
 }

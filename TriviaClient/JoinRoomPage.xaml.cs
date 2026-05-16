@@ -28,9 +28,30 @@ namespace TriviaClient
         {
             RoomsListBox.Items.Clear();
 
-            RoomsListBox.Items.Add("Room 1");
-            RoomsListBox.Items.Add("Room 2");
-            RoomsListBox.Items.Add("Room 3");
+            try
+            {
+                byte[] requestBuffer = Serializer.SerializeGetRoomsRequest();
+
+                GetRoomsResponse response = ClientSession.Communicator.SendRequest<GetRoomsResponse>(requestBuffer);
+
+                if (response.Status != 1)
+                {
+                    MessageBox.Show("Failed to load rooms.");
+                    return;
+                }
+
+                RoomsListBox.DisplayMemberPath = "Name";
+
+                int i = 0;
+                for (i = 0; i < response.Rooms.Count; i++)
+                {
+                    RoomsListBox.Items.Add(response.Rooms[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Server error: " + ex.Message);
+            }
         }
 
         private void GoBack_Click(object sender, RoutedEventArgs e)
@@ -41,6 +62,7 @@ namespace TriviaClient
             }
         }
 
+
         private void JoinRoom_Click(object sender, RoutedEventArgs e)
         {
             if (RoomsListBox.SelectedItem == null)
@@ -49,7 +71,33 @@ namespace TriviaClient
                 return;
             }
 
-            string roomName = RoomsListBox.SelectedItem.ToString();
+            RoomData selectedRoom = (RoomData)RoomsListBox.SelectedItem;
+
+            JoinRoomRequest request = new JoinRoomRequest
+            {
+                RoomId = selectedRoom.Id
+            };
+
+            try
+            {
+                byte[] requestBuffer = Serializer.serializeJoinRoomRequest(request);
+
+                JoinRoomResponse response = ClientSession.Communicator.SendRequest<JoinRoomResponse>(requestBuffer);
+
+                if (response.Status == 1)
+                {
+                    MessageBox.Show("Joined room successfully.");
+                    // later: navigate to waiting room
+                }
+                else
+                {
+                    MessageBox.Show("Failed to join room.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Server error: " + ex.Message);
+            }
         }
     }
 }

@@ -20,7 +20,37 @@ namespace TriviaClient
         public UserStatisticsPage()
         {
             InitializeComponent();
+            LoadUserStats();
         }
+
+        private void LoadUserStats()
+        {
+            try
+            {
+                byte[] requestBuffer = Serializer.SerializeGetPersonalStatsRequest();
+
+                GetPersonalStatsResponse response = ClientSession.Communicator.SendRequest<GetPersonalStatsResponse>(requestBuffer);
+
+                if (response.Status != 1)
+                {
+                    MessageBox.Show("Failed to load personal statistics.");
+                    return;
+                }
+
+                List<string> stats = response.GetStats();
+
+                int i = 0;
+                for (i = 0; i < stats.Count; i++)
+                {
+                    UserStatsListBox.Items.Add(stats[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Server error: " + ex.Message);
+            }
+        }
+
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(new StatisticsPage());
