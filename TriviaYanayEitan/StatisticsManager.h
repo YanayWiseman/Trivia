@@ -19,7 +19,7 @@ public:
 	~StatisticsManager() = default;
 
 	// methods
-	std::vector<std::pair<std::string, int>> getHighScores() const;
+	std::vector<std::string> getHighScores() const;
 	std::vector<std::string> getUserStatistics(const std::string& username) const;
 
 	static StatisticsManager& getInstance();

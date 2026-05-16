@@ -118,22 +118,24 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& g
 {
 	json response;
 
-	// we need to craft the room string
-	// we cant use vectorToApmersandString because the vector is a room vector
-	std::string roomsStr = "";
-	int i = 0;
+	json roomsArray = json::array();
 
-	for (i = 0; i < getRoomsResponse.rooms.size(); i++)
+	for (const auto& room : getRoomsResponse.rooms)
 	{
-		roomsStr += getRoomsResponse.rooms[i].name;
-		if (i != getRoomsResponse.rooms.size() - 1)
-		{
-			// the seperator will be &
-			roomsStr += "&";
-		}
+		json roomJson;
+
+		roomJson["id"] = room.id;
+		roomJson["name"] = room.name;
+		roomJson["maxPlayers"] = room.maxPlayers;
+		roomJson["numOfQuestionsInGame"] = room.numOfQuestionsInGame;
+		roomJson["timePerQuestion"] = room.timePerQuestion;
+		roomJson["status"] = room.status;
+
+		roomsArray.push_back(roomJson);
 	}
 
-	response["Rooms"] = roomsStr;
+	response["rooms"] = roomsArray;
+	response["status"] = getRoomsResponse.status;
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_ROOMS_RESPONSE);
 }
