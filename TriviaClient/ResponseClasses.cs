@@ -33,25 +33,13 @@ namespace TriviaClient
         public uint Status { get; set; }
     }
 
-    // this isnt good bro, the cpp serializer does not seperate using & for the getRoomsResponse
     public class GetRoomsResponse
     {
         [JsonProperty("status")]
         public uint Status { get; set; }
 
         [JsonProperty("rooms")]
-        public string? RoomsRaw { get; set; }
-
-        // method to convert to list
-        public List<string> GetRooms()
-        {
-            if (string.IsNullOrEmpty(RoomsRaw))
-            {
-                return new List<string>();
-            }
-
-            return RoomsRaw.Split('&').ToList();
-        }
+        public List<RoomData> Rooms { get; set; } = new List<RoomData>();
     }
 
     public class GetPlayersInRoomResponse

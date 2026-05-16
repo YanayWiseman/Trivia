@@ -20,7 +20,51 @@ namespace TriviaClient
         public BestPlayersPage()
         {
             InitializeComponent();
+            LoadBestPlayers();
         }
+
+        /*
+            Function Loads best players statistics from server.
+            Input: None
+            Output: None
+        */
+
+        private void LoadBestPlayers()
+        {
+            try
+            {
+                byte[] requestBuffer = Serializer.SerializeHighScoreRequest();
+
+                GetHighScoreResponse response = ClientSession.Communicator.SendRequest<GetHighScoreResponse>(requestBuffer);
+
+                if (response.Status != 1)
+                {
+                    MessageBox.Show("Failed to load best players.");
+                    return;
+                }
+
+                List<string> highScores = response.GetHighScores();
+
+                BestPlayersListBox.Items.Clear();
+
+                int i = 0;
+                for (i = 0; i < highScores.Count; i++)
+                {
+                    BestPlayersListBox.Items.Add(highScores[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Server error: " + ex.Message);
+            }
+        }
+
+        /*
+            Function Goes back to statistics page.
+            Input: sender (object), e (RoutedEventArgs)
+            Output: None
+        */
+
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(new StatisticsPage());
