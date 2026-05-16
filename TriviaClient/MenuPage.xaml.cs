@@ -36,10 +36,51 @@ namespace TriviaClient
         }
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                byte[] requestBuffer = Serializer.SerializeLogoutRequest();
+
+                LogoutResponse response = ClientSession.Communicator.SendRequest<LogoutResponse>(requestBuffer);
+
+                if (response.Status == 1)
+                {
+                    ClientSession.Communicator.Disconnect();
+                    ClientSession.Communicator = new Communicator();
+
+                    this.NavigationService.Navigate(new MainPage());
+                }
+                else
+                {
+                    MessageBox.Show("Logout failed.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Server error: " + ex.Message);
+            }
         }
+
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
-            // log out first !!!!!!!!! WE NEED TO ADD THIS
+            try
+            {
+                byte[] requestBuffer = Serializer.SerializeLogoutRequest();
+
+                ClientSession.Communicator.SendRequest<LogoutResponse>(requestBuffer);
+            }
+            catch
+            {
+                // App is closing anyway
+            }
+
+            try
+            {
+                ClientSession.Communicator.Disconnect();
+            }
+            catch
+            {
+            }
+
             Application.Current.Shutdown();
         }
     }

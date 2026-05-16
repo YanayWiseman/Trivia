@@ -265,7 +265,7 @@ RequestResult MenuRequestHandler::getErrorResponse(const std::string& errorMsg) 
 	errorResponse.error = errorMsg;
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(errorResponse);
-	result.newHandler = nullptr;
+	result.newHandler = const_cast<MenuRequestHandler*>(this);
 
 	return result;
 }

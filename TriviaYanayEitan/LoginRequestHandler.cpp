@@ -1,4 +1,5 @@
 #include "LoginRequestHandler.h"
+#include "MenuRequestHandler.h"
 #include "RequestHandlerFactory.h"
 
 /*
@@ -86,11 +87,11 @@ RequestResult LoginRequestHandler::login(const RequestInfo& info) const
 
 	if (loginResponse.status == Failiure)
 	{
-		result.newHandler = nullptr;
+		result.newHandler = const_cast<LoginRequestHandler*>(this);
 	}
 	else
 	{
-		result.newHandler = const_cast<LoginRequestHandler*>(this);
+		result.newHandler = this->m_handlerFactory.createMenuRequestHandler(loginRequest.username);
 	}
 
 	return result;
@@ -109,7 +110,6 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& info) const
 	SignupResponse signupResponse;
 	SignupRequest signupRequest = JsonRequestPacketDeserializer::deserializeSignupRequest(info.buffer);
 
-	// create the user's info
 	UserInfo user;
 	user.username = signupRequest.username;
 	user.password = signupRequest.password;
@@ -124,11 +124,11 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& info) const
 
 	if (signupResponse.status == Failiure)
 	{
-		result.newHandler = nullptr;
+		result.newHandler = const_cast<LoginRequestHandler*>(this);
 	}
 	else
 	{
-		result.newHandler = const_cast<LoginRequestHandler*>(this);
+		result.newHandler = this->m_handlerFactory.createMenuRequestHandler(signupRequest.username);
 	}
 
 	return result;

@@ -35,9 +35,37 @@ namespace TriviaClient
             string username = UsernameTextBox.Text;
             string password = PasswordBox.Password;
 
-            MessageBox.Show("Username: " + username + "\nPassword: " + password);
+            if (username == "" || password == "")
+            {
+                MessageBox.Show("Username and password cannot be empty.");
+                return;
+            }
 
-            this.NavigationService.Navigate(new MenuPage());
+            LoginRequest request = new LoginRequest
+            {
+                Username = username,
+                Password = password
+            };
+
+            try
+            {
+                byte[] requestBuffer = Serializer.SerializeLoginRequest(request);
+
+                LoginResponse response = ClientSession.Communicator.SendRequest<LoginResponse>(requestBuffer);
+
+                if (response.Status == 1)
+                {
+                    this.NavigationService.Navigate(new MenuPage());
+                }
+                else
+                {
+                    MessageBox.Show("Login failed.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Server error: " + ex.Message);
+            }
         }
     }
 }
