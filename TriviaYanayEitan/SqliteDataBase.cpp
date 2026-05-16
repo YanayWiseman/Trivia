@@ -475,15 +475,15 @@ float SqliteDatabase::getStatisticValue(const std::string& username, const std::
 	output: a vector of pairs, each pair has the username and its score
 */
 
-std::vector<std::pair<std::string, int>> SqliteDatabase::getHighScores() const
+std::vector<std::string> SqliteDatabase::getHighScores() const
 {
 	std::lock_guard<std::mutex> lock(this->m_dbMutex);
 
-	std::vector<std::pair<std::string, int>> res;
+	std::vector<std::string> res;
 
 	sqlite3_stmt* stmt = prepare("SELECT USERNAME, "
 		"(100 * CORRECT_ANSWERS) - (20 * (NUM_ANSWERED - CORRECT_ANSWERS)) - (10 * AVERAGE_TIME) "
-		"AS SCORE FROM STATISTICS ORDER BY SCORE DESC LIMIT 5; ");
+		"AS SCORE FROM STATISTICS ORDER BY SCORE DESC LIMIT 3; ");
 	if (!stmt)
 	{
 		return res;  // empty
@@ -498,7 +498,7 @@ std::vector<std::pair<std::string, int>> SqliteDatabase::getHighScores() const
 
 		// if its negative, make it 0
 		int score = std::max(0, sqlite3_column_int(stmt, 1));
-		res.emplace_back(curUsername, score);
+		res.emplace_back(curUsername);
 	}
 	sqlite3_finalize(stmt);
 

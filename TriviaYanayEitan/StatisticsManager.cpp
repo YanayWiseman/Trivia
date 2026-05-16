@@ -17,7 +17,7 @@ StatisticsManager::StatisticsManager()
     output: vector of top 5 best scores
 */
 
-std::vector<std::pair<std::string, int>> StatisticsManager::getHighScores() const
+std::vector<std::string> StatisticsManager::getHighScores() const
 {
     return this->m_database->getHighScores();
 }

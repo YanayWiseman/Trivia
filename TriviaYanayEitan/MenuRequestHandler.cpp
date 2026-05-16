@@ -184,9 +184,9 @@ RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo) c
 {
 	RequestResult result;
 
-	getPersonalStatsResponse response;
+	getHighScoreResponse response;
 
-	response.statistics = this->m_handlerFactory.getStatisticsManager().getUserStatistics(this->m_user.getUsername());
+	response.statistics = this->m_handlerFactory.getStatisticsManager().getHighScores();
 	response.status = Success;
 
 	// build RequestResult struct
@@ -265,7 +265,7 @@ RequestResult MenuRequestHandler::getErrorResponse(const std::string& errorMsg) 
 	errorResponse.error = errorMsg;
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(errorResponse);
-	result.newHandler = nullptr;
+	result.newHandler = const_cast<MenuRequestHandler*>(this);
 
 	return result;
 }
