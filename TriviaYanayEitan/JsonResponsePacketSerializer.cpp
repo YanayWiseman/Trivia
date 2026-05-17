@@ -212,6 +212,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const CreateRoomResponse&
 {
 	json response;
 	response["status"] = createRoomResponse.status;
+	response["roomId"] = createRoomResponse.roomId;
 
 	return JsonResponsePacketSerializer::serializeJson(response, CREATE_ROOM_RESPONSE);
 }
@@ -239,4 +240,68 @@ std::string JsonResponsePacketSerializer::vectorToAmpersandString(const std::vec
 	}
 
 	return res;
+}
+
+/*
+	Method to serialize Json CloseRoom response into buffer.
+	Input: CloseRoomResponse (const CloseRoomResponse&)
+	Output: Buffer containing CloseRoom response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const CloseRoomResponse& closeRoomResponse)
+{
+	json response;
+
+	response["status"] = closeRoomResponse.status;
+
+	return JsonResponsePacketSerializer::serializeJson(response, CLOSE_ROOM_RESPONSE);
+}
+
+/*
+	Method to serialize Json StartGameResponse response into buffer.
+	Input: StartGameResponse (const StartGameResponse&)
+	Output: Buffer containing StartGame response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const StartGameResponse& startGameResponse)
+{
+	json response;
+
+	response["status"] = startGameResponse.status;
+
+	return JsonResponsePacketSerializer::serializeJson(response, START_GAME_RESPONSE);
+}
+
+/*
+	Method to serialize Json GetRoomState response into buffer.
+	Input: GetRoomStateResponse (const GetRoomStateResponse&)
+	Output: Buffer containing GetRoomState response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomStateResponse& getRoomStateResponse)
+{
+	json response;
+
+	response["status"] = getRoomStateResponse.status;
+	response["hasGameBegun"] = getRoomStateResponse.hasGameBegun;
+	response["timePerQuestion"] = getRoomStateResponse.answerTimeout;
+	response["players"] = JsonResponsePacketSerializer::vectorToAmpersandString(getRoomStateResponse.players);
+	response["questionCount"] = getRoomStateResponse.questionsCount;
+
+	return JsonResponsePacketSerializer::serializeJson(response, GET_ROOM_STATE_RESPONSE);
+}
+
+/*
+	Method to serialize Json LeaveRoom response into buffer.
+	Input: LeaveRoomResponse (const LeaveRoomResponse&)
+	Output: Buffer containing LeaveRoom response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveRoomResponse& leaveRoomResponse)
+{
+	json response;
+
+	response["status"] = leaveRoomResponse.status;
+
+	return JsonResponsePacketSerializer::serializeJson(response, LEAVE_ROOM_RESPONSE);
 }
