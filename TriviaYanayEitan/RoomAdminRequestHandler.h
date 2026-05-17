@@ -21,7 +21,7 @@ private:
 	// methods
 	RequestResult getErrorResponse(const std::string& errorMsg) const;
 	RequestResult closeRoom(const RequestInfo& requestInfo);
-	RequestResult startGame(const RequestInfo& requestInfo);
+	RequestResult startGame(const RequestInfo& requestInfo); 
 	RequestResult getRoomState(const RequestInfo& requestInfo);
 
 public:
