@@ -279,7 +279,15 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const StartGameResponse& 
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomStateResponse& getRoomStateResponse)
 {
+	json response;
 
+	response["status"] = getRoomStateResponse.status;
+	response["hasGameBegun"] = getRoomStateResponse.hasGameBegun;
+	response["timePerQuestion"] = getRoomStateResponse.answerTimeout;
+	response["players"] = JsonResponsePacketSerializer::vectorToAmpersandString(getRoomStateResponse.players);
+	response["questionCount"] = getRoomStateResponse.questionsCount;
+
+	return JsonResponsePacketSerializer::serializeJson(response, GET_ROOM_STATE_RESPONSE);
 }
 
 /*
