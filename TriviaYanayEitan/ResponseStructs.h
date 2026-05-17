@@ -58,6 +58,7 @@ struct JoinRoomResponse
 
 struct CreateRoomResponse
 {
+	unsigned int roomId;
 	unsigned int status;
 };
 

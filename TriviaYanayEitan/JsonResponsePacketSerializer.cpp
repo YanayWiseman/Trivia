@@ -212,6 +212,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const CreateRoomResponse&
 {
 	json response;
 	response["status"] = createRoomResponse.status;
+	response["roomId"] = createRoomResponse.roomId;
 
 	return JsonResponsePacketSerializer::serializeJson(response, CREATE_ROOM_RESPONSE);
 }
