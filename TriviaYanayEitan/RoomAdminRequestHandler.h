@@ -19,10 +19,10 @@ private:
 	RequestHandlerFactory& m_handlerFactory;
 
 	// methods
+	RequestResult closeRoom(const RequestInfo& requestInfo) const;
+	RequestResult startGame(const RequestInfo& requestInfo) const; 
+	RequestResult getRoomState(const RequestInfo& requestInfo) const;
 	RequestResult getErrorResponse(const std::string& errorMsg) const;
-	RequestResult closeRoom(const RequestInfo& requestInfo);
-	RequestResult startGame(const RequestInfo& requestInfo); 
-	RequestResult getRoomState(const RequestInfo& requestInfo);
 
 public:
 	// c'tor

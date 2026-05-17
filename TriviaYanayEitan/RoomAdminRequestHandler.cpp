@@ -47,35 +47,66 @@ RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestI
 		return getErrorResponse("error: Invalid request!");
 	}
 
-
 	// then sort by request id to handle each request
 	try
 	{
 		switch (requestInfo.id)
 		{
-		case LOGOUT_REQUEST:
-		{
-			return signout(requestInfo);
-		}
-
-		case GET_ROOMS_REQUEST:
-		{
-			return getRooms(requestInfo);
-		}
-
-		case GET_PLAYERS_IN_ROOM_REQUEST:
-		{
-			return getPlayersInRoom(requestInfo);
-		}
-
-		default:
-			return getErrorResponse("error: Wrong request format!");
+			case CLOSE_ROOM_REQUEST:
+			{
+				return closeRoom(requestInfo);
+			}
+			case START_GAME_REQUEST:
+			{
+				return startGame(requestInfo);
+			}
+			case GET_ROOM_STATE_REQUEST:
+			{
+				return getRoomState(requestInfo);
+			}
+			default:
+			{
+				return getErrorResponse("error: Wrong request format!");
+			}
 		}
 	}
 	catch (const std::exception& error)
 	{
 		return getErrorResponse(error.what());
 	}
+}
+
+/*
+	Method to process the closeRoom request
+	input: the request's information
+	output: the request's result
+*/
+
+RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo) const
+{
+
+}
+
+/*
+	Method to process the startGame request
+	input: the request's information
+	output: the request's result
+*/
+
+RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo) const
+{
+
+}
+
+/*
+	Method to process the getRoomState request
+	input: the request's information
+	output: the request's result
+*/
+
+RequestResult RoomAdminRequestHandler::getRoomState(const RequestInfo& requestInfo) const
+{
+
 }
 
 /*
