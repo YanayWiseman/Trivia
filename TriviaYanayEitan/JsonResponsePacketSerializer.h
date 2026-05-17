@@ -30,6 +30,13 @@ public:
 	static Buffer serializeResponse(const JoinRoomResponse& signupResponse);
 	static Buffer serializeResponse(const CreateRoomResponse& signupResponse);
 
+	//V3
+	static Buffer serializeResponse(const CloseRoomResponse& closeRoomResponse);
+	static Buffer serializeResponse(const StartGameResponse& startGameResponse);
+	static Buffer serializeResponse(const GetRoomStateResponse& getRoomStateResponse);
+	static Buffer serializeResponse(const LeaveRoomResponse& leaveRoomResponse);
+
+
 	// singleton
 	static JsonResponsePacketSerializer& getInstance();
 
