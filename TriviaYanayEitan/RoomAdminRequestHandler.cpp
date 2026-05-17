@@ -1,8 +1,8 @@
 #include "RoomAdminRequestHandler.h"
 
 /*
-	Constructor for the MenuRequestHandler object
-	input: the handler factory and the logged user's name
+	Constructor for the RoomAdminRequestHandler object
+	input: the logged user's name and the room's data
 	output: no return values
 */
 
@@ -33,8 +33,66 @@ bool RoomAdminRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) 
 	return false;
 }
 
+/*
+	Method to handle the request (send it and return the result)
+	input: the request info
+	output: the request result
+*/
 
 RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestInfo) const
 {
+	// first check if the request is valid
+	if (!isRequestRelevant(requestInfo))
+	{
+		return getErrorResponse("error: Invalid request!");
+	}
 
+
+	// then sort by request id to handle each request
+	try
+	{
+		switch (requestInfo.id)
+		{
+		case LOGOUT_REQUEST:
+		{
+			return signout(requestInfo);
+		}
+
+		case GET_ROOMS_REQUEST:
+		{
+			return getRooms(requestInfo);
+		}
+
+		case GET_PLAYERS_IN_ROOM_REQUEST:
+		{
+			return getPlayersInRoom(requestInfo);
+		}
+
+		default:
+			return getErrorResponse("error: Wrong request format!");
+		}
+	}
+	catch (const std::exception& error)
+	{
+		return getErrorResponse(error.what());
+	}
+}
+
+/*
+	Method serializes and returns error response.
+	input: the errorMsg
+	output: Request result
+*/
+
+RequestResult RoomAdminRequestHandler::getErrorResponse(const std::string& errorMsg) const
+{
+	RequestResult result;
+
+	ErrorResponse errorResponse;
+	errorResponse.error = errorMsg;
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(errorResponse);
+	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
+
+	return result;
 }
