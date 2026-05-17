@@ -6,8 +6,8 @@
 	output: no return values
 */
 
-RoomAdminRequestHandler::RoomAdminRequestHandler(const std::string& username, const RoomData& roomData)
-	: m_handlerFactory(RequestHandlerFactory::getInstance()), m_roomManager(RoomManager::getInstance()), m_user(username), m_room(roomData)
+RoomAdminRequestHandler::RoomAdminRequestHandler(const LoggedUser& loggedUser, Room& room)
+	: m_handlerFactory(RequestHandlerFactory::getInstance()), m_roomManager(RoomManager::getInstance()), m_user(loggedUser), m_room(room)
 {
 
 }
@@ -87,13 +87,21 @@ RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
 	RequestResult result;
 
 	CloseRoomResponse response;
-	int roomId = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer).roomId;
+
+	// announce all of the room members
+	LeaveRoomResponse leaveRoomResponse;
+	leaveRoomResponse.status = 1;
+	Buffer serializedLeaveResponse = JsonResponsePacketSerializer::serializeResponse(leaveRoomResponse);
+
+	std::vector<std::string> allUsers = this->m_room.getAllUsers();
+	int roomId = this->m_room.getData().id;
+	
 
 	this->m_roomManager.deleteRoom(roomId);
 	response.status = Success;
 
 	// build RequestResult struct
-	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);;
 	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
 
 	return result;
@@ -131,7 +139,29 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 
 RequestResult RoomAdminRequestHandler::getRoomState(const RequestInfo& requestInfo) const
 {
+	RequestResult result;
+	GetRoomStateResponse response;
 
+	RoomData roomData = this->m_room.getData();
+
+	if (this->m_roomManager.checkIfRoomExists(roomData.id))
+	{
+		response.answerTimeout = roomData.timePerQuestion;
+		response.hasGameBegun = roomData.status;
+		response.players = this->m_room.getAllUsers();
+		response.questionsCount = roomData.numOfQuestionsInGame;
+		response.status = 1;
+	}
+	else
+	{
+		response.status = 0;
+	}
+
+	// build RequestResult struct
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
+
+	return result;
 }
 
 /*

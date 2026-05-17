@@ -103,3 +103,21 @@ RoomManager& RoomManager::getInstance()
 	static RoomManager instance;
 	return instance;
 }
+
+/*
+	Method to check if a room exists 
+	input: the room's id
+	output: true if it exists and false otherwise
+*/
+
+bool RoomManager::checkIfRoomExists(int id) const
+{
+	auto it = this->m_rooms.find(id);
+
+	if (it != this->m_rooms.end())
+	{
+		return true;
+	}
+
+	return false;
+}

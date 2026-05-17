@@ -13,7 +13,7 @@ class RoomAdminRequestHandler : public IRequestHandler
 {
 private:
 	//fields
-	Room m_room;
+	Room& m_room;
 	LoggedUser m_user;
 	RoomManager& m_roomManager;
 	RequestHandlerFactory& m_handlerFactory;
@@ -26,7 +26,7 @@ private:
 
 public:
 	// c'tor
-	RoomAdminRequestHandler(const std::string& username, const RoomData& roomData);
+	RoomAdminRequestHandler(const LoggedUser& loggedUser, Room& room);
 
 	// methods
 	bool isRequestRelevant(const RequestInfo& requestInfo) const override;

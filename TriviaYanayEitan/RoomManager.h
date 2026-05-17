@@ -22,6 +22,7 @@ public:
 	void deleteRoom(int id);
 	RoomStatus getRoomState(int id) const;
 	std::vector<RoomData> getRooms();
+	bool checkIfRoomExists(int id) const;
 	Room& getRoom(int id);
 
 	static RoomManager& getInstance();
