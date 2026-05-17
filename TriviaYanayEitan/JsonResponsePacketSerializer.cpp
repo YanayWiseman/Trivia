@@ -249,7 +249,11 @@ std::string JsonResponsePacketSerializer::vectorToAmpersandString(const std::vec
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const CloseRoomResponse& closeRoomResponse)
 {
+	json response;
 
+	response["status"] = closeRoomResponse.status;
+
+	return JsonResponsePacketSerializer::serializeJson(response, CLOSE_ROOM_RESPONSE);
 }
 
 /*
@@ -260,7 +264,11 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const CloseRoomResponse& 
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const StartGameResponse& startGameResponse)
 {
+	json response;
 
+	response["status"] = startGameResponse.status;
+
+	return JsonResponsePacketSerializer::serializeJson(response, START_GAME_RESPONSE);
 }
 
 /*
@@ -282,5 +290,9 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomStateRespons
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveRoomResponse& leaveRoomResponse)
 {
+	json response;
 
+	response["status"] = leaveRoomResponse.status;
+
+	return JsonResponsePacketSerializer::serializeJson(response, LEAVE_ROOM_RESPONSE);
 }
