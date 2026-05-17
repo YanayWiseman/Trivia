@@ -2,12 +2,12 @@
 
 /*
 	Constructor for the MenuRequestHandler object
-	input: the handler factory and the logged user's name
+	input: logged user's name
 	output: no return values
 */
 
-MenuRequestHandler::MenuRequestHandler(RequestHandlerFactory& handlerFactory, const std::string& username)
-	: m_handlerFactory(handlerFactory), m_user(username)
+MenuRequestHandler::MenuRequestHandler(const LoggedUser& user)
+	: m_handlerFactory(RequestHandlerFactory::getInstance()), m_user(user)
 {
 
 }

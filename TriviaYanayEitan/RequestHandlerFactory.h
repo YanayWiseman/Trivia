@@ -8,6 +8,7 @@
 
 class LoginRequestHandler;
 class MenuRequestHandler;
+class RoomMemberRequestHandler;
 class LoggedUser;
 
 
@@ -23,6 +24,7 @@ private:
 public:
 
 	MenuRequestHandler* createMenuRequestHandler(const LoggedUser& usr);
+	RoomMemberRequestHandler* createRoomMemberRequestHandler(const LoggedUser& usr, const Room& room);
 	LoginRequestHandler* createLoginRequestHandler();
 	LoginManager& getLoginmanager() const;
 	StatisticsManager& getStatisticsManager() const;

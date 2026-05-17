@@ -25,7 +25,7 @@ RequestHandlerFactory::RequestHandlerFactory()
 
 MenuRequestHandler* RequestHandlerFactory::createMenuRequestHandler(const LoggedUser& usr)
 {
-    return new MenuRequestHandler(*this, usr.getUsername());
+    return new MenuRequestHandler(usr.getUsername());
 }
 
 
