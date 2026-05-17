@@ -15,7 +15,7 @@ private:
 
 public:
 	// c'tor
-	RoomAdminRequestHandler(RequestHandlerFactory& handlerFactory, const std::string& username);
+	RoomAdminRequestHandler(RequestHandlerFactory& handlerFactory, const std::string& username, const RoomData& roomData);
 
 	// methods
 	bool isRequestRelevant(const RequestInfo& requestInfo) const override;
