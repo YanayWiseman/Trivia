@@ -20,7 +20,7 @@ private:
 
 	// methods
 	RequestResult closeRoom(const RequestInfo& requestInfo) const;
-	RequestResult startGame(const RequestInfo& requestInfo) const; 
+	RequestResult startGame(const RequestInfo& requestInfo) const;
 	RequestResult getRoomState(const RequestInfo& requestInfo) const;
 	RequestResult getErrorResponse(const std::string& errorMsg) const;
 

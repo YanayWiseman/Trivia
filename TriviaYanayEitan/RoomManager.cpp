@@ -59,7 +59,7 @@ RoomStatus RoomManager::getRoomState(int id) const
 	Output: Vector of RoomData of all rooms (std::vector<RoomData>)
 */
 
-std::vector<RoomData> RoomManager::getRooms() const
+std::vector<RoomData> RoomManager::getRooms()
 {
 	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
 	std::vector<RoomData> rooms;

@@ -26,8 +26,9 @@ private:
 public:
 	Room(const RoomData& data);
 	~Room() = default;
-	RoomData getData() const;
+	RoomData getData();
 	Status addUser(const LoggedUser& usr);
 	void removeUser(const LoggedUser& usr);
+	void setStatus(RoomStatus status);
 	std::vector<std::string> getAllUsers() const;
 };

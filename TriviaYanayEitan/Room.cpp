@@ -16,7 +16,7 @@ Room::Room(const RoomData& data) : m_metadata(data) {}
 	Output: Room data (RoomData)
 */
 
-RoomData Room::getData() const
+RoomData Room::getData()
 {
 	std::lock_guard<std::mutex> lock(this->m_mutex);
 
@@ -76,4 +76,15 @@ std::vector<std::string> Room::getAllUsers() const
 	}
 
 	return users;
+}
+
+/*
+	Setter method to se the room status
+	input: the new status
+	output: no return values
+*/
+
+void Room::setStatus(RoomStatus status)
+{
+	this->m_metadata.status = status;
 }

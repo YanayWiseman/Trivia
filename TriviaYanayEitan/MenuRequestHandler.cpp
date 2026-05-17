@@ -205,7 +205,6 @@ RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo) c
 RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 {
 	RequestResult result;
-	JoinRoomRequest request;
 	JoinRoomResponse response;
 
 	int roomId = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer).roomId;

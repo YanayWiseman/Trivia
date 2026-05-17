@@ -21,7 +21,7 @@ public:
 	Status createRoom(const LoggedUser& usr, const RoomData& data);
 	void deleteRoom(int id);
 	RoomStatus getRoomState(int id) const;
-	std::vector<RoomData> getRooms() const;
+	std::vector<RoomData> getRooms();
 	Room& getRoom(int id);
 
 	static RoomManager& getInstance();
