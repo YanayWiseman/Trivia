@@ -234,8 +234,33 @@ RequestResult MenuRequestHandler::createRoom(const RequestInfo& requestInfo) con
 	CreateRoomRequest request = JsonRequestPacketDeserializer::deserializeCreateRoomRequest(requestInfo.buffer);
 	
 	// craft room data
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distr(100000, 999999);
+	std::vector<RoomData> rooms =  this->m_handlerFactory.getRoomManager().getRooms();
+
+	int roomId = 0;
+	bool isUnique = false;
+
+	while (!isUnique)
+	{
+		roomId = distr(gen);
+		isUnique = true;
+
+		for (RoomData room : rooms)
+		{
+			if (room.id == roomId)
+			{
+				isUnique = false;
+				break;
+			}
+		}
+	}
+
+
 	RoomData roomData;
-	roomData.id = request.id;
+	roomData.id = roomId;
 	roomData.maxPlayers = request.maxUsers;
 	roomData.name = request.roomName;
 	roomData.numOfQuestionsInGame = request.questionsCount;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <random>
 #include "IRequestHandler.h"
 #include "LoggedUser.h"
 #include "RequestHandlerFactory.h"
