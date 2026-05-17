@@ -84,7 +84,19 @@ RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestI
 
 RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo) const
 {
+	RequestResult result;
 
+	CloseRoomResponse response;
+	int roomId = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer).roomId;
+
+	this->m_roomManager.deleteRoom(roomId);
+	response.status = Success;
+
+	// build RequestResult struct
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
+
+	return result;
 }
 
 /*
