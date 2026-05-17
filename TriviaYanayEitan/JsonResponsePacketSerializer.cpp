@@ -240,3 +240,47 @@ std::string JsonResponsePacketSerializer::vectorToAmpersandString(const std::vec
 
 	return res;
 }
+
+/*
+	Method to serialize Json CloseRoom response into buffer.
+	Input: CloseRoomResponse (const CloseRoomResponse&)
+	Output: Buffer containing CloseRoom response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const CloseRoomResponse& closeRoomResponse)
+{
+
+}
+
+/*
+	Method to serialize Json StartGameResponse response into buffer.
+	Input: StartGameResponse (const StartGameResponse&)
+	Output: Buffer containing StartGame response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const StartGameResponse& startGameResponse)
+{
+
+}
+
+/*
+	Method to serialize Json GetRoomState response into buffer.
+	Input: GetRoomStateResponse (const GetRoomStateResponse&)
+	Output: Buffer containing GetRoomState response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomStateResponse& getRoomStateResponse)
+{
+
+}
+
+/*
+	Method to serialize Json LeaveRoom response into buffer.
+	Input: LeaveRoomResponse (const LeaveRoomResponse&)
+	Output: Buffer containing LeaveRoom response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveRoomResponse& leaveRoomResponse)
+{
+
+}
