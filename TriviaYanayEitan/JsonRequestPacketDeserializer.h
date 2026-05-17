@@ -18,6 +18,8 @@ public:
 
 	// methods
 
+	static int getBufferLength(const Buffer& buffer);
+
 	//V1
 	static LoginRequest deserializeLoginRequest(const Buffer& buffer);
 	static SignupRequest deserializeSignupRequest(const Buffer& buffer);
@@ -26,6 +28,7 @@ public:
 	static GetPlayersInRoomRequest deserializeGetPlayersRequest(const Buffer& buffer);
 	static JoinRoomRequest deserializeJoinRoomRequest(const Buffer& buffer);
 	static CreateRoomRequest deserializeCreateRoomRequest(const Buffer& buffer);
+
 
 private:
 	// helper methods
