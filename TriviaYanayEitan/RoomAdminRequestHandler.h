@@ -3,6 +3,8 @@
 #include "IRequestHandler.h"
 #include "RequestHandlerFactory.h"
 #include "Room.h"
+#include "RoomManager.h"
+#include "RequestHandlerFactory.h"
 
 class RoomAdminRequestHandler : public IRequestHandler
 {
@@ -15,7 +17,7 @@ private:
 
 public:
 	// c'tor
-	RoomAdminRequestHandler(RequestHandlerFactory& handlerFactory, const std::string& username, const RoomData& roomData);
+	RoomAdminRequestHandler(const std::string& username, const RoomData& roomData);
 
 	// methods
 	bool isRequestRelevant(const RequestInfo& requestInfo) const override;
