@@ -8,6 +8,7 @@
 #include "Constants.h"
 #include "JsonRequestPacketDeserializer.h"
 #include "JsonResponsePacketSerializer.h"
+#include "MenuRequestHandler.h"
 
 class RoomAdminRequestHandler : public IRequestHandler
 {

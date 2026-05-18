@@ -8,12 +8,12 @@
 
 struct RoomData
 {
-	unsigned int id;
+	unsigned int id = 0;
 	std::string name;
-	unsigned int maxPlayers;
-	unsigned int numOfQuestionsInGame;
-	unsigned int timePerQuestion;
-	RoomStatus status;
+	unsigned int maxPlayers = 0;
+	unsigned int numOfQuestionsInGame = 0;
+	unsigned int timePerQuestion = 0;
+	RoomStatus status = Closed;
 };
 
 class Room
@@ -26,7 +26,7 @@ private:
 public:
 	Room(const RoomData& data);
 	~Room() = default;
-	RoomData getData();
+	RoomData getData() const;
 	Status addUser(const LoggedUser& usr);
 	void removeUser(const LoggedUser& usr);
 	void setStatus(RoomStatus status);

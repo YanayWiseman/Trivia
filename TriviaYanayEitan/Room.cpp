@@ -16,7 +16,7 @@ Room::Room(const RoomData& data) : m_metadata(data) {}
 	Output: Room data (RoomData)
 */
 
-RoomData Room::getData()
+RoomData Room::getData() const
 {
 	std::lock_guard<std::mutex> lock(this->m_mutex);
 

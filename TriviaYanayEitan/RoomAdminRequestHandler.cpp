@@ -85,24 +85,14 @@ RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestI
 RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo) const
 {
 	RequestResult result;
-
 	CloseRoomResponse response;
 
-	// announce all of the room members
-	LeaveRoomResponse leaveRoomResponse;
-	leaveRoomResponse.status = 1;
-	Buffer serializedLeaveResponse = JsonResponsePacketSerializer::serializeResponse(leaveRoomResponse);
-
-	std::vector<std::string> allUsers = this->m_room.getAllUsers();
 	int roomId = this->m_room.getData().id;
-	
-
 	this->m_roomManager.deleteRoom(roomId);
 	response.status = Success;
 
-	// build RequestResult struct
-	result.response = JsonResponsePacketSerializer::serializeResponse(response);;
-	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = this->m_handlerFactory.createMenuRequestHandler(this->m_user);
 
 	return result;
 }
@@ -116,15 +106,11 @@ RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
 RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo) const
 {
 	RequestResult result;
-
 	StartGameResponse response;
 
-	int roomId = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer).roomId;
-
-	this->m_roomManager.getRoom(roomId).setStatus(Open);
+	this->m_room.setStatus(Open);
 	response.status = Success;
 
-	// build RequestResult struct
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
 	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
 
@@ -147,7 +133,7 @@ RequestResult RoomAdminRequestHandler::getRoomState(const RequestInfo& requestIn
 	if (this->m_roomManager.checkIfRoomExists(roomData.id))
 	{
 		response.answerTimeout = roomData.timePerQuestion;
-		response.hasGameBegun = roomData.status;
+		response.hasGameBegun = (roomData.status == Open);
 		response.players = this->m_room.getAllUsers();
 		response.questionsCount = roomData.numOfQuestionsInGame;
 		response.status = 1;
@@ -157,7 +143,6 @@ RequestResult RoomAdminRequestHandler::getRoomState(const RequestInfo& requestIn
 		response.status = 0;
 	}
 
-	// build RequestResult struct
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
 	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
 

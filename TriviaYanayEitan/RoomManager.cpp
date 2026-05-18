@@ -112,12 +112,7 @@ RoomManager& RoomManager::getInstance()
 
 bool RoomManager::checkIfRoomExists(int id) const
 {
+	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
 	auto it = this->m_rooms.find(id);
-
-	if (it != this->m_rooms.end())
-	{
-		return true;
-	}
-
-	return false;
+	return it != this->m_rooms.end();
 }
