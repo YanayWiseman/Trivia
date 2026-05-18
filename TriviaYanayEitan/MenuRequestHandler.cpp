@@ -210,7 +210,7 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 	int roomId = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer).roomId;
 	Room& room = this->m_handlerFactory.getRoomManager().getRoom(roomId);
 
-	if (room.getData().status == Open)
+	if (room.getData().status == InGame || room.getData().status == Closed)
 	{
 		// game already started, cant join
 		response.status = Failiure;
@@ -223,7 +223,16 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 	
 	// build RequestResult struct
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
-	result.newHandler = const_cast<MenuRequestHandler*>(this);
+	
+	if (response.status == Success)
+	{
+		Room& room = this->m_handlerFactory.getRoomManager().getRoom(roomId);
+		result.newHandler = this->m_handlerFactory.createRoomMemberRequestHandler(this->m_user, room);
+	}
+	else
+	{
+		result.newHandler = this->m_handlerFactory.createMenuRequestHandler(this->m_user);
+	}
 
 	return result;
 }
@@ -274,13 +283,22 @@ RequestResult MenuRequestHandler::createRoom(const RequestInfo& requestInfo) con
 	roomData.name = request.roomName;
 	roomData.numOfQuestionsInGame = request.questionsCount;
 	roomData.timePerQuestion = request.answerTimeout;
-	roomData.status = Closed;
+	roomData.status = Open;
 
 	response.status = this->m_handlerFactory.getRoomManager().createRoom(this->m_user, roomData);
 
 	// build RequestResult struct
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
-	result.newHandler = const_cast<MenuRequestHandler*>(this);
+
+	if (response.status == Success)
+	{
+		Room& room = this->m_handlerFactory.getRoomManager().getRoom(roomId);
+		result.newHandler = this->m_handlerFactory.createRoomAdminRequestHandler(this->m_user, room);
+	}
+	else
+	{
+		result.newHandler = this->m_handlerFactory.createMenuRequestHandler(this->m_user);
+	}
 
 	return result;
 }
