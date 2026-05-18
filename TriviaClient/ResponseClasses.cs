@@ -112,7 +112,11 @@ namespace TriviaClient
         [JsonProperty("status")]
         public uint Status { get; set; }
     }
-
+    public class StartGameResponse
+    {
+        [JsonProperty("status")]
+        public uint Status { get; set; }
+    }
 
     public class CloseRoomResponse
     {

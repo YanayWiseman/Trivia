@@ -38,7 +38,7 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-                <Button Content="CLOSE ROOM" Height="40" FontSize="17" FontFamily="Permanent Marker" Background="Red" Click="CloseRoom_Click">
+                <Button x:Name="CloseRoomButton" Content="CLOSE ROOM" Margin="0,5,0,0" Height="40" FontSize="17" FontFamily="Permanent Marker" Background="Red" Click="CloseRoom_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Border Background="{TemplateBinding Background}" CornerRadius="8">

@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TriviaClient"
         mc:Ignorable="d"
-        Title="YanayAndEitanTrivia" Height="450" Width="800">
+        Title="YanayAndEitanTrivia" Height="500" Width="850"
+        >
     <Grid>
-        <Frame x:Name="MainFrame" 
+        <Frame x:Name="MainFrame"
                NavigationUIVisibility="Hidden" 
                Source="MainPage.xaml" />
     </Grid>

@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-
 namespace TriviaClient
 {
     public partial class CreateRoomPage : Page
@@ -80,7 +79,7 @@ namespace TriviaClient
                 if (response.Status == 1)
                 {
                     MessageBox.Show("Room created successfully.");
-                    this.NavigationService.Navigate(new WaitingPage(id));
+                    this.NavigationService.Navigate(new WaitingPage(id, isAdmin: true));
                 }
                 else
                 {

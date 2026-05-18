@@ -94,7 +94,7 @@ namespace TriviaClient
 
                     GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
 
-                    this.NavigationService.Navigate(new WaitingPage(request.RoomId));
+                    this.NavigationService.Navigate(new WaitingPage(request.RoomId, isAdmin: false));
                     MessageBox.Show("Status: " + getRoomState.Status + "\nRoom Status: " + getRoomState.roomStatus + "\nTime per Question: " + getRoomState.TimePerQuestion + "\nNum of questions per game: " + getRoomState.NumOfQuestionsInGame + "\nPlayers: " + getRoomState.PlayerListRaw);
                 }
                 else
