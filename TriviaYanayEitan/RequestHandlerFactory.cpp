@@ -2,6 +2,8 @@
 #include "LoginRequestHandler.h"
 #include "MenuRequestHandler.h"
 #include "LoggedUser.h"
+#include "RoomAdminRequestHandler.h"
+#include "RoomMemberRequestHandler.h"
 
 /*
     Function constructs handler factory.
@@ -25,14 +27,30 @@ RequestHandlerFactory::RequestHandlerFactory()
 
 MenuRequestHandler* RequestHandlerFactory::createMenuRequestHandler(const LoggedUser& usr)
 {
-    return new MenuRequestHandler(usr.getUsername());
+    return new MenuRequestHandler(usr);
 }
 
-RoomMemberRequestHandler* RequestHandlerFactory::createRoomMemberRequestHandler(const LoggedUser& usr, const Room& room)
+/*
+    Function creates a new RoomMemberRequestHandler and returns it.
+    Input: None
+    Output: New RoomMemberRequestHandler object(RoomMemberRequestHandler*)
+*/
+
+RoomMemberRequestHandler* RequestHandlerFactory::createRoomMemberRequestHandler(const LoggedUser& usr, Room& room)
 {
-    return nullptr;
+    return new RoomMemberRequestHandler(usr, room);
 }
 
+/*
+    Function creates a new RoomAdminRequestHandler and returns it.
+    Input: None
+    Output: New RoomAdminRequestHandler object(RoomAdminRequestHandler*)
+*/
+
+RoomAdminRequestHandler* RequestHandlerFactory::createRoomAdminRequestHandler(const LoggedUser& usr, Room& room)
+{
+    return new RoomAdminRequestHandler(usr, room);
+}
 
 /*
     Function creates a new login request handler and returns it.

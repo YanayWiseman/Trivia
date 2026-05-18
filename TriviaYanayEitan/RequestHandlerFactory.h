@@ -8,9 +8,9 @@
 
 class LoginRequestHandler;
 class MenuRequestHandler;
-class RoomMemberRequestHandler;
 class LoggedUser;
-
+class RoomAdminRequestHandler;
+class RoomMemberRequestHandler;
 
 class RequestHandlerFactory
 {
@@ -18,13 +18,15 @@ private:
 	LoginManager& m_loginManager;
 	StatisticsManager& m_StatisticsManager;
 	RoomManager& m_roomManager;
+
 	IDatabase* m_database; 
 	RequestHandlerFactory();
 
 public:
 
 	MenuRequestHandler* createMenuRequestHandler(const LoggedUser& usr);
-	RoomMemberRequestHandler* createRoomMemberRequestHandler(const LoggedUser& usr, const Room& room);
+	RoomMemberRequestHandler* createRoomMemberRequestHandler(const LoggedUser& usr, Room& room);
+	RoomAdminRequestHandler* createRoomAdminRequestHandler(const LoggedUser& usr,  Room& room);
 	LoginRequestHandler* createLoginRequestHandler();
 	LoginManager& getLoginmanager() const;
 	StatisticsManager& getStatisticsManager() const;
