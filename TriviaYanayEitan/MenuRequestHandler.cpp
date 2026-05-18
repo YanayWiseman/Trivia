@@ -205,12 +205,21 @@ RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo) c
 RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 {
 	RequestResult result;
-	JoinRoomRequest request;
 	JoinRoomResponse response;
 
 	int roomId = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer).roomId;
-	this->m_handlerFactory.getRoomManager().getRoom(roomId).addUser(this->m_user.getUsername());
-	response.status = Success;
+	Room& room = this->m_handlerFactory.getRoomManager().getRoom(roomId);
+
+	if (room.getData().status == Open)
+	{
+		// game already started, cant join
+		response.status = Failiure;
+	}
+	else
+	{
+		room.addUser(this->m_user);
+		response.status = Success;
+	}
 	
 	// build RequestResult struct
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
