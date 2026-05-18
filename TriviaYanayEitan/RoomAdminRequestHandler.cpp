@@ -1,16 +1,14 @@
 #include "RoomAdminRequestHandler.h"
 
+
 /*
-	Constructor for the RoomAdminRequestHandler object
-	input: the logged user's name and the room's data
-	output: no return values
+	Constructor for RoomAdminRequestHandler.
+	Input: loggedUser (const LoggedUser&), room (Room&)
+	Output: none
 */
 
-RoomAdminRequestHandler::RoomAdminRequestHandler(const LoggedUser& loggedUser, Room& room)
-	: m_handlerFactory(RequestHandlerFactory::getInstance()), m_roomManager(RoomManager::getInstance()), m_user(loggedUser), m_room(room)
-{
-
-}
+RoomAdminRequestHandler::RoomAdminRequestHandler(const LoggedUser& loggedUser, Room& room) : RoomRequestHandler(loggedUser, room)
+{}
 
 /*
 	Method to check if the request code is valid
@@ -120,37 +118,6 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 	return result;
 }
 
-/*
-	Method to process the getRoomState request
-	input: the request's information
-	output: the request's result
-*/
-
-RequestResult RoomAdminRequestHandler::getRoomState(const RequestInfo& requestInfo) const
-{
-	RequestResult result;
-	GetRoomStateResponse response;
-
-	RoomData roomData = this->m_room.getData();
-
-	if (this->m_roomManager.checkIfRoomExists(roomData.id))
-	{
-		response.answerTimeout = roomData.timePerQuestion;
-		response.hasGameBegun = (roomData.status == Open);
-		response.players = this->m_room.getAllUsers();
-		response.questionsCount = roomData.numOfQuestionsInGame;
-		response.status = 1;
-	}
-	else
-	{
-		response.status = 0;
-	}
-
-	result.response = JsonResponsePacketSerializer::serializeResponse(response);
-	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
-
-	return result;
-}
 
 /*
 	Method serializes and returns error response.
@@ -170,3 +137,4 @@ RequestResult RoomAdminRequestHandler::getErrorResponse(const std::string& error
 
 	return result;
 }
+

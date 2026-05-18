@@ -3,17 +3,15 @@
 #include "RequestHandlerFactory.h"
 
 
+
 /*
-	Constructor for the RoomMemberRequestHandler object
-	input: username (const std::string&), roomData (const RoomData&)
-	output: no return values
+	Constructor for RoomMemberRequestHandler.
+	Input: loggedUser (const LoggedUser&), room (Room&)
+	Output: none
 */
 
-RoomMemberRequestHandler::RoomMemberRequestHandler(const LoggedUser& user, Room& room) : 
-	m_handlerFactory(RequestHandlerFactory::getInstance()), m_user(user), 
-	m_roomManager(RoomManager::getInstance()), m_room(room)
+RoomMemberRequestHandler::RoomMemberRequestHandler(const LoggedUser& loggedUser, Room& room) : RoomRequestHandler(loggedUser, room)
 {}
-
 
 /*
 	Method to check if the request code is valid
@@ -109,40 +107,6 @@ RequestResult RoomMemberRequestHandler::leaveRoom(const RequestInfo& info) const
 
 	return result;
 }
-
-
-/*
-	Function returns room state.
-	Input: info (const RequestInfo& info)
-	Output: Request result (RequestResult)
-*/
-
-RequestResult RoomMemberRequestHandler::getRoomState(const RequestInfo& info) const
-{
-	RequestResult result;
-	GetRoomStateResponse getRoomStateResponse;
-	RoomData roomState;
-
-	try
-	{
-		roomState = this->m_room.getData();
-		getRoomStateResponse.answerTimeout = roomState.timePerQuestion;
-		getRoomStateResponse.hasGameBegun = roomState.status;
-		getRoomStateResponse.players = this->m_room.getAllUsers();
-		getRoomStateResponse.questionsCount = roomState.numOfQuestionsInGame;
-		getRoomStateResponse.status = Success;
-	}
-	catch (const std::exception& error)
-	{
-		getRoomStateResponse.status = Failiure;
-	}
-
-	result.response = JsonResponsePacketSerializer::serializeResponse(getRoomStateResponse);
-	result.newHandler = const_cast<RoomMemberRequestHandler*>(this);
-
-	return result;
-}
-
 
 
 /*

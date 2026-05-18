@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RoomRequestHandler.h"
 #include "IRequestHandler.h"
 #include "RequestHandlerFactory.h"
 #include "Room.h"
@@ -10,23 +11,16 @@
 #include "JsonResponsePacketSerializer.h"
 #include "MenuRequestHandler.h"
 
-class RoomAdminRequestHandler : public IRequestHandler
+class RoomAdminRequestHandler : public RoomRequestHandler
 {
 private:
-	//fields
-	Room& m_room;
-	LoggedUser m_user;
-	RoomManager& m_roomManager;
-	RequestHandlerFactory& m_handlerFactory;
-
+	
 	// methods
 	RequestResult closeRoom(const RequestInfo& requestInfo) const;
 	RequestResult startGame(const RequestInfo& requestInfo) const;
-	RequestResult getRoomState(const RequestInfo& requestInfo) const;
 	RequestResult getErrorResponse(const std::string& errorMsg) const;
 
 public:
-	// c'tor
 	RoomAdminRequestHandler(const LoggedUser& loggedUser, Room& room);
 
 	// methods
