@@ -47,3 +47,33 @@ RequestResult RoomRequestHandler::getRoomState(const RequestInfo& info) const
 }
 
 
+/*
+	Method to process the getPlayersInRoom request
+	input: the request's information
+	output: the request's result
+*/
+
+RequestResult RoomRequestHandler::getPlayersInRoom(const RequestInfo& requestInfo) const
+{
+	RequestResult result;
+	GetPlayersInRoomResponse response;
+
+	try
+	{
+		GetPlayersInRoomRequest request = JsonRequestPacketDeserializer::deserializeGetPlayersRequest(requestInfo.buffer);
+
+		response.status = Success;
+		response.players = this->m_handlerFactory.getRoomManager().getRoom(request.roomId).getAllUsers();
+	}
+	catch (...)
+	{
+
+		response.status = Failiure;
+		response.players = std::vector<std::string>();
+	}
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<RoomRequestHandler*>(this);
+
+	return result;
+}

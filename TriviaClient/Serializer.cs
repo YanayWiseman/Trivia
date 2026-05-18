@@ -9,22 +9,7 @@ namespace TriviaClient
 {
     internal static class Serializer
 	{
-        private enum RequestCode
-        {
-            LoginRequestCode = 100,
-            SignupRequestCode,
-            LogoutRequestCode,
-            GetRoomsRequestCode,
-            GetPlayersInRoomRequestCode,
-            HighScoreRequestCode,
-            GetPersonalStatsRequestCode,
-            JoinRoomRequestCode,
-            CreateRoomRequestCode,
-            CloseRoomRequestCode,
-            StartGameRequestCode,
-            GetRoomStateRequestCode,
-            LeaveRoomRequestCode
-        }
+
 
         /*
             Function Serializes JSON object into buffer.

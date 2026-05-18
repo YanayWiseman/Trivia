@@ -1,6 +1,8 @@
 #pragma once
 
 #include "JsonResponsePacketSerializer.h"
+#include "JsonRequestPacketDeserializer.h"
+#include "RequestStructs.h"
 #include "ResponseStructs.h"
 #include "IRequestHandler.h"
 #include "Room.h"
@@ -20,6 +22,7 @@ protected:
 
 	// methods
 	RequestResult getRoomState(const RequestInfo& requestInfo) const;
+	RequestResult getPlayersInRoom(const RequestInfo& requestInfo) const;
 
 
 public:

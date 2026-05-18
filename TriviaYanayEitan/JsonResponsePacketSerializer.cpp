@@ -129,7 +129,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& g
 		roomJson["maxPlayers"] = room.maxPlayers;
 		roomJson["numOfQuestionsInGame"] = room.numOfQuestionsInGame;
 		roomJson["timePerQuestion"] = room.timePerQuestion;
-		roomJson["status"] = room.status;
+		roomJson["roomStatus"] = room.status;
 
 		roomsArray.push_back(roomJson);
 	}
@@ -152,6 +152,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetPlayersInRoomRes
 
 	// we need to craft the players in room string
 	response["PlayersInRoom"] = JsonResponsePacketSerializer::vectorToAmpersandString(getPlayersInRoomResponse.players);
+	response["status"] = getPlayersInRoomResponse.status;
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_PLAYERS_IN_ROOM_RESPONSE);
 }
