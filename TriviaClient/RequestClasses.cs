@@ -51,9 +51,6 @@ namespace TriviaClient
 
     public class CreateRoomRequest
     {
-        [JsonProperty("id")]
-        public uint Id { get; set; }
-
         [JsonProperty("roomName")]
         public string RoomName { get; set; } = "";
 

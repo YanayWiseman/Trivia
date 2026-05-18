@@ -63,7 +63,6 @@ namespace TriviaClient
 
             CreateRoomRequest request = new CreateRoomRequest
             {
-                Id = 0,
                 RoomName = roomName,
                 MaxUsers = (uint)maxPlayers,
                 QuestionsCount = 10,
@@ -76,10 +75,12 @@ namespace TriviaClient
 
                 CreateRoomResponse response = ClientSession.Communicator.SendRequest<CreateRoomResponse>(requestBuffer);
 
+                uint id = response.RoomId;
+
                 if (response.Status == 1)
                 {
                     MessageBox.Show("Room created successfully.");
-                    this.NavigationService.Navigate(new JoinRoomPage());
+                    this.NavigationService.Navigate(new WaitingPage(id));
                 }
                 else
                 {
