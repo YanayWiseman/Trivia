@@ -44,6 +44,9 @@ namespace TriviaClient
 
     public class GetPlayersInRoomResponse
     {
+        [JsonProperty("status")]
+        public uint Status { get; set; }
+
         [JsonProperty("PlayersInRoom")]
         public string? PlayersRaw { get; set; }
 
@@ -104,14 +107,34 @@ namespace TriviaClient
         public uint Status { get; set; }
     }
 
-    public class CreateRoomResponse
+    public class LeaveRoomResponse
     {
         [JsonProperty("status")]
         public uint Status { get; set; }
     }
 
+
+    public class CloseRoomResponse
+    {
+        [JsonProperty("status")]
+        public uint Status { get; set; }
+    }
+
+
+    public class CreateRoomResponse
+    {
+        [JsonProperty("status")]
+        public uint Status { get; set; }
+
+        [JsonProperty("roomId")]
+        public uint RoomId { get; set; }
+    }
+
     public class RoomData
     {
+        [JsonProperty("status")]
+        public uint Status { get; set; }
+
         [JsonProperty("id")]
         public uint Id { get; set; }
 
@@ -127,13 +150,44 @@ namespace TriviaClient
         [JsonProperty("timePerQuestion")]
         public uint TimePerQuestion { get; set; }
 
-        [JsonProperty("status")]
-        public RoomStatus Status { get; set; }
+        [JsonProperty("roomStatus")]
+        public RoomStatus roomStatus { get; set; }
     }
+
+
+    public class GetRoomStateResponse
+    {
+        [JsonProperty("status")]
+        public uint Status { get; set; }
+
+        [JsonProperty("hasGameBegun")]
+        public RoomStatus roomStatus { get; set; }
+
+        [JsonProperty("players")]
+        public string? PlayerListRaw { get; set; }
+
+        public List<string> GetPlayers()
+        {
+            if (string.IsNullOrEmpty(PlayerListRaw))
+            {
+                return new List<string>();
+            }
+
+            return PlayerListRaw.Split('&').ToList();
+        }
+
+        [JsonProperty("questionCount")]
+        public uint NumOfQuestionsInGame { get; set; }
+
+        [JsonProperty("timePerQuestion")]
+        public uint TimePerQuestion { get; set; }
+    }
+
 
     public enum RoomStatus
     {
         Open,
-        Closed
+        Closed,
+        InGame
     }
 }

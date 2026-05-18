@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Printing.IndexedProperties;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -88,6 +89,13 @@ namespace TriviaClient
                 {
                     MessageBox.Show("Joined room successfully.");
                     // later: navigate to waiting room
+
+                    byte[] getRoomStateRequestBuffer = { (byte)RequestCode.GetRoomStateRequestCode  };
+
+                    GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
+
+                    this.NavigationService.Navigate(new WaitingPage(request.RoomId));
+                    MessageBox.Show("Status: " + getRoomState.Status + "\nRoom Status: " + getRoomState.roomStatus + "\nTime per Question: " + getRoomState.TimePerQuestion + "\nNum of questions per game: " + getRoomState.NumOfQuestionsInGame + "\nPlayers: " + getRoomState.PlayerListRaw);
                 }
                 else
                 {
