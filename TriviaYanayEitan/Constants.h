@@ -36,4 +36,4 @@ enum ResponseCode
 };
 
 enum Status { Failiure, Success };
-enum RoomStatus { Open, Closed };
+enum RoomStatus { Open, Closed, InGame };
