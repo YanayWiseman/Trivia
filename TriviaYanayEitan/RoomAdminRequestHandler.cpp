@@ -25,10 +25,11 @@ bool RoomAdminRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) 
 		return false;
 	}
 
-	if (requestInfo.id >= CLOSE_ROOM_REQUEST && requestInfo.id <= GET_ROOM_STATE_REQUEST)
+	if (requestInfo.id == CLOSE_ROOM_REQUEST || requestInfo.id == START_GAME_REQUEST || requestInfo.id == GET_ROOM_STATE_REQUEST)
 	{
 		return true;
 	}
+
 
 	return false;
 }
@@ -88,7 +89,9 @@ RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
 	CloseRoomResponse response;
 
 	int roomId = this->m_room.getData().id;
+	this->m_room.setStatus(Closed);
 	this->m_roomManager.deleteRoom(roomId);
+
 	response.status = Success;
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
@@ -108,7 +111,7 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 	RequestResult result;
 	StartGameResponse response;
 
-	this->m_room.setStatus(Open);
+	this->m_room.setStatus(InGame);
 	response.status = Success;
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
@@ -163,7 +166,7 @@ RequestResult RoomAdminRequestHandler::getErrorResponse(const std::string& error
 	errorResponse.error = errorMsg;
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(errorResponse);
-	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
+	result.newHandler = nullptr;
 
 	return result;
 }
