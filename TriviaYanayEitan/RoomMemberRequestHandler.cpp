@@ -86,19 +86,59 @@ RequestResult RoomMemberRequestHandler::leaveRoom(const RequestInfo& info) const
 	RequestResult result;
 	LeaveRoomResponse leaveRoomResponse;
 
-	leaveRoomResponse.status;
+	try
+	{
+		this->m_room.removeUser(this->m_user);
+		leaveRoomResponse.status = Success;
+	}
+	catch (const std::exception& error)
+	{
+		leaveRoomResponse.status = Failiure;
+	}
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(leaveRoomResponse);
 
 	if (leaveRoomResponse.status == Failiure)
 	{
 		result.newHandler = const_cast<RoomMemberRequestHandler*>(this);
-
 	}
 	else
 	{
-		result.newHandler = this->m_handlerFactory.createMenuRequestHandler(leaveRoomResponse.username);
+		result.newHandler = this->m_handlerFactory.createMenuRequestHandler(this->m_user);
 	}
+
+	return result;
+}
+
+
+/*
+	Function returns room state.
+	Input: info (const RequestInfo& info)
+	Output: Request result (RequestResult)
+*/
+
+RequestResult RoomMemberRequestHandler::getRoomState(const RequestInfo& info) const
+{
+	RequestResult result;
+	GetRoomStateResponse getRoomStateResponse;
+	RoomData roomState;
+
+	try
+	{
+		roomState = this->m_room.getData();
+		getRoomStateResponse.answerTimeout = roomState.timePerQuestion;
+		getRoomStateResponse.hasGameBegun = roomState.status;
+		getRoomStateResponse.players = this->m_room.getAllUsers();
+		getRoomStateResponse.questionsCount = roomState.numOfQuestionsInGame;
+		getRoomStateResponse.status = Success;
+	}
+	catch (const std::exception& error)
+	{
+		getRoomStateResponse.status = Failiure;
+	}
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(getRoomStateResponse);
+	result.newHandler = const_cast<RoomMemberRequestHandler*>(this);
 
 	return result;
 }

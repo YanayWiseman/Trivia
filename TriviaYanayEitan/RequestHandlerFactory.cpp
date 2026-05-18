@@ -28,6 +28,11 @@ MenuRequestHandler* RequestHandlerFactory::createMenuRequestHandler(const Logged
     return new MenuRequestHandler(usr.getUsername());
 }
 
+RoomMemberRequestHandler* RequestHandlerFactory::createRoomMemberRequestHandler(const LoggedUser& usr, const Room& room)
+{
+    return nullptr;
+}
+
 
 /*
     Function creates a new login request handler and returns it.
