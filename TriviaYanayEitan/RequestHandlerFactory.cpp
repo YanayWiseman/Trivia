@@ -25,7 +25,12 @@ RequestHandlerFactory::RequestHandlerFactory()
 
 MenuRequestHandler* RequestHandlerFactory::createMenuRequestHandler(const LoggedUser& usr)
 {
-    return new MenuRequestHandler(*this, usr.getUsername());
+    return new MenuRequestHandler(usr.getUsername());
+}
+
+RoomMemberRequestHandler* RequestHandlerFactory::createRoomMemberRequestHandler(const LoggedUser& usr, const Room& room)
+{
+    return nullptr;
 }
 
 

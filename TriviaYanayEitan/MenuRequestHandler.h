@@ -28,7 +28,7 @@ private:
 
 public:
 	// c'tor
-	MenuRequestHandler(RequestHandlerFactory& handlerFactory, const std::string& username);
+	MenuRequestHandler(const LoggedUser& user);
 
 	// methods
 	bool isRequestRelevant(const RequestInfo& requestInfo) const override;
