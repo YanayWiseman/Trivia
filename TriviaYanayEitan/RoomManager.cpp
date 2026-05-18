@@ -59,7 +59,7 @@ RoomStatus RoomManager::getRoomState(int id) const
 	Output: Vector of RoomData of all rooms (std::vector<RoomData>)
 */
 
-std::vector<RoomData> RoomManager::getRooms() const
+std::vector<RoomData> RoomManager::getRooms()
 {
 	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
 	std::vector<RoomData> rooms;
@@ -102,4 +102,17 @@ RoomManager& RoomManager::getInstance()
 {
 	static RoomManager instance;
 	return instance;
+}
+
+/*
+	Method to check if a room exists 
+	input: the room's id
+	output: true if it exists and false otherwise
+*/
+
+bool RoomManager::checkIfRoomExists(int id) const
+{
+	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
+	auto it = this->m_rooms.find(id);
+	return it != this->m_rooms.end();
 }
