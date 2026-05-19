@@ -29,7 +29,7 @@
 
                 <ListBox x:Name="PlayerBox" Height="180" FontSize="16" FontFamily="Permanent Marker" Margin="0,0,0,20"/>
 
-                <Button Content="START GAME" Height="40" FontSize="17" FontFamily="Permanent Marker" Background="Red" Click="StartGame_Click">
+                <Button x:Name="StartGameButton" Content="START GAME" Height="40" FontSize="17" FontFamily="Permanent Marker" Background="Red" Click="StartGame_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="{TemplateBinding Background}" CornerRadius="8">

@@ -30,6 +30,8 @@ namespace TriviaClient
             {
                 CloseRoomButton.IsEnabled = false;
                 CloseRoomButton.Background = new SolidColorBrush(Colors.Gray);
+                StartGameButton.IsEnabled = false;
+                StartGameButton.Background = new SolidColorBrush(Colors.Gray);
             }
             LoadPlayers();
         }
