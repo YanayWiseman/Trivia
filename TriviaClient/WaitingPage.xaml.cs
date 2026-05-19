@@ -19,6 +19,8 @@ namespace TriviaClient
     {
         private uint roomId;
         private bool isAdmin;
+        private Thread t;
+        private volatile bool stopThread;
         public WaitingPage(uint roomId, bool isAdmin = false)
         {
             this.roomId = roomId;
@@ -33,42 +35,77 @@ namespace TriviaClient
                 StartGameButton.IsEnabled = false;
                 StartGameButton.Background = new SolidColorBrush(Colors.Gray);
             }
-            LoadPlayers();
+            this.stopThread = false;
+
+            // Start the polling thread
+            ThreadStart ts = new ThreadStart(FetchPlayersLoop);
+            this.t = new Thread(ts);
+            t.IsBackground = true;
+            t.Start();
         }
-        private void LoadPlayers()
+        private void FetchPlayersLoop()
+        {
+            while (!this.stopThread)
+            {
+                try
+                {
+
+                    byte[] getRoomStateRequestBuffer = { (byte)RequestCode.GetRoomStateRequestCode };
+
+                    GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
+
+                    if (getRoomState.roomStatus == RoomStatus.Closed)
+                    {
+                        // leave the room
+                        byte[] leaveRoomRequestBuffer = { (byte)RequestCode.LeaveRoomRequestCode };
+                        LeaveRoomResponse leaveRoomResponse = ClientSession.Communicator.SendRequest<LeaveRoomResponse>(leaveRoomRequestBuffer);
+                        
+                        // stop the thread
+                        this.stopThread = true;
+                        this.Dispatcher.Invoke(() => MessageBox.Show("Room has been closed."));
+
+                        this.NavigationService.Navigate(new JoinRoomPage());
+
+                    }
+
+                    GetPlayersInRoomRequest request = new GetPlayersInRoomRequest();
+                    request.RoomId = this.roomId;
+
+                    byte[] requestBuffer = Serializer.serializeGetPlayersRequest(request);
+
+                    GetPlayersInRoomResponse response = ClientSession.Communicator.SendRequest<GetPlayersInRoomResponse>(requestBuffer);
+
+                    if (response.Status == 1)
+                    {
+                        this.Dispatcher.Invoke(() => UpdateUiWithPlayers(response.GetPlayers()));
+                    }
+                    else
+                    {
+
+                        this.Dispatcher.Invoke(() => MessageBox.Show("Failed to load players."));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (!stopThread)
+                    {
+                        this.Dispatcher.Invoke(() => MessageBox.Show("Server error: " + ex.Message));
+                    }
+                }
+                Thread.Sleep(3000);
+            }
+        }
+        private void UpdateUiWithPlayers(List<string> players)
         {
             PlayerBox.Items.Clear();
 
-            try
+            int i = 0;
+            for (i = 0; i < players.Count; i++)
             {
-                GetPlayersInRoomRequest request = new GetPlayersInRoomRequest();
-                request.RoomId = this.roomId;
-
-                byte[] requestBuffer = Serializer.serializeGetPlayersRequest(request);
-
-                GetPlayersInRoomResponse response = ClientSession.Communicator.SendRequest<GetPlayersInRoomResponse>(requestBuffer);
-
-                if (response.Status != 1)
-                {
-                    MessageBox.Show("Failed to load players.");
-                    return;
-                }
-
-                List<string> usernames = response.GetPlayers();
-
-                PlayerBox.Items.Clear();
-
-                int i = 0;
-                for (i = 0; i < usernames.Count; i++)
-                {
-                    PlayerBox.Items.Add(usernames[i]);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Server error: " + ex.Message);
+                PlayerBox.Items.Add(players[i]);
             }
         }
+
         private void LeaveRoom_Click(object sender, RoutedEventArgs e)
         {
             byte[] requestBuffer = { (byte)RequestCode.LeaveRoomRequestCode };
@@ -91,7 +128,7 @@ namespace TriviaClient
             StartGameResponse response = ClientSession.Communicator.SendRequest<StartGameResponse>(requestBuffer);
             if (response.Status == 1)
             {
-                this.NavigationService.GoBack();
+                this.stopThread = true;
             }
             else
             {
