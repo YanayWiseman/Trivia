@@ -90,9 +90,7 @@ RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
 	RequestResult result;
 	CloseRoomResponse response;
 
-	int roomId = this->m_room.getData().id;
 	this->m_room.setStatus(Closed);
-	this->m_roomManager.deleteRoom(roomId);
 
 	response.status = Success;
 
