@@ -19,27 +19,13 @@ namespace TriviaClient
 {
     public partial class MenuPage : Page
     {
-        public MenuPage()
+        public MenuPage(string username)
         {
             InitializeComponent();
 
-            Loaded += MenuPage_Loaded;
+            userNameTextBlock.Text = username;
         }
 
-        private void MenuPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            Window parentWindow = Window.GetWindow(this);
-
-            if (parentWindow != null)
-            {
-                parentWindow.Closing -= ParentWindow_Closing;
-                parentWindow.Closing += ParentWindow_Closing;
-            }
-        }
-        private void ParentWindow_Closing(object? sender, CancelEventArgs e)
-        {
-            PerformLogout();
-        }
         private void CreateRoom_Click(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(new CreateRoomPage());
@@ -52,34 +38,14 @@ namespace TriviaClient
         {
             this.NavigationService.Navigate(new StatisticsPage());
         }
-        private void PerformLogout()
-        {
-            try
-            {
-                byte[] requestBuffer = Serializer.SerializeLogoutRequest();
-
-                ClientSession.Communicator.SendRequest<LogoutResponse>(requestBuffer);
-            }
-            catch
-            {
-            }
-
-            try
-            {
-                ClientSession.Communicator.Disconnect();
-            }
-            catch
-            {
-            }
-        }
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                PerformLogout();
-
+                byte[] requestBuffer = Serializer.SerializeLogoutRequest();
+                ClientSession.Communicator.SendRequest<LogoutResponse>(requestBuffer);
+                ClientSession.Communicator.Disconnect();
                 ClientSession.Communicator = new Communicator();
-
                 this.NavigationService.Navigate(new MainPage());
             }
             catch (Exception ex)
@@ -87,11 +53,9 @@ namespace TriviaClient
                 MessageBox.Show("Server error: " + ex.Message);
             }
         }
-
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
-            PerformLogout();
-            Application.Current.Shutdown();
+            Application.Current.Shutdown();  // MainWindow.Closing handles the rest
         }
     }
 }

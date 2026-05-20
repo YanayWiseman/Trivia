@@ -23,7 +23,10 @@ namespace TriviaClient
         }
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new MenuPage());
+            if (this.NavigationService.CanGoBack)
+            {
+                this.NavigationService.GoBack();
+            }
         }
 
         private void MyStatistics_Click(object sender, RoutedEventArgs e)

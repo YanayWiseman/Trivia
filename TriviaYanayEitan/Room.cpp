@@ -77,3 +77,14 @@ std::vector<std::string> Room::getAllUsers() const
 
 	return users;
 }
+
+/*
+	Setter method to se the room status
+	input: the new status
+	output: no return values
+*/
+
+void Room::setStatus(RoomStatus status)
+{
+	this->m_metadata.status = status;
+}

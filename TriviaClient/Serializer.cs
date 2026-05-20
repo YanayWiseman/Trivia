@@ -9,15 +9,6 @@ namespace TriviaClient
 {
     internal static class Serializer
 	{
-        private const int LoginRequestCode = 1;
-        private const int SignupRequestCode = 3;
-        private const int LogoutRequestCode = 13;
-        private const int GetRoomsRequestCode = 14;
-        private const int GetPlayersInRoomRequestCode = 15;
-        private const int HighScoreRequestCode = 16;
-        private const int GetPersonalStatsRequestCode = 17;
-        private const int JoinRoomRequestCode = 18;
-        private const int CreateRoomRequestCode = 19;
 
 
         /*
@@ -60,7 +51,7 @@ namespace TriviaClient
 
         public static byte[] SerializeLoginRequest(LoginRequest request)
 		{
-            return SerializeJson(request, LoginRequestCode);
+            return SerializeJson(request, (int)RequestCode.LoginRequestCode);
         }
 
 
@@ -71,7 +62,7 @@ namespace TriviaClient
         */
         public static byte[] serializeSignupRequest(SignupRequest request)
 		{
-            return SerializeJson(request, SignupRequestCode);
+            return SerializeJson(request, (int)RequestCode.SignupRequestCode);
         }
 
 
@@ -83,7 +74,7 @@ namespace TriviaClient
 
         public static byte[] serializeGetPlayersRequest(GetPlayersInRoomRequest request)
 		{
-            return SerializeJson(request, GetPlayersInRoomRequestCode);
+            return SerializeJson(request, (int)RequestCode.GetPlayersInRoomRequestCode);
         }
 
 
@@ -95,7 +86,7 @@ namespace TriviaClient
 
         public static byte[] serializeJoinRoomRequest(JoinRoomRequest request)
 		{
-            return SerializeJson(request, JoinRoomRequestCode);
+            return SerializeJson(request, (int)RequestCode.JoinRoomRequestCode);
         }
 
 
@@ -107,7 +98,7 @@ namespace TriviaClient
 
         public static byte[] serializeCreateRoomRequest(CreateRoomRequest request)
 		{
-            return SerializeJson(request, CreateRoomRequestCode);
+            return SerializeJson(request, (int)RequestCode.CreateRoomRequestCode);
         }
 
 
@@ -118,7 +109,7 @@ namespace TriviaClient
         */
         public static byte[] SerializeLogoutRequest()
         {
-            return SerializeJson(new { }, LogoutRequestCode);
+            return SerializeJson(new { }, (int)RequestCode.LogoutRequestCode);
         }
         
         /*
@@ -128,17 +119,17 @@ namespace TriviaClient
         */
         public static byte[] SerializeGetRoomsRequest()
         {
-            return SerializeJson(new { }, GetRoomsRequestCode);
+            return SerializeJson(new { }, (int)RequestCode.GetRoomsRequestCode);
         }
 
         public static byte[] SerializeHighScoreRequest()
         {
-            return SerializeJson(new { }, HighScoreRequestCode);
+            return SerializeJson(new { }, (int)RequestCode.HighScoreRequestCode);
         }
 
         public static byte[] SerializeGetPersonalStatsRequest()
         {
-            return SerializeJson(new { }, GetPersonalStatsRequestCode);
+            return SerializeJson(new { }, (int)RequestCode.GetPersonalStatsRequestCode);
         }
     }
 }
