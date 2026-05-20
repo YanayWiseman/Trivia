@@ -63,10 +63,16 @@ std::vector<RoomData> RoomManager::getRooms()
 {
 	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
 	std::vector<RoomData> rooms;
+	RoomData data;
 
 	for (auto it = this->m_rooms.begin(); it != this->m_rooms.end(); it++)
 	{
-		rooms.push_back(it->second.getData());
+		data = it->second.getData();
+
+		if (data.status == Open)
+		{
+			rooms.push_back(data);
+		}
 	}
 
 	return rooms;
