@@ -28,7 +28,9 @@ namespace TriviaClient
 
             InitializeComponent();
 
-            if(!this.isAdmin)
+            this.Unloaded += WaitingPage_Unloaded;
+
+            if (!this.isAdmin)
             {
                 CloseRoomButton.IsEnabled = false;
                 CloseRoomButton.Background = new SolidColorBrush(Colors.Gray);
@@ -43,6 +45,12 @@ namespace TriviaClient
             t.IsBackground = true;
             t.Start();
         }
+
+        private void WaitingPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.stopThread = true;
+        }
+
         private void FetchPlayersLoop()
         {
             while (!this.stopThread)
@@ -54,18 +62,17 @@ namespace TriviaClient
 
                     GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
 
-                    if (getRoomState.roomStatus == RoomStatus.Closed)
+                    if (getRoomState.Status == 0 || getRoomState.roomStatus == RoomStatus.Closed)
                     {
-                        // leave the room
-                        byte[] leaveRoomRequestBuffer = { (byte)RequestCode.LeaveRoomRequestCode };
-                        LeaveRoomResponse leaveRoomResponse = ClientSession.Communicator.SendRequest<LeaveRoomResponse>(leaveRoomRequestBuffer);
-                        
-                        // stop the thread
                         this.stopThread = true;
-                        this.Dispatcher.Invoke(() => MessageBox.Show("Room has been closed."));
 
-                        this.NavigationService.Navigate(new JoinRoomPage());
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show("Room has been closed.");
+                            this.NavigationService.Navigate(new JoinRoomPage());
+                        });
 
+                        break;
                     }
 
                     GetPlayersInRoomRequest request = new GetPlayersInRoomRequest();
@@ -113,7 +120,8 @@ namespace TriviaClient
             LeaveRoomResponse response = ClientSession.Communicator.SendRequest<LeaveRoomResponse>(requestBuffer);
             if (response.Status == 1)
             {
-                this.NavigationService.GoBack();
+                this.stopThread = true;
+                this.NavigationService.Navigate(new JoinRoomPage());
             }
             else
             {
@@ -138,13 +146,20 @@ namespace TriviaClient
 
         private void CloseRoom_Click(object sender, RoutedEventArgs e)
         {
+            this.stopThread = true;
+
             byte[] requestBuffer = { (byte)RequestCode.CloseRoomRequestCode };
 
             CloseRoomResponse response = ClientSession.Communicator.SendRequest<CloseRoomResponse>(requestBuffer);
 
             if (response.Status == 1)
             {
-                this.NavigationService.GoBack();
+                this.NavigationService.Navigate(new JoinRoomPage());
+
+                while (this.NavigationService.CanGoBack)
+                {
+                    this.NavigationService.RemoveBackEntry();
+                }
             }
             else
             {

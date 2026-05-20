@@ -27,11 +27,18 @@ namespace TriviaClient
             InitializeComponent();
             this.stopThread = false;
 
+            this.Unloaded += JoinRoomPage_Unloaded;
+
             // Start the polling thread
             ThreadStart ts = new ThreadStart(FetchRoomsLoop);
             this.t = new Thread(ts);
             t.IsBackground = true;
             t.Start();
+        }
+
+        private void JoinRoomPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.stopThread = true;
         }
 
         private void FetchRoomsLoop()
@@ -79,6 +86,8 @@ namespace TriviaClient
         }
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
+            this.stopThread = true;
+
             if (this.NavigationService.CanGoBack)
             {
                 this.NavigationService.GoBack();
@@ -109,17 +118,12 @@ namespace TriviaClient
 
                 if (response.Status == 1)
                 {
-                    MessageBox.Show("Joined room successfully.");
-                    // later: navigate to waiting room
-
                     byte[] getRoomStateRequestBuffer = { (byte)RequestCode.GetRoomStateRequestCode  };
 
                     GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
 
                     this.stopThread = true;
                     this.NavigationService.Navigate(new WaitingPage(request.RoomId, isAdmin: false));
-
-                    MessageBox.Show("Status: " + getRoomState.Status + "\nRoom Status: " + getRoomState.roomStatus + "\nTime per Question: " + getRoomState.TimePerQuestion + "\nNum of questions per game: " + getRoomState.NumOfQuestionsInGame + "\nPlayers: " + getRoomState.PlayerListRaw);
                 }
                 else
                 {
