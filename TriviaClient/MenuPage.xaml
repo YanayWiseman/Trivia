@@ -9,7 +9,8 @@
       Title="MenuPage">
 
     <Grid Background="#FF4100">
-
+        <TextBlock x:Name="userNameTextBlock" FontSize="24" Foreground="Black" Margin="30"
+               HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Permanent Marker"/>
         <Border Width="360"
                 Padding="30"
                 Background="Orange"

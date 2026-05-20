@@ -20,6 +20,7 @@ struct SignupRequest
     std::string birthdate;
 };
 
+
 // V2
 
 struct GetPlayersInRoomRequest
@@ -34,7 +35,6 @@ struct JoinRoomRequest
 
 struct CreateRoomRequest
 {
-    unsigned int id;
     std::string roomName;
     unsigned int maxUsers;
     unsigned int questionsCount;

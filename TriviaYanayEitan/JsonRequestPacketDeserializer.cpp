@@ -1,5 +1,20 @@
 #include "JsonRequestPacketDeserializer.h"
 
+
+
+/*
+	Function returns length of buffer
+	Input: buffer (Buffer)
+	Output: Length of buffer (int) 
+*/
+
+int JsonRequestPacketDeserializer::getBufferLength(const Buffer& buffer)
+{
+	return (buffer[1] << 24) | (buffer[2] << 16) | (buffer[3] << 8) | (buffer[4]);
+}
+
+
+
 /*
 	Method to deserialize a login request given the buffer
 	input: the buffer
@@ -26,6 +41,7 @@ LoginRequest JsonRequestPacketDeserializer::deserializeLoginRequest(const Buffer
 
 	return request;
 }
+
 
 /*
 	Method to deserialize a signup request given the buffer
@@ -56,6 +72,7 @@ SignupRequest JsonRequestPacketDeserializer::deserializeSignupRequest(const Buff
 	return request;
 }
 
+
 /*
 	Helper method to check if a buffer is valid by the protocol
 	input: the buffer and the code it needs to have
@@ -76,11 +93,7 @@ bool JsonRequestPacketDeserializer::isBufferValid(const Buffer& buffer, int code
 		return false;
 	}
 
-	uint32_t dataLen =
-		(buffer[1] << 24) |
-		(buffer[2] << 16) |
-		(buffer[3] << 8) |
-		(buffer[4]);
+	uint32_t dataLen = getBufferLength(buffer);
 
 	// check the buffer's size match the data's actual len
 	size_t offset = 1 + sizeof(uint32_t);
@@ -105,11 +118,7 @@ json JsonRequestPacketDeserializer::extractJson(const Buffer& buffer, int expect
 		throw std::runtime_error("invalid buffer or wrong request code");
 	}
 
-	uint32_t dataLen =
-		(buffer[1] << 24) |
-		(buffer[2] << 16) |
-		(buffer[3] << 8) |
-		(buffer[4]);
+	uint32_t dataLen = getBufferLength(buffer);
 
 	Buffer data(buffer.begin() + 1 + sizeof(uint32_t), buffer.begin() + 1 + sizeof(uint32_t) + dataLen);
 
@@ -198,10 +207,9 @@ CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(co
 	CreateRoomRequest request;
 
 	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, CREATE_ROOM_REQUEST);
-
+	 
 	try
 	{
-		request.id = jsonData.at("id").get<unsigned int>();
 		request.roomName = jsonData.at("roomName").get<std::string>();
 		request.maxUsers = jsonData.at("maxUsers").get<unsigned int>();
 		request.questionsCount = jsonData.at("questionsCount").get<unsigned int>();

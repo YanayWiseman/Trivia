@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Printing.IndexedProperties;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -18,44 +20,74 @@ namespace TriviaClient
 {
     public partial class JoinRoomPage : Page
     {
+        private Thread t;
+        private volatile bool stopThread;
         public JoinRoomPage()
         {
             InitializeComponent();
-            LoadRooms();
+            this.stopThread = false;
+
+            this.Unloaded += JoinRoomPage_Unloaded;
+
+            // Start the polling thread
+            ThreadStart ts = new ThreadStart(FetchRoomsLoop);
+            this.t = new Thread(ts);
+            t.IsBackground = true;
+            t.Start();
         }
 
-        private void LoadRooms()
+        private void JoinRoomPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.stopThread = true;
+        }
+
+        private void FetchRoomsLoop()
+        {
+            while(!this.stopThread)
+            {
+                try
+                {
+                    byte[] requestBuffer = Serializer.SerializeGetRoomsRequest();
+
+                    GetRoomsResponse response = ClientSession.Communicator.SendRequest<GetRoomsResponse>(requestBuffer);
+
+                    if (response.Status == 1)
+                    {
+                        this.Dispatcher.Invoke(() => UpdateUiWithRooms(response.Rooms));
+                    }
+                    else
+                    {
+
+                        this.Dispatcher.Invoke(() => MessageBox.Show("Failed to load rooms."));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (!stopThread)
+                    {
+                        this.Dispatcher.Invoke(() => MessageBox.Show("Server error: " + ex.Message));
+                    }
+                }
+
+                Thread.Sleep(3000);  // wait 3 seconds
+            }
+        }
+
+        private void UpdateUiWithRooms(List<RoomData> rooms)
         {
             RoomsListBox.Items.Clear();
+            RoomsListBox.DisplayMemberPath = "Name";
 
-            try
+            int i = 0;
+            for (i = 0; i < rooms.Count; i++)
             {
-                byte[] requestBuffer = Serializer.SerializeGetRoomsRequest();
-
-                GetRoomsResponse response = ClientSession.Communicator.SendRequest<GetRoomsResponse>(requestBuffer);
-
-                if (response.Status != 1)
-                {
-                    MessageBox.Show("Failed to load rooms.");
-                    return;
-                }
-
-                RoomsListBox.DisplayMemberPath = "Name";
-
-                int i = 0;
-                for (i = 0; i < response.Rooms.Count; i++)
-                {
-                    RoomsListBox.Items.Add(response.Rooms[i]);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Server error: " + ex.Message);
+                RoomsListBox.Items.Add(rooms[i]);
             }
         }
-
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
+            this.stopThread = true;
+
             if (this.NavigationService.CanGoBack)
             {
                 this.NavigationService.GoBack();
@@ -86,8 +118,12 @@ namespace TriviaClient
 
                 if (response.Status == 1)
                 {
-                    MessageBox.Show("Joined room successfully.");
-                    // later: navigate to waiting room
+                    byte[] getRoomStateRequestBuffer = { (byte)RequestCode.GetRoomStateRequestCode  };
+
+                    GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
+
+                    this.stopThread = true;
+                    this.NavigationService.Navigate(new WaitingPage(request.RoomId, isAdmin: false));
                 }
                 else
                 {
