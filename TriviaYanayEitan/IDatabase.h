@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <list>
 #include "Constants.h"
 #include "UserInfo.h"
 #include "Game.h"
@@ -25,9 +26,9 @@ public:
     virtual int getNumOfPlayerGames(const std::string& username) const = 0;
     virtual int getPlayerScore(const std::string& username) const = 0;
     virtual std::vector<std::string> getHighScores() const = 0;
-    virtual void submitGameStatistics(const std::string& username, const GameData& gameData) const = 0;
+    virtual void submitGameStatistics(const std::string& username, const GameData& gameData) = 0;
 
     // QUESTIONS operations
-    std::list<Question> getQuestions(int amount);
+    virtual std::list<Question> getQuestions(int amount) const = 0;
 
 };

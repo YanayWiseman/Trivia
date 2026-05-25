@@ -220,7 +220,7 @@ Status SqliteDatabase::addNewUser(const UserInfo& userInfo)
 	Output: List of questions (std::list<Question>)
 */
 
-std::list<Question> SqliteDatabase::getQuestions(int amount)
+std::list<Question> SqliteDatabase::getQuestions(int amount) const
 {
 	std::lock_guard<std::mutex> lock(this->m_dbMutex);
 
@@ -540,7 +540,7 @@ int SqliteDatabase::getPlayerScore(const std::string& username) const
 	output: no return values
 */
 
-void SqliteDatabase::submitGameStatistics(const std::string& username, const GameData& gameData) const
+void SqliteDatabase::submitGameStatistics(const std::string& username, const GameData& gameData)
 {
 	sqlite3_stmt* stmt = prepare("SELECT NUM_ANSWERED, CORRECT_ANSWERS, AVERAGE_TIME, GAMES_COUNT "
 		"FROM STATISTICS WHERE USERNAME = ?;");
