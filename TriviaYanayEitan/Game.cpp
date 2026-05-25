@@ -24,7 +24,7 @@ Question Game::getQuestionsForUser(const LoggedUser& user)
 
 /*
 	Method to submit the answer
-	input: the user that submits the answer, the answer's id and the answer time
+	input: the user that submits the answer, the answer's id and the answer time 
 	output: no return values
 */
 
