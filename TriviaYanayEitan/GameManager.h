@@ -1,10 +1,13 @@
 #pragma once
 
 #include <vector>
+#include <list>
 #include "IDatabase.h"
 #include "SqliteDatabase.h"
 #include "Room.h"
 #include "Game.h"
+
+#define AMOUNT_OF_QUESTIONS 10
 
 class GameManager
 {
