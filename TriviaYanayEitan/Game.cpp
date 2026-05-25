@@ -71,3 +71,14 @@ void Game::setPlayers(const std::vector<LoggedUser>& players)
 		this->m_players[player] = startingGameData;
 	}
 }
+
+/*
+	Setter method to set the questions for the game
+	input: a vector of questions
+	output: no return values
+*/
+
+void Game::setQuestions(const std::vector<Question>& questions)
+{
+	this->m_questions = questions;
+}

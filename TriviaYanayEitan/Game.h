@@ -33,4 +33,5 @@ public:
 	void submitAnswer();
 	void removePlayer();
 	void setPlayers(const std::vector<LoggedUser>& players);
+	void setQuestions(const std::vector<Question>& questions);
 };

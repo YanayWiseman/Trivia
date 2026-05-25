@@ -33,6 +33,7 @@ Game GameManager::createGame(const Room& room)
 {
 	Game game(room.getData().id);
 
+	game.setPlayers(room.getUsers());
 	game.
 
 	this->m_games.push_back(game);
