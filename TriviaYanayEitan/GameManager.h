@@ -3,6 +3,7 @@
 #include <vector>
 #include "IDatabase.h"
 #include "Room.h"
+#include "Game.h"
 
 class GameManager
 {
