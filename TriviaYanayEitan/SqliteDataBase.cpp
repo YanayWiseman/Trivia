@@ -542,5 +542,59 @@ int SqliteDatabase::getPlayerScore(const std::string& username) const
 
 void SqliteDatabase::submitGameStatistics(const std::string& username, const GameData& gameData) const
 {
+	sqlite3_stmt* stmt = prepare("SELECT NUM_ANSWERED, CORRECT_ANSWERS, AVERAGE_TIME, GAMES_COUNT "
+		"FROM STATISTICS WHERE USERNAME = ?;");
+	if (!stmt)
+	{
+		return;
+	}
 
+	// bind the username
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+	int gamesCount = 0, numAnswered = 0, correct = 0;
+	float avgTime = 0.0;
+
+	// extract values from the table
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		numAnswered = sqlite3_column_int(stmt, 0);
+		correct = sqlite3_column_int(stmt, 1);
+		avgTime = (float)sqlite3_column_double(stmt, 2);
+		gamesCount = sqlite3_column_int(stmt, 3);
+	}
+	else
+	{
+		sqlite3_finalize(stmt);
+		return;
+	}
+	sqlite3_finalize(stmt);
+
+	// now calculate the new values
+	int newAnswered = numAnswered + gameData.correctAnswerCount + gameData.wrongAnswerCount;
+	int newCorrect = correct + gameData.correctAnswerCount;
+	float newAvgTime = (numAnswered * avgTime + gameData.averageAnswerTime * (gameData.correctAnswerCount + gameData.wrongAnswerCount)) / newAnswered;
+	int newGamesCount = gamesCount + 1;
+
+	// now we update the database
+	sqlite3_stmt* updateStmt = prepare("UPDATE STATISTICS SET NUM_ANSWERED = ?, CORRECT_ANSWERS = ?, "
+		"AVERAGE_TIME = ?, GAMES_COUNT = ? WHERE USERNAME = ?;");
+	if (!updateStmt)
+	{
+		return;
+	}
+
+	// bind values
+	sqlite3_bind_int(stmt, 1, newAnswered);
+	sqlite3_bind_int(stmt, 2, newCorrect);
+	sqlite3_bind_double(stmt, 3, newAvgTime);
+	sqlite3_bind_int(stmt, 4, newGamesCount);
+	sqlite3_bind_text(stmt, 5, username.c_str(), -1, SQLITE_TRANSIENT);
+
+	if (sqlite3_step(updateStmt) != SQLITE_DONE)
+	{
+		sqlite3_finalize(stmt);
+		throw std::runtime_error("Failed to update statistics");
+	}
+
+	sqlite3_finalize(stmt);
 }
