@@ -31,7 +31,11 @@ GameManager& GameManager::getInstance()
 
 Game GameManager::createGame(const Room& room)
 {
+	Game game(room.getData().id);
 
+	game.
+
+	this->m_games.push_back(game);
 }
 
 /*

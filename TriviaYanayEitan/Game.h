@@ -25,6 +25,9 @@ private:
 	void submitGameStatusToDB(const GameData& gameData);
 
 public:
+	// c'tor
+	Game(unsigned int gameId);
+
 	// methods
 	void getQuestionsForUser(const LoggedUser& user);
 	void submitAnswer();
