@@ -36,4 +36,5 @@ public:
 	void setPlayers(const std::vector<LoggedUser>& players);
 	void setQuestions(const std::vector<Question>& questions);
 	unsigned int getGameId();
+	std::vector<LoggedUser> getPlayers();
 };

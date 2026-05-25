@@ -103,6 +103,24 @@ void Game::setPlayers(const std::vector<LoggedUser>& players)
 }
 
 /*
+	Getter method to get the players in the game
+	input: no input values
+	output: a vector of logged users
+*/
+
+std::vector<LoggedUser> Game::getPlayers()
+{
+	std::vector<LoggedUser> players;
+
+	players.reserve(this->m_players.size());
+
+	for (const auto& player : this->m_players)
+	{
+		players.push_back(player.first);
+	}
+}
+
+/*
 	Setter method to set the questions for the game
 	input: a vector of questions
 	output: no return values
@@ -124,3 +142,4 @@ unsigned int Game::getGameId()
 {
 	return this->m_gameId;
 }
+

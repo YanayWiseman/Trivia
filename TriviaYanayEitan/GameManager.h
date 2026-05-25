@@ -20,7 +20,7 @@ private:
 	// methods
 	GameManager();
 
-	void submitGameStatusToDB(const std::string& user, const GameData& gameData);
+	void submitGameStatusToDB(const std::string& username, const GameData& gameData);
 
 public:
 	// methods
