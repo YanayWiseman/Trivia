@@ -222,3 +222,27 @@ CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(co
 
 	return request;
 }
+
+/*
+	Method to deserialize a submit answer request given the buffer
+	input: the buffer
+	output: the built submit answer request struct
+*/
+
+SubmitAnswerRequest JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(const Buffer& buffer)
+{
+	SubmitAnswerRequest request;
+
+	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, SUBMIT_ANSWER_REQUEST);
+
+	try
+	{
+		request.answerId = jsonData.at("answerId").get<unsigned int>();
+	}
+	catch (const std::exception& error)
+	{
+		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeCreateRoomRequest: error parsing json");
+	}
+
+	return request;
+}
