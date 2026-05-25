@@ -33,14 +33,17 @@ Game GameManager::createGame(const Room& room)
 {
 	Game game(room.getData().id);
 
-	game.setPlayers(room.getUsers());
 	std::list<Question> questionsList = this->m_database->getQuestions(AMOUNT_OF_QUESTIONS);
-
 	std::vector<Question> questionsVector(questionsList.begin(), questionsList.end());
+	
 	game.setQuestions(questionsVector);
+	game.setPlayers(room.getUsers());
 
 	this->m_games.push_back(game);
+
+	return game;
 }
+
 
 /*
 	Method to delete a game from the game manager's map
@@ -50,10 +53,12 @@ Game GameManager::createGame(const Room& room)
 
 void GameManager::deleteGame(unsigned int gameId)
 {
+	
 	for (auto it = this->m_games.begin(); it != this->m_games.end(); it++)
 	{
 		if (it->getGameId() == gameId)
 		{
+			it->
 			this->m_games.erase(it);
 			break;
 		}

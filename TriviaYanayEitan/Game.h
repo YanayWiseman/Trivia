@@ -22,12 +22,12 @@ private:
 	unsigned int m_gameId;
 
 	// methods
-	void submitGameStatusToDB(const GameData& gameData);
+	void submitGameStatusToDB(const LoggedUser& user, const GameData& gameData);
 
 public:
 	// c'tor
 	Game(unsigned int gameId);
-
+	~Game();
 	// methods
 	void getQuestionsForUser(const LoggedUser& user);
 	void submitAnswer();

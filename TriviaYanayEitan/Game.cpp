@@ -12,14 +12,29 @@ Game::Game(unsigned int gameId)
 }
 
 /*
+	Destructor for the Game object
+	input: no input values
+	output: no return values
+*/
+
+Game::~Game()
+{
+	for (const auto& player : this->m_players)
+	{
+		this->submitGameStatusToDB(player.first, player.second);
+	}
+}
+
+
+/*
 	Private Method to submit the game status to the database
 	input: the game's data
 	output: no return values
 */
 
-void Game::submitGameStatusToDB(const GameData& gameData)
+void Game::submitGameStatusToDB(const LoggedUser& user, const GameData& gameData)
 {
-
+	
 }
 
 /*
