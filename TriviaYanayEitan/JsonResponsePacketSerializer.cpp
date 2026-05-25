@@ -306,3 +306,88 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveRoomResponse& 
 
 	return JsonResponsePacketSerializer::serializeJson(response, LEAVE_ROOM_RESPONSE);
 }
+
+
+/*
+	Function inserts playerResults struct into json object.
+	Input: j (json&), playerResults (const PlayerResults&)
+	Output: None (void)
+*/
+
+void to_json(json& j, const PlayerResults& playerResults)
+{
+	j = json{
+		{"username", playerResults.username},
+		{"correctAnswerCount", playerResults.correctAnswerCount},
+		{"wrongAnswerCount", playerResults.wrongAnswerCount},
+		{"avrageAnswerTime", playerResults.avrageAnswerTime}
+	};
+}
+
+
+/*
+	Method to serialize Json GetGameResults response into buffer.
+	Input: getGameResultsResponse (const GetGameResultsResponse&)
+	Output: Buffer containing GetGameResults response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const GetGameResultsResponse& getGameResultsResponse)
+{
+	json response;
+
+	response["status"] = getGameResultsResponse.status;
+	response["results"] = getGameResultsResponse.results;
+
+	return JsonResponsePacketSerializer::serializeJson(response, GET_GAMRE_RESULTS_RESPONSE);
+}
+
+
+/*
+	Method to serialize Json SubmitAnswer response into buffer.
+	Input: submitAnswerResponse (const SubmitAnswerResponse&)
+	Output: Buffer containing SubmitAnswer response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const SubmitAnswerResponse& submitAnswerResponse)
+{
+	json response;
+	
+	response["status"] = submitAnswerResponse.status;
+	response["correctAnsId"] = submitAnswerResponse.correctAnswerId;
+
+	return JsonResponsePacketSerializer::serializeJson(response, SUBMIT_ANSWER_RESPONSE);
+}
+
+
+/*
+	Method to serialize Json GetQuestion response into buffer.
+	Input: getQuestionResponse (const GetQuestionResponse&)
+	Output: Buffer containing GetQuestion response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const GetQuestionResponse& getQuestionResponse)
+{
+	json response;
+
+	response["status"] = getQuestionResponse.status;
+	response["question"] = getQuestionResponse.question;
+	response["answers"] = getQuestionResponse.answers;
+
+	return JsonResponsePacketSerializer::serializeJson(response, SUBMIT_ANSWER_RESPONSE);
+}
+
+
+/*
+	Method to serialize Json LeaveGame response into buffer.
+	Input: leaveGameResponse (const LeaveGameResponse&)
+	Output: Buffer containing LeaveGame response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveGameResponse& leaveGameResponse)
+{
+	json response;
+
+	response["status"] = leaveGameResponse.status;
+
+	return JsonResponsePacketSerializer::serializeJson(response, SUBMIT_ANSWER_RESPONSE);
+}
