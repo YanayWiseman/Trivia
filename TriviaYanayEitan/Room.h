@@ -31,4 +31,5 @@ public:
 	void removeUser(const LoggedUser& usr);
 	void setStatus(RoomStatus status);
 	std::vector<std::string> getAllUsers() const;
+	std::vector<LoggedUser> getUsers() const;
 };

@@ -79,6 +79,25 @@ std::vector<std::string> Room::getAllUsers() const
 }
 
 /*
+	Function returns a vector of all connected users.
+	Input: None
+	Output: Vector of all connected users
+*/
+
+std::vector<LoggedUser> Room::getUsers() const
+{
+	std::lock_guard<std::mutex> lock(this->m_mutex);
+	std::vector<LoggedUser> users;
+
+	for (auto it = this->m_users.begin(); it != this->m_users.end(); it++)
+	{
+		users.push_back(*it);
+	}
+
+	return users;
+}
+
+/*
 	Setter method to se the room status
 	input: the new status
 	output: no return values
