@@ -9,6 +9,7 @@
 #include "JsonRequestPacketDeserializer.h"
 #include "JsonResponsePacketSerializer.h"
 #include "RoomAdminRequestHandler.h"
+#include "ResponseStructs.h"
 #include "RoomMemberRequestHandler.h"
 
 class MenuRequestHandler : public IRequestHandler

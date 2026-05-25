@@ -19,7 +19,7 @@ class Game
 private:
 	// fields
 	std::vector<Question> m_questions;
-	std::map<LoggedUser, GameData> m_players;
+	std::map<std::string, GameData> m_players;
 	unsigned int m_gameId;
 
 public:
@@ -33,5 +33,5 @@ public:
 	void setPlayers(const std::vector<LoggedUser>& players);
 	void setQuestions(const std::vector<Question>& questions);
 	unsigned int getGameId();
-	std::map<LoggedUser, GameData> getPlayers();
+	std::map<std::string, GameData> getPlayers();
 };
