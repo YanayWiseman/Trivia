@@ -40,12 +40,12 @@ void Game::submitGameStatusToDB(const LoggedUser& user, const GameData& gameData
 /*
 	Method to get the questions for a given user
 	input: the user
-	output: no return values
+	output: the user's current question
 */
 
-void Game::getQuestionsForUser(const LoggedUser& user)
+Question Game::getQuestionsForUser(const LoggedUser& user)
 {
-
+	return this->m_players[user].currentQuestion;
 }
 
 /*
@@ -67,7 +67,13 @@ void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, float ans
 
 void Game::removePlayer(const LoggedUser& user)
 {
-	this->m_players.erase(m_players.find(user));
+	auto it = this->m_players.find(user);
+
+	if (it != this->m_players.end())
+	{
+		this->submitGameStatusToDB(it->first, it->second);
+		this->m_players.erase(it);
+	}
 }
 
 /*
@@ -79,7 +85,7 @@ void Game::removePlayer(const LoggedUser& user)
 void Game::setPlayers(const std::vector<LoggedUser>& players)
 {
 	// this method will be initializing the player's game data to all 0's
-	GameData startingGameData = { this->m_questions[0], 0, 0, 0 };
+	GameData startingGameData = { this->m_questions[0], 0, 0, 0, 0 };
 
 	for (LoggedUser player : players)
 	{
