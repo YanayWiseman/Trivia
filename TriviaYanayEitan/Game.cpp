@@ -12,20 +12,6 @@ Game::Game(unsigned int gameId)
 }
 
 /*
-	Destructor for the Game object
-	input: no input values
-	output: no return values
-*/
-
-Game::~Game()
-{
-	for (const auto& player : this->m_players)
-	{
-		this->submitGameStatusToDB(player.first, player.second);
-	}
-}
-
-/*
 	Method to get the questions for a given user
 	input: the user
 	output: the user's current question
@@ -80,7 +66,6 @@ void Game::removePlayer(const LoggedUser& user)
 
 	if (it != this->m_players.end())
 	{
-		this->submitGameStatusToDB(it->first, it->second);
 		this->m_players.erase(it);
 	}
 }
@@ -105,19 +90,12 @@ void Game::setPlayers(const std::vector<LoggedUser>& players)
 /*
 	Getter method to get the players in the game
 	input: no input values
-	output: a vector of logged users
+	output: the mao of logged users and their game data
 */
 
-std::vector<LoggedUser> Game::getPlayers()
+std::map<LoggedUser, GameData> Game::getPlayers()
 {
-	std::vector<LoggedUser> players;
-
-	players.reserve(this->m_players.size());
-
-	for (const auto& player : this->m_players)
-	{
-		players.push_back(player.first);
-	}
+	return this->m_players;
 }
 
 /*

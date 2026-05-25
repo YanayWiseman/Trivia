@@ -22,13 +22,10 @@ private:
 	std::map<LoggedUser, GameData> m_players;
 	unsigned int m_gameId;
 
-	// methods
-	void submitGameStatusToDB(const LoggedUser& user, const GameData& gameData);
-
 public:
 	// c'tor
 	Game(unsigned int gameId);
-	~Game();
+	~Game() = default;
 	// methods
 	Question getQuestionsForUser(const LoggedUser& user);
 	void submitAnswer(const LoggedUser& user, unsigned int answerId, float answerTime);
@@ -36,5 +33,5 @@ public:
 	void setPlayers(const std::vector<LoggedUser>& players);
 	void setQuestions(const std::vector<Question>& questions);
 	unsigned int getGameId();
-	std::vector<LoggedUser> getPlayers();
+	std::map<LoggedUser, GameData> getPlayers();
 };
