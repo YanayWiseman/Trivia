@@ -44,7 +44,28 @@ Question Game::getQuestionsForUser(const LoggedUser& user)
 
 void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, float answerTime)
 {
+	GameData& gameData = this->m_players[user];
 
+	if (answerId == gameData.currentQuestion.getCorrectAnswerId())
+	{
+		gameData.correctAnswerCount++;
+	}
+	else
+	{
+		gameData.wrongAnswerCount++;
+	}
+
+	unsigned int totalAnswers = gameData.correctAnswerCount + gameData.wrongAnswerCount;
+
+	// update average answer time
+	gameData.averageAnswerTime = ((gameData.averageAnswerTime * (totalAnswers - 1)) + answerTime) / totalAnswers;
+
+	// move to the next question if it exists
+	if (gameData.currentQuestionIndex + 1 < this->m_questions.size())
+	{
+		gameData.currentQuestionIndex++;
+		gameData.currentQuestion = this->m_questions[gameData.currentQuestionIndex];
+	}
 }
 
 /*
