@@ -14,7 +14,7 @@
 RequestHandlerFactory::RequestHandlerFactory()
     : m_loginManager(LoginManager::getInstance()),
     m_StatisticsManager(StatisticsManager::getInstance()),
-        m_roomManager(RoomManager::getInstance())
+    m_roomManager(RoomManager::getInstance()), m_gameManager(GameManager::getInstance())
 {
 
 }
@@ -94,6 +94,18 @@ StatisticsManager& RequestHandlerFactory::getStatisticsManager() const
 RoomManager& RequestHandlerFactory::getRoomManager() const
 {
     return this->m_roomManager;
+}
+
+
+/*
+    Method returns game manager of the handler factory.
+    Input: no input values
+    Output: game manager
+*/
+
+GameManager& RequestHandlerFactory::getGameManager() const
+{
+    return this->m_gameManager;
 }
 
 
