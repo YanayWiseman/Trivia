@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "IDatabase.h"
+#include "SqliteDatabase.h"
 #include "Room.h"
 #include "Game.h"
 
@@ -13,7 +14,7 @@ private:
 	std::vector<Game> m_games;
 
 	// methods
-	GameManager() = default;
+	GameManager();
 
 public:
 	// methods

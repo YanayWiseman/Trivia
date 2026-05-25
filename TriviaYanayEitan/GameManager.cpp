@@ -1,6 +1,17 @@
 #include "GameManager.h"
 
 /*
+	Constructor for the GameManager Object
+	input: no input values
+	output: no return values
+*/
+
+GameManager::GameManager()
+{
+	this->m_database = &SqliteDatabase::getInstance();
+}
+
+/*
 	Function creates single instance of GameManager.
 	Input: None
 	Output: New GameManager instance (GameManager&)
@@ -18,7 +29,7 @@ GameManager& GameManager::getInstance()
 	Output: the new Game struct created
 */
 
-Game createGame(const Room& room)
+Game GameManager::createGame(const Room& room)
 {
 
 }
@@ -29,7 +40,7 @@ Game createGame(const Room& room)
 	Output: no return values
 */
 
-void deleteGame(unsigned int gameId)
+void GameManager::deleteGame(unsigned int gameId)
 {
 
 }
