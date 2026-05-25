@@ -19,7 +19,7 @@ enum RequestCode
     GET_QUESTION_REQUEST,
     SUBMIT_ANSWER_REQUEST,
     GET_GAME_RESULT_REQUEST
-};
+};  
 
 enum ResponseCode
 {
