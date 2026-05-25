@@ -82,3 +82,15 @@ void Game::setQuestions(const std::vector<Question>& questions)
 {
 	this->m_questions = questions;
 }
+
+
+/*
+	Getter method to get the game's id
+	input: no input values
+	output: the game's id (unsigned int)
+*/
+
+unsigned int Game::getGameId()
+{
+	return this->m_gameId;
+}

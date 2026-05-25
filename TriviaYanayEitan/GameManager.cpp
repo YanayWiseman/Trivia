@@ -34,9 +34,10 @@ Game GameManager::createGame(const Room& room)
 	Game game(room.getData().id);
 
 	game.setPlayers(room.getUsers());
-	std::list questionsList = this->m_database->getQuestions(AMOUNT_OF_QUESTIONS);
-	std::vector<int> myVector(questionsList.begin(), questionsList.end());
-	game.setQuestions();
+	std::list<Question> questionsList = this->m_database->getQuestions(AMOUNT_OF_QUESTIONS);
+
+	std::vector<Question> questionsVector(questionsList.begin(), questionsList.end());
+	game.setQuestions(questionsVector);
 
 	this->m_games.push_back(game);
 }
