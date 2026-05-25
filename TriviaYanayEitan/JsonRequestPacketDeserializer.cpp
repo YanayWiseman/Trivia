@@ -222,3 +222,14 @@ CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(co
 
 	return request;
 }
+
+/*
+	Method to deserialize a submit answer request given the buffer
+	input: the buffer
+	output: the built submit answer request struct
+*/
+
+SubmitAnswerRequest JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(const Buffer& buffer)
+{
+
+}

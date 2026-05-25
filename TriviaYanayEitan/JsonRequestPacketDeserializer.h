@@ -29,6 +29,9 @@ public:
 	static JoinRoomRequest deserializeJoinRoomRequest(const Buffer& buffer);
 	static CreateRoomRequest deserializeCreateRoomRequest(const Buffer& buffer);
 
+	//V4
+	static SubmitAnswerRequest deserializeSubmitAnswerRequest(const Buffer& buffer);
+
 
 private:
 	// helper methods
