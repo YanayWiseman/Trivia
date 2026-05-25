@@ -21,12 +21,11 @@ private:
 	unsigned int m_gameId;
 
 	// methods
-	void submitGameStatusToDB(const GameData&)
+	void submitGameStatusToDB(const GameData&);
 
 public:
 	// methods
 	void getQuestionsForUser(const LoggedUser& user);
 	void submitAnswer();
 	void removePlayer();
-
 };
