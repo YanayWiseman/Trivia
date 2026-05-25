@@ -22,7 +22,7 @@ private:
 	unsigned int m_gameId;
 
 	// methods
-	void submitGameStatusToDB(const GameData&);
+	void submitGameStatusToDB(const GameData& gameData);
 
 public:
 	// methods
