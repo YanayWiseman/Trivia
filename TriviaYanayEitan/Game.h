@@ -32,4 +32,5 @@ public:
 	void getQuestionsForUser(const LoggedUser& user);
 	void submitAnswer();
 	void removePlayer();
+	void setPlayers(const std::vector<LoggedUser>& players);
 };

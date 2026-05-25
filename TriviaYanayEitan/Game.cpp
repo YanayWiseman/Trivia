@@ -54,3 +54,20 @@ void Game::removePlayer()
 {
 
 }
+
+/*
+	Setter method to set the players in the game
+	input: a vector of logged users, will be transitioned into the map
+	output: no return values
+*/
+
+void Game::setPlayers(const std::vector<LoggedUser>& players)
+{
+	// this method will be initializing the player's game data to all 0's
+	GameData startingGameData = { this->m_questions[0], 0, 0, 0 };
+
+	for (LoggedUser player : players)
+	{
+		this->m_players[player] = startingGameData;
+	}
+}
