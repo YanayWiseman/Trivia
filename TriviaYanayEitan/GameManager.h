@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <list>
+#include <string>
 #include "IDatabase.h"
 #include "SqliteDatabase.h"
 #include "Room.h"
@@ -19,7 +20,7 @@ private:
 	// methods
 	GameManager();
 
-	void submitGameStatusToDB(const LoggedUser& user, const GameData& gameData);
+	void submitGameStatusToDB(const std::string& user, const GameData& gameData);
 
 public:
 	// methods

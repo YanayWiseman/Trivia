@@ -3,6 +3,7 @@
 #include <string>
 #include "Constants.h"
 #include "UserInfo.h"
+#include "Game.h"
 
 class IDatabase
 {
@@ -24,6 +25,7 @@ public:
     virtual int getNumOfPlayerGames(const std::string& username) const = 0;
     virtual int getPlayerScore(const std::string& username) const = 0;
     virtual std::vector<std::string> getHighScores() const = 0;
+    virtual void submitGameStatistics(const std::string& username, const GameData& gameData) const = 0;
 
     // QUESTIONS operations
     std::list<Question> getQuestions(int amount);

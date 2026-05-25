@@ -70,7 +70,7 @@ void GameManager::deleteGame(unsigned int gameId)
 	output: no return values
 */
 
-void GameManager::submitGameStatusToDB(const LoggedUser& user, const GameData& gameData)
+void GameManager::submitGameStatusToDB(const std::string& user, const GameData& gameData)
 {
-
+	
 }

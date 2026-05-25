@@ -533,3 +533,14 @@ int SqliteDatabase::getPlayerScore(const std::string& username) const
 
 	return score;
 }
+
+/*
+	Method to submit a game's statistics for a given user
+	input: the game's data and the user's name
+	output: no return values
+*/
+
+void SqliteDatabase::submitGameStatistics(const std::string& username, const GameData& gameData) const
+{
+
+}
