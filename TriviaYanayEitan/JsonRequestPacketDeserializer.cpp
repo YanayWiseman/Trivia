@@ -231,5 +231,18 @@ CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(co
 
 SubmitAnswerRequest JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(const Buffer& buffer)
 {
+	SubmitAnswerRequest request;
 
+	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, SUBMIT_ANSWER_REQUEST);
+
+	try
+	{
+		request.answerId = jsonData.at("answerId").get<unsigned int>();
+	}
+	catch (const std::exception& error)
+	{
+		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeCreateRoomRequest: error parsing json");
+	}
+
+	return request;
 }
