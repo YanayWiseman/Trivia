@@ -50,5 +50,12 @@ Game GameManager::createGame(const Room& room)
 
 void GameManager::deleteGame(unsigned int gameId)
 {
-
+	for (auto it = this->m_games.begin(); it != this->m_games.end(); it++)
+	{
+		if (it->getGameId() == gameId)
+		{
+			this->m_games.erase(it);
+			break;
+		}
+	}
 }
