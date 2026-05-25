@@ -4,6 +4,14 @@
 #include <map>
 #include "Question.h"
 
+struct GameData
+{
+	Question currentQuestion;
+	unsigned int correctAnswerCount;
+	unsigned int wrongAnswerCount;
+	float averageAnswerTime;
+};
+
 class Game
 {
 private:
