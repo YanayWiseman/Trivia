@@ -25,18 +25,6 @@ Game::~Game()
 	}
 }
 
-
-/*
-	Private Method to submit the game status to the database
-	input: the game's data
-	output: no return values
-*/
-
-void Game::submitGameStatusToDB(const LoggedUser& user, const GameData& gameData)
-{
-	
-}
-
 /*
 	Method to get the questions for a given user
 	input: the user

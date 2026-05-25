@@ -63,3 +63,14 @@ void GameManager::deleteGame(unsigned int gameId)
 		}
 	}
 }
+
+/*
+	Private Method to submit the game status to the database
+	input: the game's data
+	output: no return values
+*/
+
+void GameManager::submitGameStatusToDB(const LoggedUser& user, const GameData& gameData)
+{
+
+}

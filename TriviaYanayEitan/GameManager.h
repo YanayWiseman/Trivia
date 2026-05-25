@@ -19,6 +19,8 @@ private:
 	// methods
 	GameManager();
 
+	void submitGameStatusToDB(const LoggedUser& user, const GameData& gameData);
+
 public:
 	// methods
 	Game createGame(const Room& room);
