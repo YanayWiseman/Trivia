@@ -50,24 +50,24 @@ void Game::getQuestionsForUser(const LoggedUser& user)
 
 /*
 	Method to submit the answer
-	input: no input values
+	input: the user that submits the answer, the answer's id and the answer time
 	output: no return values
 */
 
-void Game::submitAnswer()
+void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, float answerTime)
 {
 
 }
 
 /*
 	Method to remove a player from the game
-	input: no input values;
+	input: the user to remove
 	output: no return values
 */
 
-void Game::removePlayer()
+void Game::removePlayer(const LoggedUser& user)
 {
-
+	this->m_players.erase(m_players.find(user));
 }
 
 /*

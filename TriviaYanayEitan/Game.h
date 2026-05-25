@@ -7,7 +7,7 @@
 
 struct GameData
 {
-	Question currentQuestion;
+	unsigned int currentQuestionIndex;
 	unsigned int correctAnswerCount;
 	unsigned int wrongAnswerCount;
 	float averageAnswerTime;
@@ -30,8 +30,8 @@ public:
 	~Game();
 	// methods
 	void getQuestionsForUser(const LoggedUser& user);
-	void submitAnswer();
-	void removePlayer();
+	void submitAnswer(const LoggedUser& user, unsigned int answerId, float answerTime);
+	void removePlayer(const LoggedUser& user);
 	void setPlayers(const std::vector<LoggedUser>& players);
 	void setQuestions(const std::vector<Question>& questions);
 	unsigned int getGameId();
