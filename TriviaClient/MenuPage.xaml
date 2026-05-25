@@ -8,60 +8,407 @@
       d:DesignWidth="800"
       Title="MenuPage">
 
-    <Grid Background="#FF4100">
-        <TextBlock x:Name="userNameTextBlock" FontSize="24" Foreground="Black" Margin="30"
-               HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Permanent Marker"/>
-        <Border Width="360"
-                Padding="30"
-                Background="Orange"
-                CornerRadius="12"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+    <Page.Resources>
 
-            <StackPanel>
+        <DropShadowEffect x:Key="CardShadow"
+                          BlurRadius="18"
+                          ShadowDepth="4"
+                          Opacity="0.35"/>
 
-                <TextBlock Text="Machshilim Trivia"
-                           FontSize="32"
-                           FontWeight="Bold"
-                           HorizontalAlignment="Center"
-                           FontFamily="Permanent Marker"
-                           Margin="0,0,0,35"/>
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="72"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontFamily" Value="Segoe UI Black"/>
+            <Setter Property="Foreground" Value="#FFF7E8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="BorderBrush" Value="#2A0909"/>
+            <Setter Property="Background" Value="#E7471D"/>
+            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="18">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
 
-                <Button Content="Create Room"
-                        Height="45"
-                        FontSize="18"
-                        FontFamily="Permanent Marker"
-                        Margin="0,0,0,15"
-                        Click="CreateRoom_Click"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF7A1A"/>
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="1.03" ScaleY="1.03"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
 
-                <Button Content="Join Room"
-                        Height="45"
-                        FontSize="18"
-                        FontFamily="Permanent Marker"
-                        Margin="0,0,0,15"
-                        Click="JoinRoom_Click"/>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#B91F16"/>
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.98" ScaleY="0.98"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-                <Button Content="Statistics"
-                        Height="45"
-                        FontSize="18"
-                        FontFamily="Permanent Marker"
-                        Margin="0,0,0,15"
-                        Click="Statistics_Click"/>
+        <Style x:Key="StatsTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#FFF2D2"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
 
-                <Button Content="Logout"
-                Height="45"
-                FontSize="18"
-                FontFamily="Permanent Marker"
-                Margin="0,0,0,15"
-                Click="Logout_Click"/>
-                
-                <Button Content="Exit"
-                        Height="45"
-                        FontSize="18"
-                        FontFamily="Permanent Marker"
-                        Click="Exit_Click"/>
+    </Page.Resources>
 
+    <Grid Background="#7A0707">
+
+        <!-- background patterns -->
+        <Canvas Opacity="0.24">
+            <Ellipse Width="180" Height="180" Canvas.Left="-50" Canvas.Top="-40"
+                     Stroke="#FFB12A" StrokeThickness="5"/>
+            <Ellipse Width="90" Height="90" Canvas.Left="690" Canvas.Top="350"
+                     Stroke="#FFB12A" StrokeThickness="4"/>
+            <Line X1="620" Y1="30" X2="730" Y2="90" Stroke="#FFB12A" StrokeThickness="3"/>
+            <Line X1="730" Y1="90" X2="690" Y2="170" Stroke="#FFB12A" StrokeThickness="3"/>
+            <Line X1="690" Y1="170" X2="760" Y2="245" Stroke="#FFB12A" StrokeThickness="3"/>
+            <Ellipse Width="16" Height="16" Canvas.Left="615" Canvas.Top="23" Fill="#FFB12A"/>
+            <Ellipse Width="16" Height="16" Canvas.Left="724" Canvas.Top="84" Fill="#FFB12A"/>
+            <Ellipse Width="16" Height="16" Canvas.Left="684" Canvas.Top="164" Fill="#FFB12A"/>
+            <Ellipse Width="16" Height="16" Canvas.Left="754" Canvas.Top="239" Fill="#FFB12A"/>
+
+            <TextBlock Text="×" Canvas.Left="90" Canvas.Top="350"
+                       Foreground="#FFB12A" FontSize="38" FontWeight="Bold"/>
+            <TextBlock Text="+" Canvas.Left="735" Canvas.Top="35"
+                       Foreground="#FFCF47" FontSize="28" FontWeight="Bold"/>
+            <TextBlock Text="×" Canvas.Left="500" Canvas.Top="60"
+                       Foreground="#FF5B35" FontSize="34" FontWeight="Bold"/>
+        </Canvas>
+
+        <Grid Margin="28">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="86"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- title -->
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+                <TextBlock Text="מכשילים"
+                           FontSize="58"
+                           FontWeight="Black"
+                           FontFamily="Segoe UI Black"
+                           Foreground="#FFF3D6">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="5"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+
+                <Border Background="#240707"
+                        Padding="12,5"
+                        CornerRadius="4"
+                        HorizontalAlignment="Left"
+                        Margin="4,-4,0,0">
+                    <TextBlock Text="משחק הטריוויה הרשמי לכישלון יצירתי"
+                               Foreground="#FFCB4D"
+                               FontWeight="Bold"
+                               FontSize="15"/>
+                </Border>
             </StackPanel>
-        </Border>
+
+            <!-- username card -->
+            <Border Grid.Row="0"
+                    Grid.Column="1"
+                    Background="#1B0808"
+                    CornerRadius="20"
+                    Padding="18,12"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    BorderBrush="#D53B22"
+                    BorderThickness="2">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="😵"
+                               FontSize="28"
+                               Margin="0,0,8,0"/>
+                    <StackPanel>
+                        <TextBlock x:Name="userNameTextBlock"
+                                   Text="שחקן מקצועי"
+                                   Foreground="#FFF3D6"
+                                   FontWeight="Bold"
+                                   FontSize="18"/>
+                        <TextBlock Text="⭐ 12,450"
+                                   Foreground="#FFCB4D"
+                                   FontWeight="Bold"
+                                   FontSize="14"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- main menu card -->
+            <Border Grid.Row="1"
+                    Grid.Column="0"
+                    Background="#FFF0D0"
+                    CornerRadius="28"
+                    Padding="26"
+                    Margin="0,24,22,18"
+                    BorderBrush="#240707"
+                    BorderThickness="4"
+                    Effect="{StaticResource CardShadow}">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,18">
+                        <TextBlock Text="ברוכים הבאים ל"
+                                   HorizontalAlignment="Center"
+                                   FontSize="34"
+                                   FontFamily="Segoe UI Black"
+                                   FontWeight="Black"
+                                   Foreground="#241010"/>
+
+                        <TextBlock Text="מכשילים"
+                                   HorizontalAlignment="Center"
+                                   FontSize="54"
+                                   FontFamily="Segoe UI Black"
+                                   FontWeight="Black"
+                                   Foreground="#C92519"/>
+
+                        <Border Background="#240707"
+                                Padding="14,6"
+                                CornerRadius="5"
+                                HorizontalAlignment="Center">
+                            <TextBlock Text="מוכנים לענות בביטחון ולטעות בסטייל?"
+                                       Foreground="#FFF3D6"
+                                       FontWeight="Bold"
+                                       FontSize="17"/>
+                        </Border>
+                    </StackPanel>
+
+                    <UniformGrid Grid.Row="1" Columns="2" Rows="3">
+
+                        <Button Style="{StaticResource MenuButtonStyle}"
+                                Background="#E83C22"
+                                Click="CreateRoom_Click">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="➕" Margin="0,0,12,0"/>
+                                <TextBlock Text="צור חדר"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Style="{StaticResource MenuButtonStyle}"
+                                Background="#FF7A1A"
+                                Click="JoinRoom_Click">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="🚪" Margin="0,0,12,0"/>
+                                <TextBlock Text="הצטרף לחדר"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Style="{StaticResource MenuButtonStyle}"
+                                Background="#D5331B"
+                                Click="Statistics_Click">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="🏆" Margin="0,0,12,0"/>
+                                <TextBlock Text="סטטיסטיקות"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Style="{StaticResource MenuButtonStyle}"
+                                Background="#F0A51A">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="❔" Margin="0,0,12,0"/>
+                                <TextBlock Text="איך נכשלים?"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Style="{StaticResource MenuButtonStyle}"
+                                Background="#B91F16"
+                                Click="Logout_Click">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="↩" Margin="0,0,12,0"/>
+                                <TextBlock Text="התנתק"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Style="{StaticResource MenuButtonStyle}"
+                                Background="#361111"
+                                Click="Exit_Click">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="✖" Margin="0,0,12,0"/>
+                                <TextBlock Text="יציאה"/>
+                            </StackPanel>
+                        </Button>
+
+                    </UniformGrid>
+                </Grid>
+            </Border>
+
+            <!-- right mascot card -->
+            <Border Grid.Row="1"
+                    Grid.Column="1"
+                    Background="#A91414"
+                    CornerRadius="28"
+                    Padding="22"
+                    Margin="0,24,0,18"
+                    BorderBrush="#240707"
+                    BorderThickness="4"
+                    Effect="{StaticResource CardShadow}">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Background="#FFF0D0"
+                            CornerRadius="24"
+                            Padding="16"
+                            Margin="0,0,0,16">
+                        <TextBlock Text="אין לחץ. תטעו בקצב שלכם."
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   Foreground="#9F1515"
+                                   FontFamily="Segoe UI Black"
+                                   FontWeight="Black"
+                                   FontSize="26"/>
+                    </Border>
+
+                    <Grid Grid.Row="1">
+                        <TextBlock Text="🏆"
+                                   FontSize="118"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Opacity="0.95"/>
+                        <TextBlock Text="💣"
+                                   FontSize="54"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom"
+                                   Margin="0,0,18,20"/>
+                        <TextBlock Text="× ×"
+                                   Foreground="#240707"
+                                   FontSize="42"
+                                   FontWeight="Black"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="0,-4,0,0"/>
+                    </Grid>
+
+                    <Button Grid.Row="2"
+                            Content="יאללה נכשיל!"
+                            Height="64"
+                            FontSize="28"
+                            FontWeight="Black"
+                            FontFamily="Segoe UI Black"
+                            Foreground="#FFF3D6"
+                            Background="#E83C22"
+                            BorderBrush="#240707"
+                            BorderThickness="4"
+                            Cursor="Hand"
+                            Click="JoinRoom_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="28">
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- bottom stats -->
+            <Border Grid.Row="2"
+                    Grid.ColumnSpan="2"
+                    Background="#1B0808"
+                    CornerRadius="22"
+                    Padding="18"
+                    BorderBrush="#B91F16"
+                    BorderThickness="2"
+                    Effect="{StaticResource CardShadow}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.2*"/>
+                        <ColumnDefinition Width="1.6*"/>
+                        <ColumnDefinition Width="1.6*"/>
+                        <ColumnDefinition Width="1.6*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="😵"
+                                   FontSize="38"
+                                   Margin="0,0,12,0"/>
+                        <StackPanel>
+                            <TextBlock Text="טעות טובה"
+                                       Foreground="#FFF3D6"
+                                       FontWeight="Black"
+                                       FontSize="20"/>
+                            <TextBlock Text="לומדים. צוחקים. נכשלים."
+                                       Foreground="#FFCB4D"
+                                       FontSize="13"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="לוח הבושות"
+                                   Style="{StaticResource StatsTextStyle}"
+                                   Foreground="#FFCB4D"/>
+                        <ListBox x:Name="BestPlayersListBox"
+                                 Height="52"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Foreground="#FFF3D6"
+                                 FontSize="13"
+                                 FontWeight="Bold"
+                                 ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                        <TextBlock Text="חדרים פעילים"
+                                   Style="{StaticResource StatsTextStyle}"
+                                   Foreground="#FFCB4D"/>
+                        <TextBlock Text="139"
+                                   Foreground="#FFF3D6"
+                                   FontSize="28"
+                                   FontWeight="Black"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                        <TextBlock Text="שיא יומי"
+                                   Style="{StaticResource StatsTextStyle}"
+                                   Foreground="#FFCB4D"/>
+                        <TextBlock Text="9,870 טעויות בסטייל"
+                                   Foreground="#FFF3D6"
+                                   FontSize="22"
+                                   FontWeight="Black"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Page>
