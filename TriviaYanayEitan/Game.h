@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include "Question.h"
+#include "LoggedUser.h"
 
 struct GameData
 {

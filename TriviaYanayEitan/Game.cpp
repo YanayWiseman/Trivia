@@ -1,19 +1,19 @@
 #include "Game.h"
 
-void submitGameStatusToDB(const GameData&)
+void Game::submitGameStatusToDB(const GameData&)
 {
 
 }
 
-void getQuestionsForUser(const LoggedUser& user)
+void Game::getQuestionsForUser(const LoggedUser& user)
 {
 
-	}
-void submitAnswer()
+}
+void Game::submitAnswer()
 {
 
-	}
-void removePlayer()
+}
+void Game::removePlayer()
 {
 
-	}
+}
