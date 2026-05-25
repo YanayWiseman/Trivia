@@ -19,7 +19,14 @@ Game::Game(unsigned int gameId)
 
 Question Game::getQuestionsForUser(const LoggedUser& user)
 {
-	return this->m_players[user].currentQuestion;
+	auto it = this->m_players.find(user.getUsername());
+
+	if (it == this->m_players.end())
+	{
+		throw std::runtime_error("error: User not found");
+	}
+
+	return it->second.currentQuestion;
 }
 
 /*
@@ -30,7 +37,14 @@ Question Game::getQuestionsForUser(const LoggedUser& user)
 
 void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, float answerTime)
 {
-	GameData& gameData = this->m_players[user];
+	auto it = this->m_players.find(user.getUsername());
+
+	if (it == this->m_players.end())
+	{
+		throw std::runtime_error("error: User not found");
+	}
+
+	GameData& gameData = it->second;
 
 	if (answerId == gameData.currentQuestion.getCorrectAnswerId())
 	{
@@ -62,7 +76,7 @@ void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, float ans
 
 void Game::removePlayer(const LoggedUser& user)
 {
-	auto it = this->m_players.find(user);
+	auto it = this->m_players.find(user.getUsername());
 
 	if (it != this->m_players.end())
 	{
@@ -83,7 +97,7 @@ void Game::setPlayers(const std::vector<LoggedUser>& players)
 
 	for (LoggedUser player : players)
 	{
-		this->m_players[player] = startingGameData;
+		this->m_players.insert(std::pair<std::string, GameData>(player.getUsername(), startingGameData));
 	}
 }
 
@@ -93,7 +107,7 @@ void Game::setPlayers(const std::vector<LoggedUser>& players)
 	output: the mao of logged users and their game data
 */
 
-std::map<LoggedUser, GameData> Game::getPlayers()
+std::map<std::string, GameData> Game::getPlayers()
 {
 	return this->m_players;
 }

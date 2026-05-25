@@ -58,11 +58,11 @@ void GameManager::deleteGame(unsigned int gameId)
 		if (it->getGameId() == gameId)
 		{
 			// submitthe game statistics into the database for the players
-			std::map<LoggedUser, GameData> players = it->getPlayers();
+			std::map<std::string, GameData> players = it->getPlayers();
 
 			for (const auto& player : players)
 			{
-				submitGameStatusToDB(player.first.getUsername(), player.second);
+				submitGameStatusToDB(player.first, player.second);
 			}
 			// now delete the game
 			this->m_games.erase(it);

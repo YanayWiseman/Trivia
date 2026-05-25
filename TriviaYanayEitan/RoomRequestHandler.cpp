@@ -1,6 +1,7 @@
 #include "RoomRequestHandler.h"
 #include "MenuRequestHandler.h"
 
+
 /*
 	Function constructs RoomRequestHandler object.
 	Input: loggedUser (const LoggedUser&), room (Room&)
