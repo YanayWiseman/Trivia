@@ -31,7 +31,7 @@ GameManager& GameManager::getInstance()
 
 Game GameManager::createGame(const Room& room)
 {
-	Game game(room.getData().id);
+	Game game(room.getData().id, room.getData().timePerQuestion);
 
 	std::list<Question> questionsList = this->m_database->getQuestions(AMOUNT_OF_QUESTIONS);
 	std::vector<Question> questionsVector(questionsList.begin(), questionsList.end());
