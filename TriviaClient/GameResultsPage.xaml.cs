@@ -15,14 +15,34 @@ using System.Windows.Shapes;
 
 namespace TriviaClient
 {
-    /// <summary>
-    /// Interaction logic for GameResultsPage.xaml
-    /// </summary>
     public partial class GameResultsPage : Page
     {
+        public List<PlayerResult> leaderboard { get; set; }
         public GameResultsPage()
         {
             InitializeComponent();
+
+            this.leaderboard = FetchGameResults();
+
+            // tell the xaml to look at this class for data bindings
+            this.DataContext = this;
+        }
+
+        private List<PlayerResult> FetchGameResults()
+        {
+            return new List<PlayerResult>
+            {
+                new PlayerResult { Rank = 1, PlayerName = "Kira", CorrectAnswers = 10 },
+                new PlayerResult { Rank = 2, PlayerName = "Yanay", CorrectAnswers = 6 },
+                new PlayerResult { Rank = 3, PlayerName = "Radinsky", CorrectAnswers = 4 },
+                new PlayerResult { Rank = 4, PlayerName = "Alan", CorrectAnswers = 2 }
+            };
+        }
+        public class PlayerResult
+        {
+            public int Rank { get; set; }
+            public string? PlayerName { get; set; }
+            public int CorrectAnswers { get; set; }
         }
     }
 }

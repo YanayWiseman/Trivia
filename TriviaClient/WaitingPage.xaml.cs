@@ -137,6 +137,8 @@ namespace TriviaClient
             if (response.Status == 1)
             {
                 this.stopThread = true;
+                // temp
+                this.NavigationService.Navigate(new GameResultsPage());
             }
             else
             {

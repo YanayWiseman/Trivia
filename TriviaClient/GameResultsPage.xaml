@@ -14,8 +14,43 @@
             <RowDefinition/>
             <RowDefinition Height="0.2*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Game Results" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Permanent Marker"
-                   FontSize="45"/>
+
+        <TextBlock Grid.Row="0" Text="Game Results" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Permanent Marker" FontSize="45"/>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,10">
+            <Border Background="#F0F8FF" BorderBrush="Black" BorderThickness="4" CornerRadius="15" Width="540" HorizontalAlignment="Center" Padding="15">
+                <ItemsControl ItemsSource="{Binding leaderboard}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="White" BorderBrush="Black" BorderThickness="2" CornerRadius="10" Padding="20,12" Margin="0,6" Width="500">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <TextBlock Text="#" FontFamily="Permanent Marker" FontSize="22" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding Rank}" FontFamily="Permanent Marker" FontSize="24" FontWeight="Bold" Foreground="Black"/>
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Column="1" Text="{Binding PlayerName}" FontFamily="Permanent Marker" FontSize="22" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding CorrectAnswers}" FontFamily="Permanent Marker" FontSize="24" Foreground="DarkGreen" FontWeight="Bold"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+        </ScrollViewer>
+
 
         <Button Grid.Row="2" Height="45" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center"
                 Background="Red" FontFamily="Permanent Marker" FontSize="25">
