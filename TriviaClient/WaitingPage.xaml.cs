@@ -158,7 +158,7 @@ namespace TriviaClient
 
                 while (this.NavigationService.CanGoBack)
                 {
-                    this.NavigationService.RemoveBackEntry();
+                    this.NavigationService.RemoveBackEntry(); 
                 }
             }
             else
