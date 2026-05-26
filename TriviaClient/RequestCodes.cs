@@ -21,9 +21,9 @@ namespace TriviaClient
         StartGameRequestCode,
         GetRoomStateRequestCode,
         LeaveRoomRequestCode,
-        LeaveGameRequestCode,
         GetQuestionRequestCode,
         SubmitAnswerRequestCode,
-        GetGameResultRequestCode
+        GetGameResultsRequestCode,
+        LeaveGameRequestCode
     }
 }

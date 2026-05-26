@@ -4,6 +4,8 @@
 #include "JsonRequestPacketDeserializer.h"
 #include "JsonResponsePacketSerializer.h"
 #include "Constants.h"
+#include <thread>
+#include <chrono>
 
 /*
 	Function creates GameRequestHandler object.
@@ -29,12 +31,27 @@ RequestResult GameRequestHandler::submitAnswer(const RequestInfo& requestInfo) c
 
 	SubmitAnswerRequest submitAnswerRequest = JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(requestInfo.buffer);
 
-	m_game.submitAnswer(m_user, submitAnswerRequest.answerId, 0);
+	unsigned int correctAnswerId = this->m_game.getCurrentCorrectAnswerId(this->m_user);
 
-	SubmitAnswerResponse submitAnswerResponse;
-	submitAnswerResponse.status = Success;
+	float answerTime = this->m_game.getAnswerTime(this->m_user);
+	float remainingTime = this->m_game.getRemainingTime(this->m_user);
 
-	result.response = JsonResponsePacketSerializer::serializeResponse(submitAnswerResponse);
+	if (answerTime < this->m_game.getTimePerQuestion())
+	{
+		this->m_game.submitAnswer(this->m_user, submitAnswerRequest.answerId, answerTime);
+	}
+	else
+	{
+		this->m_game.submitAnswer(this->m_user, NO_ANSWER, (float)this->m_game.getTimePerQuestion());
+	}
+
+	std::this_thread::sleep_for(std::chrono::milliseconds((int)(remainingTime * 1000)));
+
+	SubmitAnswerResponse response;
+	response.status = Success;
+	response.correctAnswerId = correctAnswerId;
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
 	result.newHandler = const_cast<GameRequestHandler*>(this);
 
 	return result;

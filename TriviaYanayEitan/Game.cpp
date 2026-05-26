@@ -6,8 +6,7 @@
 	output: no return values
 */
 
-Game::Game(unsigned int gameId)
-	: m_gameId(gameId)
+Game::Game(unsigned int gameId, unsigned int timePerQuestion) : m_gameId(gameId), m_timePerQuestion(timePerQuestion)
 {
 }
 
@@ -26,7 +25,11 @@ Question Game::getQuestionsForUser(const LoggedUser& user)
 		throw std::runtime_error("error: User not found");
 	}
 
-	return it->second.currentQuestion;
+	GameData& gameData = it->second;
+
+	gameData.questionStartTime = std::chrono::steady_clock::now();
+
+	return gameData.currentQuestion;
 }
 
 /*
@@ -92,12 +95,24 @@ void Game::removePlayer(const LoggedUser& user)
 
 void Game::setPlayers(const std::vector<LoggedUser>& players)
 {
-	// this method will be initializing the player's game data to all 0's
-	GameData startingGameData = { this->m_questions[0], 0, 0, 0, 0 };
-
-	for (LoggedUser player : players)
+	if (this->m_questions.empty())
 	{
-		this->m_players.insert(std::pair<std::string, GameData>(player.getUsername(), startingGameData));
+		throw std::runtime_error("error: No questions in game");
+	}
+
+	for (int i = 0; i < players.size(); i++)
+	{
+		GameData gameData =
+		{
+			std::chrono::steady_clock::now(),
+			this->m_questions[0],
+			0,
+			0,
+			0,
+			0
+		};
+
+		this->m_players.insert(std::pair<std::string, GameData>(players[i].getUsername(), gameData));
 	}
 }
 
@@ -134,4 +149,85 @@ unsigned int Game::getGameId()
 {
 	return this->m_gameId;
 }
+
+
+/*
+	Function calculates how many seconds passed since the user's current question started
+	Input: user (const LoggedUser&)
+	Output: answer time in seconds (float)
+*/
+
+float Game::getAnswerTime(const LoggedUser& user) const
+{
+	auto it = this->m_players.find(user.getUsername());
+
+	if (it == this->m_players.end())
+	{
+		throw std::runtime_error("error: User not found");
+	}
+
+	const GameData& gameData = it->second;
+
+	auto now = std::chrono::steady_clock::now();
+
+	float answerTime = std::chrono::duration<float>(now - gameData.questionStartTime).count();
+
+	if (answerTime > this->m_timePerQuestion)
+	{
+		answerTime = (float)this->m_timePerQuestion;
+	}
+
+	return answerTime;
+}
+
+
+/*
+	Function calculates how many seconds are left for the user's current question
+	Input: user (const LoggedUser&)
+	Output: remaining time in seconds (float)
+*/
+
+float Game::getRemainingTime(const LoggedUser& user) const
+{
+	float answerTime = this->getAnswerTime(user);
+
+	if (answerTime >= this->m_timePerQuestion)
+	{
+		return 0;
+	}
+
+	return this->m_timePerQuestion - answerTime;
+}
+
+
+/*
+	Function returns the correct answer id of the user's current question
+	Input: user (const LoggedUser&)
+	Output: correct answer id (unsigned int)
+*/
+
+unsigned int Game::getCurrentCorrectAnswerId(const LoggedUser& user) const
+{
+	auto it = this->m_players.find(user.getUsername());
+
+	if (it == this->m_players.end())
+	{
+		throw std::runtime_error("error: User not found");
+	}
+
+	return it->second.currentQuestion.getCorrectAnswerId();
+}
+
+
+/*
+	Function returns the time limit for each question
+	Input: None
+	Output: time per question in seconds (unsigned int)
+*/
+
+unsigned int Game::getTimePerQuestion() const
+{
+	return this->m_timePerQuestion;
+}
+
 
