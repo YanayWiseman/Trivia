@@ -17,9 +17,11 @@ namespace TriviaClient
 {
     public partial class CreateRoomPage : Page
     {
-        public CreateRoomPage()
+        private string username;
+        public CreateRoomPage(string username)
         {
             InitializeComponent();
+            this.username = username;
         }
 
         private void GoBack_Click(object sender, RoutedEventArgs e)
@@ -79,7 +81,7 @@ namespace TriviaClient
                 if (response.Status == 1)
                 {
                     MessageBox.Show("Room created successfully.");
-                    this.NavigationService.Navigate(new WaitingPage(id, request.AnswerTimeout, request.QuestionsCount, isAdmin: true));
+                    this.NavigationService.Navigate(new WaitingPage(id, this.username, request.AnswerTimeout, request.QuestionsCount, isAdmin: true));
                 }
                 else
                 {

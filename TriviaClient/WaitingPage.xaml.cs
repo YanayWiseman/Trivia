@@ -23,12 +23,13 @@ namespace TriviaClient
         private volatile bool stopThread;
         private uint timePerQuestion;
         private uint questionCount;
+        private string username;
 
-        public WaitingPage(uint roomId, uint timePerQuestion = 0, uint questionCount = 0, bool isAdmin = false)
+        public WaitingPage(uint roomId, string username, uint timePerQuestion = 0, uint questionCount = 0, bool isAdmin = false)
         {
             this.roomId = roomId;
             this.isAdmin = isAdmin;
-
+            this.username = username;
             if (isAdmin)
             {
                 this.timePerQuestion = timePerQuestion;
@@ -77,7 +78,7 @@ namespace TriviaClient
                         this.Dispatcher.Invoke(() =>
                         {
                             MessageBox.Show("Room has been closed.");
-                            this.NavigationService.Navigate(new JoinRoomPage());
+                            this.NavigationService.Navigate(new JoinRoomPage(this.username));
                         });
 
                         break;
@@ -129,7 +130,7 @@ namespace TriviaClient
             if (response.Status == 1)
             {
                 this.stopThread = true;
-                this.NavigationService.Navigate(new JoinRoomPage());
+                this.NavigationService.Navigate(new JoinRoomPage(this.username));
             }
             else
             {
@@ -139,7 +140,7 @@ namespace TriviaClient
 
         private void StartGame_Click(object sender, RoutedEventArgs e)
         {
-            byte[] requestBuffer = { (byte)RequestCode.StartGameRequestCode };
+            byte[] requestBuffer = Serializer.SerializeStartGameRequest();
 
             StartGameResponse response = ClientSession.Communicator.SendRequest<StartGameResponse>(requestBuffer);
             if (response.Status == 1)
@@ -148,7 +149,7 @@ namespace TriviaClient
                 // temp
                 if (this.NavigationService != null)
                 {
-                    this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion));
+                    this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion, this.username));
                 }
                 else
                 {
@@ -171,7 +172,7 @@ namespace TriviaClient
 
             if (response.Status == 1)
             {
-                this.NavigationService.Navigate(new JoinRoomPage());
+                this.NavigationService.Navigate(new JoinRoomPage(this.username));
 
                 while (this.NavigationService.CanGoBack)
                 {

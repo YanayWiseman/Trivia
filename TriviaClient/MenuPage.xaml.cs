@@ -28,11 +28,11 @@ namespace TriviaClient
 
         private void CreateRoom_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new CreateRoomPage());
+            this.NavigationService.Navigate(new CreateRoomPage(userNameTextBlock.Text));
         }
         private void JoinRoom_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new JoinRoomPage());
+            this.NavigationService.Navigate(new JoinRoomPage(userNameTextBlock.Text));
         }
         private void Statistics_Click(object sender, RoutedEventArgs e)
         {

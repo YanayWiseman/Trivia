@@ -371,9 +371,30 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetQuestionResponse
 
 	response["status"] = getQuestionResponse.status;
 	response["question"] = getQuestionResponse.question;
-	response["answers"] = getQuestionResponse.answers;
 
-	return JsonResponsePacketSerializer::serializeJson(response, SUBMIT_ANSWER_RESPONSE);
+	// turn the answers from this (map)
+	/*"answers":
+	[
+		[0, "bla1"],
+		[1, "bla2"]
+	]
+	to this:
+	"answers":
+	{
+		"0":"bla1",
+		"1" : "bla 2"
+	}  
+	so we can parse it in thee client using deserializeObject()*/
+	json answersJson = json::object();
+
+	for (const auto& pair : getQuestionResponse.answers)
+	{
+		answersJson[std::to_string(pair.first)] = pair.second;
+	}
+
+	response["answers"] = answersJson;
+
+	return JsonResponsePacketSerializer::serializeJson(response, GET_QUESTION_RESPONSE);
 }
 
 
@@ -389,5 +410,5 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveGameResponse& 
 
 	response["status"] = leaveGameResponse.status;
 
-	return JsonResponsePacketSerializer::serializeJson(response, SUBMIT_ANSWER_RESPONSE);
+	return JsonResponsePacketSerializer::serializeJson(response, LEAVE_GAME_RESPONSE);
 }

@@ -16,9 +16,7 @@ using System.Windows.Threading;
 
 namespace TriviaClient
 {
-    /// <summary>
-    /// Interaction logic for GamePage.xaml
-    /// </summary>
+
     public partial class GamePage : Page
     {
         private DispatcherTimer timer;
@@ -36,6 +34,7 @@ namespace TriviaClient
 
         private List<Button> answerButtons;
         private List<TextBlock> answerTextBlocks;
+        private string username;
 
 
         /*
@@ -44,13 +43,14 @@ namespace TriviaClient
             Output: None (constructor)
         */
 
-        public GamePage(uint questionCount, uint timePerQuestion)
+        public GamePage(uint questionCount, uint timePerQuestion, string username)
         {
             InitializeComponent();
 
             this.questionCount = questionCount;
             this.timePerQuestion = timePerQuestion;
             this.questionNumber = 0;
+            this.username = username;
 
             this.answered = false;
             this.waitingForAnswerResult = false;
@@ -121,7 +121,7 @@ namespace TriviaClient
             ResetButtonColors();
             EnableAnswerButtons();
 
-            byte[] request = { (byte)RequestCode.GetQuestionRequestCode };
+            byte[] request = Serializer.SerializeGetQuestionRequest();
             GetQuestionResponse response = ClientSession.Communicator.SendRequest<GetQuestionResponse>(request);
 
             if (response.Status != 1)
@@ -184,7 +184,7 @@ namespace TriviaClient
 
             if (!this.waitingForAnswerResult)
             {
-                ShowAnswerResult();
+                await ShowAnswerResult();
             }
         }
 
@@ -221,11 +221,7 @@ namespace TriviaClient
             });
 
             this.waitingForAnswerResult = false;
-
-            if (this.timeLeft == 0)
-            {
-                ShowAnswerResult();
-            }
+            await ShowAnswerResult();
         }
 
 
@@ -235,7 +231,7 @@ namespace TriviaClient
             Output: None (void)
         */
 
-        private async void ShowAnswerResult()
+        private async Task ShowAnswerResult()
         {
             if (this.lastSubmitResponse == null)
             {
@@ -346,11 +342,9 @@ namespace TriviaClient
 
         private void ShowResultsPage()
         {
+            this.timer.Stop();
 
-            MessageBox.Show("What the helly");
-            //this.timer.Stop();
-
-            //this.NavigationService.Navigate(new GameResultsPage());
+            this.NavigationService.Navigate(new GameResultsPage(this.username));
         }
     }
 }

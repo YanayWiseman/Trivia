@@ -19,19 +19,21 @@ namespace TriviaClient
     public partial class GameResultsPage : Page
     {
         public List<PlayerResult>? leaderboard { get; set; }
-        public GameResultsPage()
+        private string username;
+        public GameResultsPage(string username)
         {
             InitializeComponent();
             byte[] getGameResultsRequestBuffer = { (byte)RequestCode.GetGameResultsRequestCode };
             GetGameResultResponse getGameResultsResponse = ClientSession.Communicator.SendRequest<GetGameResultResponse>(getGameResultsRequestBuffer);
 
-            if(getGameResultsResponse.Status == 1)
+            if (getGameResultsResponse.Status == 1)
             {
                 this.leaderboard = FetchGameResults(getGameResultsResponse.results);
             }
 
             // tell the xaml to look at this class for data bindings
             this.DataContext = this;
+            this.username = username;
         }
 
         private List<PlayerResult>? FetchGameResults(List<ServerPlayerResult>? playersResults)
@@ -64,6 +66,11 @@ namespace TriviaClient
             public int Rank { get; set; }
             public string? PlayerName { get; set; }
             public int CorrectAnswers { get; set; }
+        }
+
+        private void BackToMenu_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new MenuPage(username));
         }
     }
 }

@@ -21,8 +21,9 @@ namespace TriviaClient
     public partial class JoinRoomPage : Page
     {
         private Thread t;
+        private string username;
         private volatile bool stopThread;
-        public JoinRoomPage()
+        public JoinRoomPage(string username)
         {
             InitializeComponent();
             this.stopThread = false;
@@ -34,6 +35,7 @@ namespace TriviaClient
             this.t = new Thread(ts);
             t.IsBackground = true;
             t.Start();
+            this.username = username;
         }
 
         private void JoinRoomPage_Unloaded(object sender, RoutedEventArgs e)
@@ -122,7 +124,7 @@ namespace TriviaClient
                     GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
 
                     this.stopThread = true;
-                    this.NavigationService.Navigate(new WaitingPage(request.RoomId, isAdmin: false));
+                    this.NavigationService.Navigate(new WaitingPage(request.RoomId, username, isAdmin: false));
                 }
                 else
                 {

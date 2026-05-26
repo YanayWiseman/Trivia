@@ -131,6 +131,25 @@ namespace TriviaClient
         {
             return SerializeJson(new { }, (int)RequestCode.GetPersonalStatsRequestCode);
         }
+        public static byte[] SerializeGetRoomStateRequest()
+        {
+            return SerializeJson(new { }, (int)RequestCode.GetRoomStateRequestCode);
+        }
+
+        public static byte[] SerializeLeaveRoomRequest()
+        {
+            return SerializeJson(new { }, (int)RequestCode.LeaveRoomRequestCode);
+        }
+
+        public static byte[] SerializeCloseRoomRequest()
+        {
+            return SerializeJson(new { }, (int)RequestCode.CloseRoomRequestCode);
+        }
+
+        public static byte[] SerializeStartGameRequest()
+        {
+            return SerializeJson(new { }, (int)RequestCode.StartGameRequestCode);
+        }
 
         public static byte[] SerializeGetQuestionRequest()
         {
