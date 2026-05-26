@@ -81,18 +81,18 @@ RequestResult GameRequestHandler::getGameResults(const RequestInfo& requestInfo)
 {
 	RequestResult result;
 	GetGameResultsResponse getGameResultsResponse;
-	std::map<std::string, GameData> players = m_game.getPlayers();
+	std::map<std::string, GameData> players = this->m_game.getPlayers();
 
 	getGameResultsResponse.status = Success;
 
-	for (std::map<std::string, GameData>::iterator it = players.begin(); it != players.end(); ++it)
+	for (std::map<std::string, GameData>::iterator it = players.begin(); it != players.end(); it++)
 	{
 		PlayerResults playerResults;
 
 		playerResults.username = it->first;
 		playerResults.correctAnswerCount = it->second.correctAnswerCount;
 		playerResults.wrongAnswerCount = it->second.wrongAnswerCount;
-		playerResults.avrageAnswerTime = it->second.averageAnswerTime;
+		playerResults.averageAnswerTime = it->second.averageAnswerTime;
 
 		getGameResultsResponse.results.push_back(playerResults);
 	}
