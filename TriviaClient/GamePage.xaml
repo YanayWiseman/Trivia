@@ -91,7 +91,8 @@
         BorderThickness="3"
         Click="AnswerButton_Click">
 
-                <TextBlock Text="Answer 1"
+                <TextBlock x:Name="answerTextBlock1"
+               Text="Answer 1"
                TextWrapping="Wrap"
                TextAlignment="Center"/>
             </Button>
@@ -110,13 +111,14 @@
         BorderThickness="3"
         Click="AnswerButton_Click">
 
-                <TextBlock Text="Answer 2"
+                <TextBlock x:Name="answerTextBlock2"
+               Text="Answer 2"
                TextWrapping="Wrap"
                TextAlignment="Center"/>
             </Button>
 
 
-        <Button x:Name="answerButton3"
+            <Button x:Name="answerButton3"
         Grid.Row="1"
         Grid.Column="0"
         Margin="0,12,12,0"
@@ -129,7 +131,8 @@
         BorderThickness="3"
         Click="AnswerButton_Click">
 
-                <TextBlock Text="Answer 3"
+                <TextBlock x:Name="answerTextBlock3"
+               Text="Answer 3"
                TextWrapping="Wrap"
                TextAlignment="Center"/>
             </Button>
@@ -148,7 +151,8 @@
         BorderThickness="3"
         Click="AnswerButton_Click">
 
-                <TextBlock Text="Answer 4"
+                <TextBlock x:Name="answerTextBlock4"
+               Text="Answer 4"
                TextWrapping="Wrap"
                TextAlignment="Center"/>
             </Button>

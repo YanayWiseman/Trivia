@@ -7,6 +7,8 @@
 #include "HandlersStructs.h"
 #include "ResponseStructs.h"
 
+#define NO_ANSWER 0
+
 class RequestHandlerFactory;
 
 
