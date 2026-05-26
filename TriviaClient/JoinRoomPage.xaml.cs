@@ -94,7 +94,6 @@ namespace TriviaClient
             }
         }
 
-
         private void JoinRoom_Click(object sender, RoutedEventArgs e)
         {
             if (RoomsListBox.SelectedItem == null)
