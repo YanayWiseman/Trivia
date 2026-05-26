@@ -79,7 +79,7 @@ namespace TriviaClient
                 if (response.Status == 1)
                 {
                     MessageBox.Show("Room created successfully.");
-                    this.NavigationService.Navigate(new WaitingPage(id, isAdmin: true));
+                    this.NavigationService.Navigate(new WaitingPage(id, request.AnswerTimeout, request.QuestionsCount, isAdmin: true));
                 }
                 else
                 {

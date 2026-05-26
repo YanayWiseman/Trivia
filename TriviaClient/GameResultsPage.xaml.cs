@@ -22,7 +22,7 @@ namespace TriviaClient
         public GameResultsPage()
         {
             InitializeComponent();
-            byte[] getGameResultsRequestBuffer = { (byte)RequestCode.GetGameResultRequestCode };
+            byte[] getGameResultsRequestBuffer = { (byte)RequestCode.GetGameResultsRequestCode };
             GetGameResultResponse getGameResultsResponse = ClientSession.Communicator.SendRequest<GetGameResultResponse>(getGameResultsRequestBuffer);
 
             if(getGameResultsResponse.Status == 1)

@@ -349,7 +349,7 @@ namespace TriviaClient
         {
             this.timer.Stop();
 
-            // this.NavigationService.Navigate(new ResultPage());
+            this.NavigationService.Navigate(new GameResultsPage());
         }
     }
 }

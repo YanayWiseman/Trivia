@@ -21,10 +21,19 @@ namespace TriviaClient
         private bool isAdmin;
         private Thread t;
         private volatile bool stopThread;
-        public WaitingPage(uint roomId, bool isAdmin = false)
+        private uint timePerQuestion;
+        private uint questionCount;
+
+        public WaitingPage(uint roomId, uint timePerQuestion = 0, uint questionCount = 0, bool isAdmin = false)
         {
             this.roomId = roomId;
             this.isAdmin = isAdmin;
+
+            if (isAdmin)
+            {
+                this.timePerQuestion = timePerQuestion;
+                this.questionCount = questionCount;
+            }
 
             InitializeComponent();
 
@@ -137,7 +146,14 @@ namespace TriviaClient
             {
                 this.stopThread = true;
                 // temp
-                this.NavigationService.Navigate(new GameResultsPage());
+                if (this.NavigationService != null)
+                {
+                    this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion));
+                }
+                else
+                {
+                    MessageBox.Show("NavigationService is null!");
+                }
             }
             else
             {
