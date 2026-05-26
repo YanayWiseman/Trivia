@@ -2,6 +2,7 @@
 
 #include <list>
 #include <string>
+#include <vector>
 #include "SqliteDatabase.h"
 #include "Room.h"
 #include "Game.h"
@@ -22,10 +23,11 @@ private:
 
 public:
 	// methods
-	Game createGame(const Room& room);
+	Game& createGame(const Room& room);
+	Game& getGame(unsigned int gameId);
 	void deleteGame(unsigned int gameId);
 
-	// signlton methods
+	// singleton methods
 	static GameManager& getInstance();
 
 	GameManager(const GameManager& other) = delete;

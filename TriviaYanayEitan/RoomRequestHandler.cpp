@@ -37,6 +37,16 @@ RequestResult RoomRequestHandler::getRoomState(const RequestInfo& info) const
 		getRoomStateResponse.questionsCount = roomState.numOfQuestionsInGame;
 		getRoomStateResponse.status = Success;
 
+		if (roomState.status == InGame)
+		{
+			Game& game = GameManager::getInstance().getGame(roomState.id);
+
+			result.response = JsonResponsePacketSerializer::serializeResponse(getRoomStateResponse);
+			result.newHandler = this->m_handlerFactory.createGameRequestHandler(game, this->m_user);
+
+			return result;
+		}
+
 		if (roomState.status == Closed)
 		{
 			result.newHandler = this->m_handlerFactory.createMenuRequestHandler(this->m_user);

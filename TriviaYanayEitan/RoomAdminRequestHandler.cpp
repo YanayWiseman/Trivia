@@ -111,11 +111,13 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 	RequestResult result;
 	StartGameResponse response;
 
+	Game& game = GameManager::getInstance().createGame(this->m_room);
+
 	this->m_room.setStatus(InGame);
 	response.status = Success;
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
-	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
+	result.newHandler = this->m_handlerFactory.createGameRequestHandler(game, this->m_user);
 
 	return result;
 }

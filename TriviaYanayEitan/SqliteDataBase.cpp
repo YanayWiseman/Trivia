@@ -229,7 +229,7 @@ std::list<Question> SqliteDatabase::getQuestions(int amount) const
 	
 	// Prepare question statement
 
-	sqlite3_stmt* questionStmt = prepare("SELECT ID, QUESTION FROM QUESTIONS ORDER BY RANDOM() LIMIT = ?;");
+	sqlite3_stmt* questionStmt = prepare("SELECT ID, QUESTION FROM QUESTIONS ORDER BY RANDOM() LIMIT ?;");
 	if (!questionStmt)
 	{
 		std::runtime_error err("error: Failed to prepare questions.");
@@ -263,7 +263,7 @@ std::list<Question> SqliteDatabase::getQuestions(int amount) const
 
 		// Prepare answer statement
 
-		answerStmt = prepare("SELECT ANSWER, IS_CORRECT FROM ANSWERS WHERE QUESTIO_ID = ?;");
+		answerStmt = prepare("SELECT ANSWER, IS_CORRECT FROM ANSWERS WHERE QUESTION_ID = ?;");
 
 		if(!questionStmt)
 		{

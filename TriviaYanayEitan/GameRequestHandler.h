@@ -28,7 +28,7 @@ private:
 	RequestResult getErrorResponse(const std::string& errorMsg) const;
 
 public:
-	GameRequestHandler(Game& game, const LoggedUser& user, GameManager& gameManager);
+	GameRequestHandler(Game& game, const LoggedUser& user);
 
 	bool isRequestRelevant(const RequestInfo& requestInfo) const override;
 	RequestResult handleRequest(const RequestInfo& requestInfo) const override;

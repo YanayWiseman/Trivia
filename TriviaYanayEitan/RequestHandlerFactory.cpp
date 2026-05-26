@@ -63,6 +63,11 @@ LoginRequestHandler* RequestHandlerFactory::createLoginRequestHandler()
     return new LoginRequestHandler(*this);
 }
 
+GameRequestHandler* RequestHandlerFactory::createGameRequestHandler(Game& game, const LoggedUser& usr)
+{
+    return new GameRequestHandler(game, usr);
+}
+
 /*
     Function returns login manager of the handler factory.
     Input: None

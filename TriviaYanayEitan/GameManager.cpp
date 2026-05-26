@@ -29,21 +29,49 @@ GameManager& GameManager::getInstance()
 	Output: the new Game struct created
 */
 
-Game GameManager::createGame(const Room& room)
+Game& GameManager::createGame(const Room& room)
 {
 	Game game(room.getData().id, room.getData().timePerQuestion);
 
 	std::list<Question> questionsList = this->m_database->getQuestions(AMOUNT_OF_QUESTIONS);
 	std::vector<Question> questionsVector(questionsList.begin(), questionsList.end());
-	
+
 	game.setQuestions(questionsVector);
-	game.setPlayers(room.getUsers());
+	
+	std::vector<std::string> usernames = room.getAllUsers();
+	std::vector<LoggedUser> loggedUsers;
+
+	for (int i = 0; i < usernames.size(); i++)
+	{
+		loggedUsers.push_back(LoggedUser(usernames[i]));
+	}
+
+	game.setPlayers(loggedUsers);
 
 	this->m_games.push_back(game);
 
-	return game;
+	return this->m_games.back();
 }
 
+
+/*
+	Function returns a game by its id
+	Input: gameId (unsigned int)
+	Output: game with the matching id (Game&)
+*/
+
+Game& GameManager::getGame(unsigned int gameId)
+{
+	for (int i = 0; i < this->m_games.size(); i++)
+	{
+		if (this->m_games[i].getGameId() == gameId)
+		{
+			return this->m_games[i];
+		}
+	}
+
+	throw std::runtime_error("error: Game not found");
+}
 
 /*
 	Method to delete a game from the game manager's map

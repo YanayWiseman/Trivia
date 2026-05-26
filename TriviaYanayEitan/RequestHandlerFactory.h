@@ -31,7 +31,7 @@ public:
 	RoomMemberRequestHandler* createRoomMemberRequestHandler(const LoggedUser& usr, Room& room);
 	RoomAdminRequestHandler* createRoomAdminRequestHandler(const LoggedUser& usr,  Room& room);
 	LoginRequestHandler* createLoginRequestHandler();
-	GameRequestHandler* createGameRequestHandler();
+	GameRequestHandler* createGameRequestHandler(Game& game, const LoggedUser& usr);
 	LoginManager& getLoginmanager() const;
 	StatisticsManager& getStatisticsManager() const;
 	RoomManager& getRoomManager() const;

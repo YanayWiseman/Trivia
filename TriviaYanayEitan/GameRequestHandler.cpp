@@ -13,8 +13,8 @@
 	Output: None (constructor)
 */
 
-GameRequestHandler::GameRequestHandler(Game& game, const LoggedUser& user, GameManager& gameManager)
-	: m_game(game), m_user(user), m_gameManager(gameManager), m_handlerFactory(RequestHandlerFactory::getInstance())
+GameRequestHandler::GameRequestHandler(Game& game, const LoggedUser& user)
+	: m_game(game), m_user(user), m_gameManager(GameManager::getInstance()), m_handlerFactory(RequestHandlerFactory::getInstance())
 {
 }
 

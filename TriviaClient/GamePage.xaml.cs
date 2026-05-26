@@ -121,9 +121,8 @@ namespace TriviaClient
             ResetButtonColors();
             EnableAnswerButtons();
 
-            byte[] requestBuffer = Serializer.SerializeGetQuestionRequest();
-
-            GetQuestionResponse response = ClientSession.Communicator.SendRequest<GetQuestionResponse>(requestBuffer);
+            byte[] request = { (byte)RequestCode.GetQuestionRequestCode };
+            GetQuestionResponse response = ClientSession.Communicator.SendRequest<GetQuestionResponse>(request);
 
             if (response.Status != 1)
             {
@@ -347,9 +346,11 @@ namespace TriviaClient
 
         private void ShowResultsPage()
         {
-            this.timer.Stop();
 
-            this.NavigationService.Navigate(new GameResultsPage());
+            MessageBox.Show("What the helly");
+            //this.timer.Stop();
+
+            //this.NavigationService.Navigate(new GameResultsPage());
         }
     }
 }
