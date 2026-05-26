@@ -57,7 +57,6 @@ namespace TriviaClient
             {
                 try
                 {
-
                     byte[] getRoomStateRequestBuffer = { (byte)RequestCode.GetRoomStateRequestCode };
 
                     GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
@@ -137,6 +136,8 @@ namespace TriviaClient
             if (response.Status == 1)
             {
                 this.stopThread = true;
+                // temp
+                this.NavigationService.Navigate(new GameResultsPage());
             }
             else
             {
@@ -158,7 +159,7 @@ namespace TriviaClient
 
                 while (this.NavigationService.CanGoBack)
                 {
-                    this.NavigationService.RemoveBackEntry();
+                    this.NavigationService.RemoveBackEntry(); 
                 }
             }
             else

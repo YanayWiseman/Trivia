@@ -1,0 +1,66 @@
+﻿<Page x:Class="TriviaClient.GameResultsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TriviaClient"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="GameResultsPage">
+
+    <Grid Background="LightBlue">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.2*"/>
+            <RowDefinition/>
+            <RowDefinition Height="0.2*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Game Results" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Permanent Marker" FontSize="45"/>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,10">
+            <Border Background="#F0F8FF" BorderBrush="Black" BorderThickness="4" CornerRadius="15" Width="540" HorizontalAlignment="Center" Padding="15">
+                <ItemsControl ItemsSource="{Binding leaderboard}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="White" BorderBrush="Black" BorderThickness="2" CornerRadius="10" Padding="20,12" Margin="0,6" Width="500">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <TextBlock Text="#" FontFamily="Permanent Marker" FontSize="22" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding Rank}" FontFamily="Permanent Marker" FontSize="24" FontWeight="Bold" Foreground="Black"/>
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Column="1" Text="{Binding PlayerName}" FontFamily="Permanent Marker" FontSize="22" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding CorrectAnswers}" FontFamily="Permanent Marker" FontSize="24" Foreground="DarkGreen" FontWeight="Bold"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+        </ScrollViewer>
+
+
+        <Button Grid.Row="2" Height="45" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Background="Red" FontFamily="Permanent Marker" FontSize="25">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                        <TextBlock Text="Back To Menu" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+    </Grid>
+</Page>

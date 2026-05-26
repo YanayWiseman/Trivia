@@ -98,7 +98,7 @@ struct PlayerResults
 	std::string username;
 	unsigned int correctAnswerCount;
 	unsigned int wrongAnswerCount;
-	unsigned int avrageAnswerTime;
+	unsigned int averageAnswerTime;
 };
 
 struct GetGameResultsResponse

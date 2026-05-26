@@ -123,7 +123,28 @@ namespace TriviaClient
         [JsonProperty("status")]
         public uint Status { get; set; }
     }
+    public class GetGameResultResponse
+    {
+        [JsonProperty("status")]
+        public uint Status { get; set; }
 
+        [JsonProperty("results")]
+        public List<ServerPlayerResult>? results { get; set; }
+    }
+    public class ServerPlayerResult
+    {
+        [JsonProperty("username")]
+        public string? Username { get; set; }
+
+        [JsonProperty("correctAnswerCount")]
+        public int CorrectAnswerCount { get; set; }
+
+        [JsonProperty("wrongAnswerCount")]
+        public int WrongAnswerCount { get; set; }
+
+        [JsonProperty("averageAnswerTime")]
+        public double AverageAnswerTime { get; set; }
+    }
 
     public class CreateRoomResponse
     {
