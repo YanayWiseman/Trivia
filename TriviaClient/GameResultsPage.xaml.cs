@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,26 +18,46 @@ namespace TriviaClient
 {
     public partial class GameResultsPage : Page
     {
-        public List<PlayerResult> leaderboard { get; set; }
+        public List<PlayerResult>? leaderboard { get; set; }
         public GameResultsPage()
         {
             InitializeComponent();
+            byte[] getGameResultsRequestBuffer = { (byte)RequestCode.GetGameResultRequestCode };
+            GetGameResultResponse getGameResultsResponse = ClientSession.Communicator.SendRequest<GetGameResultResponse>(getGameResultsRequestBuffer);
 
-            this.leaderboard = FetchGameResults();
+            if(getGameResultsResponse.Status == 1)
+            {
+                this.leaderboard = FetchGameResults(getGameResultsResponse.results);
+            }
 
             // tell the xaml to look at this class for data bindings
             this.DataContext = this;
         }
 
-        private List<PlayerResult> FetchGameResults()
+        private List<PlayerResult>? FetchGameResults(List<ServerPlayerResult>? playersResults)
         {
-            return new List<PlayerResult>
+            if (playersResults == null)
             {
-                new PlayerResult { Rank = 1, PlayerName = "Kira", CorrectAnswers = 10 },
-                new PlayerResult { Rank = 2, PlayerName = "Yanay", CorrectAnswers = 6 },
-                new PlayerResult { Rank = 3, PlayerName = "Radinsky", CorrectAnswers = 4 },
-                new PlayerResult { Rank = 4, PlayerName = "Alan", CorrectAnswers = 2 }
-            };
+                return new List<PlayerResult>();
+            }
+
+            // sort the list by the correct answers count
+            List<ServerPlayerResult> sortedPlayers = playersResults.OrderByDescending(p => p.CorrectAnswerCount).ToList();
+            List<PlayerResult> rankingList = new List<PlayerResult>();
+
+            int i = 0;
+            for (i = 0; i < sortedPlayers.Count; i++)
+            {
+                ServerPlayerResult curr = sortedPlayers[i];
+                rankingList.Add(new PlayerResult
+                {
+                    Rank = i + 1,
+                    CorrectAnswers = curr.CorrectAnswerCount,
+                    PlayerName = curr.Username
+                });
+            }
+
+            return rankingList;
         }
         public class PlayerResult
         {

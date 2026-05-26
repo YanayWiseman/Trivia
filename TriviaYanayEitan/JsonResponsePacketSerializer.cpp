@@ -320,7 +320,7 @@ void to_json(json& j, const PlayerResults& playerResults)
 		{"username", playerResults.username},
 		{"correctAnswerCount", playerResults.correctAnswerCount},
 		{"wrongAnswerCount", playerResults.wrongAnswerCount},
-		{"avrageAnswerTime", playerResults.avrageAnswerTime}
+		{"averageAnswerTime", playerResults.averageAnswerTime}
 	};
 }
 

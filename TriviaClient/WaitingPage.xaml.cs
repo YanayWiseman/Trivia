@@ -57,7 +57,6 @@ namespace TriviaClient
             {
                 try
                 {
-
                     byte[] getRoomStateRequestBuffer = { (byte)RequestCode.GetRoomStateRequestCode };
 
                     GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
