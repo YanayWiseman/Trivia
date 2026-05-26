@@ -63,4 +63,22 @@ namespace TriviaClient
         [JsonProperty("answerTimeout")]
         public uint AnswerTimeout { get; set; }
     }
+
+     public class GetQuestionRequest
+     {
+     }
+
+    public class SubmitAnswerRequest
+    {
+        [JsonProperty("answerId")]
+        public uint AnswerId { get; set; }
+    }
+
+    public class GetGameResultsRequest
+    {
+    }
+
+    public class LeaveGameRequest
+    {
+    }
 }

@@ -131,5 +131,46 @@ namespace TriviaClient
         {
             return SerializeJson(new { }, (int)RequestCode.GetPersonalStatsRequestCode);
         }
+
+        public static byte[] SerializeGetQuestionRequest()
+        {
+            string json = "{}";
+            return BuildPacket(RequestCode.GetQuestionRequestCode, json);
+        }
+
+        public static byte[] SerializeSubmitAnswerRequest(SubmitAnswerRequest request)
+        {
+            string json = JsonConvert.SerializeObject(request);
+            return BuildPacket(RequestCode.SubmitAnswerRequestCode, json);
+        }
+
+        public static byte[] SerializeGetGameResultsRequest()
+        {
+            string json = "{}";
+            return BuildPacket(RequestCode.GetGameResultsRequestCode, json);
+        }
+
+        public static byte[] SerializeLeaveGameRequest()
+        {
+            string json = "{}";
+            return BuildPacket(RequestCode.LeaveGameRequestCode, json);
+        }
+
+        private static byte[] BuildPacket(RequestCode code, string json)
+        {
+            byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
+            byte[] packet = new byte[1 + 4 + jsonBytes.Length];
+
+            packet[0] = (byte)code;
+
+            packet[1] = (byte)((jsonBytes.Length >> 24) & 0xFF);
+            packet[2] = (byte)((jsonBytes.Length >> 16) & 0xFF);
+            packet[3] = (byte)((jsonBytes.Length >> 8) & 0xFF);
+            packet[4] = (byte)(jsonBytes.Length & 0xFF);
+
+            Array.Copy(jsonBytes, 0, packet, 5, jsonBytes.Length);
+
+            return packet;
+        }
     }
 }
