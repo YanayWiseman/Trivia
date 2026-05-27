@@ -227,7 +227,7 @@ std::list<Question> SqliteDatabase::getQuestions(int amount) const
 	std::list<Question> questions;
 
 	
-	// Prepare question statement
+	// prepare question statement
 
 	sqlite3_stmt* questionStmt = prepare("SELECT ID, QUESTION FROM QUESTIONS ORDER BY RANDOM() LIMIT ?;");
 	if (!questionStmt)
@@ -236,7 +236,7 @@ std::list<Question> SqliteDatabase::getQuestions(int amount) const
 		throw(err);
 	}
 
-	// Bind the limit
+	// bind the limit
 
 	sqlite3_bind_int(questionStmt, 1, amount);
 
@@ -260,21 +260,14 @@ std::list<Question> SqliteDatabase::getQuestions(int amount) const
 		questionId = sqlite3_column_int(questionStmt, QUESTION_ID_COL);
 		questionText = reinterpret_cast<const char*>(sqlite3_column_text(questionStmt, QUESTION_TEXT_COL));
 
-
-		// Prepare answer statement
+		// reset these for each question
+		answers.clear();
+		correctAnsId = -1;
+		ansIndex = 0;
 
 		answerStmt = prepare("SELECT ANSWER, IS_CORRECT FROM ANSWERS WHERE QUESTION_ID = ?;");
 
-		if(!questionStmt)
-		{
-			std::runtime_error err("error: Failed to prepare answers.");
-			throw(err);
-		}	
-
 		sqlite3_bind_int(answerStmt, 1, questionId);
-
-		
-		// Go through questions
 
 		while (sqlite3_step(answerStmt) == SQLITE_ROW)
 		{
@@ -294,7 +287,7 @@ std::list<Question> SqliteDatabase::getQuestions(int amount) const
 		sqlite3_finalize(answerStmt);
 		answerStmt = nullptr;
 
-		questions.push_back(Question(questionText, answers, isCorrect));
+		questions.push_back(Question(questionText, answers, correctAnsId));
 	}
 
 	sqlite3_finalize(questionStmt);

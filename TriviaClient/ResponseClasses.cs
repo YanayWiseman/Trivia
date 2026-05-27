@@ -225,7 +225,7 @@ namespace TriviaClient
         [JsonProperty("status")]
         public uint Status { get; set; }
 
-        [JsonProperty("correctAnswerId")]
+        [JsonProperty("correctAnsId")]
         public uint CorrectAnswerId { get; set; }
     }
 

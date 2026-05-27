@@ -83,6 +83,14 @@ namespace TriviaClient
 
                         break;
                     }
+                    if (getRoomState.roomStatus == RoomStatus.InGame)
+                    {
+                        this.stopThread = true;
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion, this.username));
+                        });
+                    }
 
                     GetPlayersInRoomRequest request = new GetPlayersInRoomRequest();
                     request.RoomId = this.roomId;

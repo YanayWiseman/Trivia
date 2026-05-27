@@ -35,6 +35,7 @@ namespace TriviaClient
         private List<Button> answerButtons;
         private List<TextBlock> answerTextBlocks;
         private string username;
+        private int correctAnswersCounter;
 
 
         /*
@@ -51,9 +52,10 @@ namespace TriviaClient
             this.timePerQuestion = timePerQuestion;
             this.questionNumber = 0;
             this.username = username;
-
+            this.correctAnswersCounter = 0;
             this.answered = false;
             this.waitingForAnswerResult = false;
+            this.scoreTextBlock.Text = "Correct Answers: " + "0/" + this.questionCount.ToString();
 
             this.answerButtons = new List<Button>
             {
@@ -202,6 +204,7 @@ namespace TriviaClient
                 return;
             }
 
+            this.timer.Stop();
             this.answered = true;
             this.waitingForAnswerResult = true;
 
@@ -219,6 +222,12 @@ namespace TriviaClient
 
                 return ClientSession.Communicator.SendRequest<SubmitAnswerResponse>(requestBuffer);
             });
+            if (this.lastSubmitResponse.CorrectAnswerId == answerId)
+            {
+                this.correctAnswersCounter++;
+                this.scoreTextBlock.Text = "Correct Answers: " + this.correctAnswersCounter.ToString() + "/" + this.questionCount.ToString();
+                this.scoreTextBlock.Visibility = Visibility.Visible;
+            }
 
             this.waitingForAnswerResult = false;
             await ShowAnswerResult();

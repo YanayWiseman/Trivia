@@ -23,7 +23,7 @@ namespace TriviaClient
         public GameResultsPage(string username)
         {
             InitializeComponent();
-            byte[] getGameResultsRequestBuffer = { (byte)RequestCode.GetGameResultsRequestCode };
+            byte[] getGameResultsRequestBuffer = Serializer.SerializeGetGameResultsRequest();
             GetGameResultResponse getGameResultsResponse = ClientSession.Communicator.SendRequest<GetGameResultResponse>(getGameResultsRequestBuffer);
 
             if (getGameResultsResponse.Status == 1)
@@ -70,6 +70,13 @@ namespace TriviaClient
 
         private void BackToMenu_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                // tell the server to transition back to MenuRequestHandler
+                byte[] leaveBuffer = Serializer.SerializeLeaveGameRequest();
+                ClientSession.Communicator.SendRequest<LeaveGameResponse>(leaveBuffer);
+            }
+            catch { }
             this.NavigationService.Navigate(new MenuPage(username));
         }
     }
