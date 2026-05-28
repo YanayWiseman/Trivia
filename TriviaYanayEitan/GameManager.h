@@ -18,14 +18,12 @@ private:
 
 	// methods
 	GameManager();
-
-	void submitGameStatusToDB(const std::string& username, const GameData& gameData);
-
 public:
 	// methods
 	Game& createGame(const Room& room);
 	Game& getGame(unsigned int gameId);
 	void deleteGame(unsigned int gameId);
+	void submitGameStatusToDB(const std::string& username, const GameData& gameData);
 
 	// singleton methods
 	static GameManager& getInstance();

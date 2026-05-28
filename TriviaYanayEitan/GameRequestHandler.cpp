@@ -132,7 +132,16 @@ RequestResult GameRequestHandler::leaveGame(const RequestInfo& requestInfo) cons
 	RequestResult result;
 	LeaveGameResponse leaveGameResponse;
 
+	GameData userGameData = this->m_game.getGameDataForUser(this->m_user);
+
+	this->m_gameManager.submitGameStatusToDB(this->m_user.getUsername(), userGameData);
+
 	m_game.removePlayer(m_user);
+
+	if (this->m_game.getPlayers().size() == 0)
+	{
+		this->m_gameManager.deleteGame(this->m_game.getGameId());
+	}
 
 	leaveGameResponse.status = Success;
 

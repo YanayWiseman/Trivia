@@ -145,7 +145,7 @@ void Game::setQuestions(const std::vector<Question>& questions)
 	output: the game's id (unsigned int)
 */
 
-unsigned int Game::getGameId()
+unsigned int Game::getGameId() const
 {
 	return this->m_gameId;
 }
@@ -230,4 +230,20 @@ unsigned int Game::getTimePerQuestion() const
 	return this->m_timePerQuestion;
 }
 
+/*
+	Getter Method to get the game data for a specific user
+	input: the user to get his data
+	output: the user's game data
+*/
 
+GameData Game::getGameDataForUser(const LoggedUser& user) const
+{
+	auto it = this->m_players.find(user.getUsername());
+
+	if (it == this->m_players.end())
+	{
+		throw std::runtime_error("error: User not found");
+	}
+
+	return it->second;
+}

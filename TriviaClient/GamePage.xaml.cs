@@ -204,7 +204,6 @@ namespace TriviaClient
                 return;
             }
 
-            this.timer.Stop();
             this.answered = true;
             this.waitingForAnswerResult = true;
 
@@ -213,26 +212,23 @@ namespace TriviaClient
 
             DisableAnswerButtons();
 
-            SubmitAnswerRequest request = new SubmitAnswerRequest();
-            request.AnswerId = answerId;
+            SubmitAnswerRequest request = new SubmitAnswerRequest { AnswerId = answerId };
 
             this.lastSubmitResponse = await Task.Run(() =>
             {
                 byte[] requestBuffer = Serializer.SerializeSubmitAnswerRequest(request);
-
                 return ClientSession.Communicator.SendRequest<SubmitAnswerResponse>(requestBuffer);
             });
+
             if (this.lastSubmitResponse.CorrectAnswerId == answerId)
             {
                 this.correctAnswersCounter++;
-                this.scoreTextBlock.Text = "Correct Answers: " + this.correctAnswersCounter.ToString() + "/" + this.questionCount.ToString();
-                this.scoreTextBlock.Visibility = Visibility.Visible;
+                this.scoreTextBlock.Text = "Correct Answers: " + this.correctAnswersCounter + "/" + this.questionCount;
             }
 
             this.waitingForAnswerResult = false;
             await ShowAnswerResult();
         }
-
 
         /*
             Function displays the answer result after the server returns the correct answer
@@ -247,8 +243,9 @@ namespace TriviaClient
                 return;
             }
 
-            uint clickedAnswerId = 0;
+            this.timer.Stop();
 
+            uint clickedAnswerId = 0;
             if (this.clickedButton != null)
             {
                 clickedAnswerId = Convert.ToUInt32(this.clickedButton.Tag);
