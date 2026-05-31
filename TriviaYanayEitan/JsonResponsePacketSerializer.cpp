@@ -411,5 +411,5 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const AddQuestionResponse
 
 	response["status"] = leaveGameResponse.status;
 
-	return JsonResponsePacketSerializer::serializeJson(response, );
+	return JsonResponsePacketSerializer::serializeJson(response, ADD_QUESTION_RESPONSE);
 }
