@@ -210,6 +210,25 @@ Status SqliteDatabase::addNewUser(const UserInfo& userInfo)
 	}
 
 	sqlite3_finalize(stmt);
+
+	// initialize statistics row with all zeros
+	sqlite3_stmt* statsStmt = prepare("INSERT INTO STATISTICS (USERNAME, NUM_ANSWERED, CORRECT_ANSWERS, AVERAGE_TIME, GAMES_COUNT) "
+		"VALUES (?, 0, 0, 0.0, 0);");
+	if (!statsStmt)
+	{
+		return Failiure;
+	}
+
+	sqlite3_bind_text(statsStmt, 1, userInfo.username.c_str(), -1, SQLITE_TRANSIENT);
+
+	if (sqlite3_step(statsStmt) != SQLITE_DONE)
+	{
+		std::cout << "Failed initializing statistics for: " << userInfo.username << std::endl;
+		sqlite3_finalize(statsStmt);
+		return Failiure;
+	}
+	sqlite3_finalize(statsStmt);
+
 	return Success;
 }
 
@@ -220,23 +239,23 @@ Status SqliteDatabase::addNewUser(const UserInfo& userInfo)
 	Output: List of questions (std::list<Question>)
 */
 
-std::list<Question> SqliteDatabase::getQuestions(int amount)
+std::list<Question> SqliteDatabase::getQuestions(int amount) const
 {
 	std::lock_guard<std::mutex> lock(this->m_dbMutex);
 
 	std::list<Question> questions;
 
 	
-	// Prepare question statement
+	// prepare question statement
 
-	sqlite3_stmt* questionStmt = prepare("SELECT ID, QUESTION FROM QUESTIONS ORDER BY RANDOM() LIMIT = ?;");
+	sqlite3_stmt* questionStmt = prepare("SELECT ID, QUESTION FROM QUESTIONS ORDER BY RANDOM() LIMIT ?;");
 	if (!questionStmt)
 	{
 		std::runtime_error err("error: Failed to prepare questions.");
 		throw(err);
 	}
 
-	// Bind the limit
+	// bind the limit
 
 	sqlite3_bind_int(questionStmt, 1, amount);
 
@@ -260,21 +279,14 @@ std::list<Question> SqliteDatabase::getQuestions(int amount)
 		questionId = sqlite3_column_int(questionStmt, QUESTION_ID_COL);
 		questionText = reinterpret_cast<const char*>(sqlite3_column_text(questionStmt, QUESTION_TEXT_COL));
 
+		// reset these for each question
+		answers.clear();
+		correctAnsId = -1;
+		ansIndex = 0;
 
-		// Prepare answer statement
-
-		answerStmt = prepare("SELECT ANSWER, IS_CORRECT FROM ANSWERS WHERE QUESTIO_ID = ?;");
-
-		if(!questionStmt)
-		{
-			std::runtime_error err("error: Failed to prepare answers.");
-			throw(err);
-		}	
+		answerStmt = prepare("SELECT ANSWER, IS_CORRECT FROM ANSWERS WHERE QUESTION_ID = ?;");
 
 		sqlite3_bind_int(answerStmt, 1, questionId);
-
-		
-		// Go through questions
 
 		while (sqlite3_step(answerStmt) == SQLITE_ROW)
 		{
@@ -294,7 +306,7 @@ std::list<Question> SqliteDatabase::getQuestions(int amount)
 		sqlite3_finalize(answerStmt);
 		answerStmt = nullptr;
 
-		questions.push_back(Question(questionText, answers, isCorrect));
+		questions.push_back(Question(questionText, answers, correctAnsId));
 	}
 
 	sqlite3_finalize(questionStmt);
@@ -532,4 +544,69 @@ int SqliteDatabase::getPlayerScore(const std::string& username) const
 	sqlite3_finalize(stmt);
 
 	return score;
+}
+
+/*
+	Method to submit a game's statistics for a given user
+	input: the game's data and the user's name
+	output: no return values
+*/
+
+void SqliteDatabase::submitGameStatistics(const std::string& username, const GameData& gameData)
+{
+	sqlite3_stmt* stmt = prepare("SELECT NUM_ANSWERED, CORRECT_ANSWERS, AVERAGE_TIME, GAMES_COUNT "
+		"FROM STATISTICS WHERE USERNAME = ?;");
+	if (!stmt)
+	{
+		return;
+	}
+
+	// bind the username
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+	int gamesCount = 0, numAnswered = 0, correct = 0;
+	float avgTime = 0.0;
+
+	// extract values from the table
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		numAnswered = sqlite3_column_int(stmt, 0);
+		correct = sqlite3_column_int(stmt, 1);
+		avgTime = (float)sqlite3_column_double(stmt, 2);
+		gamesCount = sqlite3_column_int(stmt, 3);
+	}
+	else
+	{
+		sqlite3_finalize(stmt);
+		return;
+	}
+	sqlite3_finalize(stmt);
+
+	// now calculate the new values
+	int newAnswered = numAnswered + gameData.correctAnswerCount + gameData.wrongAnswerCount;
+	int newCorrect = correct + gameData.correctAnswerCount;
+	float newAvgTime = (numAnswered * avgTime + gameData.averageAnswerTime * (gameData.correctAnswerCount + gameData.wrongAnswerCount)) / newAnswered;
+	int newGamesCount = gamesCount + 1;
+
+	// now we update the database
+	sqlite3_stmt* updateStmt = prepare("UPDATE STATISTICS SET NUM_ANSWERED = ?, CORRECT_ANSWERS = ?, "
+		"AVERAGE_TIME = ?, GAMES_COUNT = ? WHERE USERNAME = ?;");
+	if (!updateStmt)
+	{
+		return;
+	}
+
+	// bind values
+	sqlite3_bind_int(updateStmt, 1, newAnswered);
+	sqlite3_bind_int(updateStmt, 2, newCorrect);
+	sqlite3_bind_double(updateStmt, 3, newAvgTime);
+	sqlite3_bind_int(updateStmt, 4, newGamesCount);
+	sqlite3_bind_text(updateStmt, 5, username.c_str(), -1, SQLITE_TRANSIENT);
+
+	if (sqlite3_step(updateStmt) != SQLITE_DONE)
+	{
+		sqlite3_finalize(updateStmt);
+		throw std::runtime_error("Failed to update statistics");
+	}
+
+	sqlite3_finalize(updateStmt);
 }

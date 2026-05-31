@@ -3,7 +3,7 @@
 
 /*
     Function constructs LoginManager object.
-    Input: database (IDatabase*)
+    Input: no input values
     Output: None (constructor)
 */
 

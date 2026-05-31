@@ -3,7 +3,6 @@
 #include "JsonResponsePacketSerializer.h"
 #include "JsonRequestPacketDeserializer.h"
 #include "RequestStructs.h"
-#include "ResponseStructs.h"
 #include "IRequestHandler.h"
 #include "Room.h"
 #include "LoggedUser.h"

@@ -1,6 +1,7 @@
 #include "RoomRequestHandler.h"
 #include "MenuRequestHandler.h"
 
+
 /*
 	Function constructs RoomRequestHandler object.
 	Input: loggedUser (const LoggedUser&), room (Room&)
@@ -35,6 +36,16 @@ RequestResult RoomRequestHandler::getRoomState(const RequestInfo& info) const
 		getRoomStateResponse.players = this->m_room.getAllUsers();
 		getRoomStateResponse.questionsCount = roomState.numOfQuestionsInGame;
 		getRoomStateResponse.status = Success;
+
+		if (roomState.status == InGame)
+		{
+			Game& game = GameManager::getInstance().getGame(roomState.id);
+
+			result.response = JsonResponsePacketSerializer::serializeResponse(getRoomStateResponse);
+			result.newHandler = this->m_handlerFactory.createGameRequestHandler(game, this->m_user);
+
+			return result;
+		}
 
 		if (roomState.status == Closed)
 		{

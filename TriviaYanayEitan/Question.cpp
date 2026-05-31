@@ -7,7 +7,7 @@
     Output: Question (std::string)
 */
 
-std::string Question::getQuestion()
+std::string Question::getQuestion() const
 {
     return this->m_question;
 }
@@ -19,7 +19,7 @@ std::string Question::getQuestion()
     Output: Possible answer strings (std::string)
 */
 
-std::vector<std::string> Question::getPossibleAnswers()
+std::vector<std::string> Question::getPossibleAnswers() const
 {
     return this->m_possibleAnswers;
 }
@@ -31,9 +31,9 @@ std::vector<std::string> Question::getPossibleAnswers()
     Output: Correct answer index (int)
 */
 
-int Question::getCorrectAnswerId()
+int Question::getCorrectAnswerId() const
 {
-    return this->m_correctAnswerId;
+    return this->m_correctAnswerId+1;
 }
 
 /*

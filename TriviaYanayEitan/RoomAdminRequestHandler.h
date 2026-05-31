@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GameManager.h"
+#include "GameRequestHandler.h"
 #include "RoomRequestHandler.h"
 #include "IRequestHandler.h"
 #include "RequestHandlerFactory.h"
