@@ -111,7 +111,7 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 	RequestResult result;
 	StartGameResponse response;
 
-	Game& game = GameManager::getInstance().createGame(this->m_room);
+	Game& game = GameManager::getInstance().createGame(this->m_room, this->m_newQuestions);
 
 	this->m_room.setStatus(InGame);
 	response.status = Success;
