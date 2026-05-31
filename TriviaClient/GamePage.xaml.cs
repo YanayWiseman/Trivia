@@ -169,7 +169,7 @@ namespace TriviaClient
                 this.answered = true;
                 this.waitingForAnswerResult = true;
 
-                DisableAnswerButtons();
+                MarkWaitingForResult(0);
 
                 SubmitAnswerRequest request = new SubmitAnswerRequest();
                 request.AnswerId = 0;
@@ -209,8 +209,7 @@ namespace TriviaClient
 
             this.clickedButton = (Button)sender;
             uint answerId = Convert.ToUInt32(this.clickedButton.Tag);
-
-            DisableAnswerButtons();
+            MarkWaitingForResult(answerId);
 
             SubmitAnswerRequest request = new SubmitAnswerRequest { AnswerId = answerId };
 
@@ -229,6 +228,39 @@ namespace TriviaClient
             this.waitingForAnswerResult = false;
             await ShowAnswerResult();
         }
+
+
+        /*
+            Function marks the buttons while waiting for the server's correct answer response
+            Input: selectedAnswerId (uint)
+            Output: None (void)
+        */
+
+        private void MarkWaitingForResult(uint selectedAnswerId)
+        {
+            for (int i = 0; i < this.answerButtons.Count; i++)
+            {
+                if (this.answerButtons[i].Tag == null)
+                {
+                    continue;
+                }
+
+                uint buttonAnswerId = Convert.ToUInt32(this.answerButtons[i].Tag);
+
+                if (selectedAnswerId != 0 && buttonAnswerId == selectedAnswerId)
+                {
+                    this.answerButtons[i].Background = Brushes.DarkOrange;
+                }
+                else
+                {
+                    this.answerButtons[i].Background = Brushes.LightGray;
+                }
+
+                this.answerButtons[i].IsHitTestVisible = false;
+                this.answerButtons[i].Focusable = false;
+            }
+        }
+
 
         /*
             Function displays the answer result after the server returns the correct answer
@@ -251,7 +283,7 @@ namespace TriviaClient
                 clickedAnswerId = Convert.ToUInt32(this.clickedButton.Tag);
             }
 
-            MarkAnswer(clickedAnswerId, this.lastSubmitResponse.CorrectAnswerId);
+            MarkAnswer(this.lastSubmitResponse.CorrectAnswerId);
 
             await Task.Delay(1200);
 
@@ -272,7 +304,7 @@ namespace TriviaClient
             Output: None (void)
         */
 
-        private void MarkAnswer(uint clickedAnswerId, uint correctAnswerId)
+        private void MarkAnswer(uint correctAnswerId)
         {
             for (int i = 0; i < this.answerButtons.Count; i++)
             {
@@ -285,12 +317,15 @@ namespace TriviaClient
 
                 if (buttonAnswerId == correctAnswerId)
                 {
-                    this.answerButtons[i].Background = Brushes.LightGreen;
+                    this.answerButtons[i].Background = Brushes.Green;
                 }
-                else if (buttonAnswerId == clickedAnswerId && clickedAnswerId != 0)
+                else
                 {
-                    this.answerButtons[i].Background = Brushes.IndianRed;
+                    this.answerButtons[i].Background = Brushes.Red;
                 }
+
+                this.answerButtons[i].IsHitTestVisible = false;
+                this.answerButtons[i].Focusable = false;
             }
         }
 
@@ -311,7 +346,7 @@ namespace TriviaClient
 
 
         /*
-            Function enables all answer buttons
+            Function enables answer button clicks
             Input: None
             Output: None (void)
         */
@@ -320,22 +355,8 @@ namespace TriviaClient
         {
             for (int i = 0; i < this.answerButtons.Count; i++)
             {
-                this.answerButtons[i].IsEnabled = true;
-            }
-        }
-
-
-        /*
-            Function disables all answer buttons
-            Input: None
-            Output: None (void)
-        */
-
-        private void DisableAnswerButtons()
-        {
-            for (int i = 0; i < this.answerButtons.Count; i++)
-            {
-                this.answerButtons[i].IsEnabled = false;
+                this.answerButtons[i].IsHitTestVisible = true;
+                this.answerButtons[i].Focusable = true;
             }
         }
 

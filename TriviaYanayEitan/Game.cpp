@@ -10,6 +10,28 @@ Game::Game(unsigned int gameId, unsigned int timePerQuestion) : m_gameId(gameId)
 {
 }
 
+
+
+/*
+	Function checks whether the game has finished for all players.
+	Input: None
+	Output: Whether game has finished for all players (bool)
+*/
+
+bool Game::hasGameEnded() const
+{
+	for (std::map<std::string, GameData>::const_iterator it = this->m_players.begin(); it != this->m_players.end(); it++)
+	{
+		if (!it->second.finished)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
 /*
 	Method to get the questions for a given user
 	input: the user
@@ -69,6 +91,10 @@ void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, float ans
 		gameData.currentQuestionIndex++;
 		gameData.currentQuestion = this->m_questions[gameData.currentQuestionIndex];
 	}
+	else
+	{
+		gameData.finished = true;
+	}
 }
 
 /*
@@ -109,7 +135,8 @@ void Game::setPlayers(const std::vector<LoggedUser>& players)
 			0,
 			0,
 			0,
-			0
+			0,
+			false
 		};
 
 		this->m_players.insert(std::pair<std::string, GameData>(players[i].getUsername(), gameData));

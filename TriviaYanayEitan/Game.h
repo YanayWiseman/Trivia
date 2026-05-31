@@ -14,6 +14,7 @@ struct GameData
 	unsigned int correctAnswerCount;
 	unsigned int wrongAnswerCount;
 	float averageAnswerTime;
+	bool finished;
 };
 
 class Game
@@ -31,6 +32,7 @@ public:
 	~Game() = default;
 
 	// methods
+	bool hasGameEnded() const;
 	Question getQuestionsForUser(const LoggedUser& user);
 	void submitAnswer(const LoggedUser& user, unsigned int answerId, float answerTime);
 	void removePlayer(const LoggedUser& user);
