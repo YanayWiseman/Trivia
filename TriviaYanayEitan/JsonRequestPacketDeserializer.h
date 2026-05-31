@@ -32,6 +32,8 @@ public:
 	//V4
 	static SubmitAnswerRequest deserializeSubmitAnswerRequest(const Buffer& buffer);
 
+	//V4.0.1
+	static AddQuestionRequest deserializeAddQuestionRequest(const Buffer& buffer);
 
 private:
 	// helper methods
