@@ -372,19 +372,6 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetQuestionResponse
 	response["status"] = getQuestionResponse.status;
 	response["question"] = getQuestionResponse.question;
 
-	// turn the answers from this (map)
-	/*"answers":
-	[
-		[0, "bla1"],
-		[1, "bla2"]
-	]
-	to this:
-	"answers":
-	{
-		"0":"bla1",
-		"1" : "bla 2"
-	}  
-	so we can parse it in thee client using deserializeObject()*/
 	json answersJson = json::object();
 
 	for (const auto& pair : getQuestionResponse.answers)
@@ -396,7 +383,6 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetQuestionResponse
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_QUESTION_RESPONSE);
 }
-
 
 /*
 	Method to serialize Json LeaveGame response into buffer.
@@ -411,4 +397,19 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveGameResponse& 
 	response["status"] = leaveGameResponse.status;
 
 	return JsonResponsePacketSerializer::serializeJson(response, LEAVE_GAME_RESPONSE);
+}
+
+/*
+	Method to serialize Json AddQuestionresponse into buffer.
+	Input: addQuestionResponse (const AddQuestionResponse&)
+	Output: Buffer containing AddQuestion response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const AddQuestionResponse& leaveGameResponse)
+{
+	json response;
+
+	response["status"] = leaveGameResponse.status;
+
+	return JsonResponsePacketSerializer::serializeJson(response, );
 }
