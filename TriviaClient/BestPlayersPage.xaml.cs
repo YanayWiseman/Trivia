@@ -67,7 +67,7 @@ namespace TriviaClient
 
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new StatisticsPage());
+            this.NavigationService.GoBack();
         }
     }
 }

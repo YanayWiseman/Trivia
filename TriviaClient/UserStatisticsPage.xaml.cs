@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,10 +41,10 @@ namespace TriviaClient
                 List<string> stats = response.GetStats();
 
                 UserStatsListBox.Items.Add("Your name: " + stats[0]);
-                UserStatsListBox.Items.Add("Average Answer Time: " + FixNegativeStat(stats[1]));
-                UserStatsListBox.Items.Add("Num of Correct Answers: " + FixNegativeStat(stats[2]));
-                UserStatsListBox.Items.Add("Games played: " + FixNegativeStat(stats[3]));
-                UserStatsListBox.Items.Add("Total Answers: " + FixNegativeStat(stats[4]));
+                UserStatsListBox.Items.Add("Average Answer Time: " + $"{double.Parse(stats[1]):F2}");
+                UserStatsListBox.Items.Add("Num of Correct Answers: " + stats[2]);
+                UserStatsListBox.Items.Add("Games played: " + stats[3]);
+                UserStatsListBox.Items.Add("Total Answers: " + stats[4]);
 
             }
             catch (Exception ex)
@@ -51,19 +52,10 @@ namespace TriviaClient
                 MessageBox.Show("Server error: " + ex.Message);
             }
         }
-        private string FixNegativeStat(string value)
-        {
-            if (int.TryParse(value, out int number))
-            {
-                return number < 0 ? "0" : value;
-            }
-
-            return "0";
-        }
 
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new StatisticsPage());
+            this.NavigationService.GoBack();
         }
     }
 }

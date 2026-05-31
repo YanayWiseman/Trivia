@@ -18,7 +18,6 @@ namespace TriviaClient
         public static T DeserializeResponse<T>(byte[] buffer)
         {
             string json = GetJson(buffer);
-
             // ? makes T a nullable type
             T? returnValue = JsonConvert.DeserializeObject<T>(json);
 
@@ -63,17 +62,6 @@ namespace TriviaClient
                (buffer[3] << 8) |
                 buffer[4];
         }
-        
-        /*
-            Method to get the response code
-            input: the buffer
-            output: the resoponse code
-        */
-        public static byte GetResponseCode(byte[] buffer)
-        {
-            return buffer[0];
-        }
-
     }
 }
 

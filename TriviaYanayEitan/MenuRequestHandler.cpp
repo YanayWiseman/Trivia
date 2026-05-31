@@ -8,9 +8,8 @@
 
 MenuRequestHandler::MenuRequestHandler(const LoggedUser& user)
 	: m_handlerFactory(RequestHandlerFactory::getInstance()), m_user(user)
-{
+{}
 
-}
 
 /*
 	Method to check if the request code is valid
@@ -81,6 +80,7 @@ RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo) 
 	}
 }
 
+
 /*
 	Method to process the logout request
 	input: the request's information
@@ -103,6 +103,7 @@ RequestResult MenuRequestHandler::signout(const RequestInfo& requestInfo) const
 
 	return result;
 }
+
 
 /*
 	Method to process the getRooms request
@@ -149,6 +150,7 @@ RequestResult MenuRequestHandler::getPersonalStats(const RequestInfo& requestInf
 	return result;
 }
 
+
 /*
 	Method to process the getHighScore request
 	input: the request's information
@@ -185,7 +187,7 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 	int roomId = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer).roomId;
 	Room& room = this->m_handlerFactory.getRoomManager().getRoom(roomId);
 
-	if (room.getData().status == InGame || room.getData().status == Closed)
+	if (room.getData().status == InGame || room.getData().status == Closed || room.isFull())
 	{
 		// game already started, cant join
 		response.status = Failiure;

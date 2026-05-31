@@ -40,3 +40,11 @@ struct CreateRoomRequest
     unsigned int questionsCount;
     unsigned int answerTimeout;
 };
+
+
+// V4
+
+struct SubmitAnswerRequest
+{
+    unsigned int answerId;
+};
