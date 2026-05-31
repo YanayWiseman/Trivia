@@ -26,6 +26,7 @@ private:
 public:
 	Room(const RoomData& data);
 	~Room() = default;
+	bool isFull();
 	RoomData getData() const;
 	Status addUser(const LoggedUser& usr);
 	void removeUser(const LoggedUser& usr);

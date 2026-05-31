@@ -210,6 +210,25 @@ Status SqliteDatabase::addNewUser(const UserInfo& userInfo)
 	}
 
 	sqlite3_finalize(stmt);
+
+	// initialize statistics row with all zeros
+	sqlite3_stmt* statsStmt = prepare("INSERT INTO STATISTICS (USERNAME, NUM_ANSWERED, CORRECT_ANSWERS, AVERAGE_TIME, GAMES_COUNT) "
+		"VALUES (?, 0, 0, 0.0, 0);");
+	if (!statsStmt)
+	{
+		return Failiure;
+	}
+
+	sqlite3_bind_text(statsStmt, 1, userInfo.username.c_str(), -1, SQLITE_TRANSIENT);
+
+	if (sqlite3_step(statsStmt) != SQLITE_DONE)
+	{
+		std::cout << "Failed initializing statistics for: " << userInfo.username << std::endl;
+		sqlite3_finalize(statsStmt);
+		return Failiure;
+	}
+	sqlite3_finalize(statsStmt);
+
 	return Success;
 }
 
@@ -577,17 +596,17 @@ void SqliteDatabase::submitGameStatistics(const std::string& username, const Gam
 	}
 
 	// bind values
-	sqlite3_bind_int(stmt, 1, newAnswered);
-	sqlite3_bind_int(stmt, 2, newCorrect);
-	sqlite3_bind_double(stmt, 3, newAvgTime);
-	sqlite3_bind_int(stmt, 4, newGamesCount);
-	sqlite3_bind_text(stmt, 5, username.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(updateStmt, 1, newAnswered);
+	sqlite3_bind_int(updateStmt, 2, newCorrect);
+	sqlite3_bind_double(updateStmt, 3, newAvgTime);
+	sqlite3_bind_int(updateStmt, 4, newGamesCount);
+	sqlite3_bind_text(updateStmt, 5, username.c_str(), -1, SQLITE_TRANSIENT);
 
 	if (sqlite3_step(updateStmt) != SQLITE_DONE)
 	{
-		sqlite3_finalize(stmt);
+		sqlite3_finalize(updateStmt);
 		throw std::runtime_error("Failed to update statistics");
 	}
 
-	sqlite3_finalize(stmt);
+	sqlite3_finalize(updateStmt);
 }

@@ -187,7 +187,7 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 	int roomId = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer).roomId;
 	Room& room = this->m_handlerFactory.getRoomManager().getRoom(roomId);
 
-	if (room.getData().status == InGame || room.getData().status == Closed)
+	if (room.getData().status == InGame || room.getData().status == Closed || room.isFull())
 	{
 		// game already started, cant join
 		response.status = Failiure;

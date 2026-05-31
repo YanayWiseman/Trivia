@@ -77,7 +77,7 @@ RequestResult GameRequestHandler::getQuestion(const RequestInfo& requestInfo) co
 
 	for (unsigned int i = 0; i < answers.size(); i++)
 	{
-		getQuestionResponse.answers[i] = answers[i];
+		getQuestionResponse.answers[i + 1] = answers[i];
 	}
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(getQuestionResponse);
@@ -98,11 +98,20 @@ RequestResult GameRequestHandler::getGameResults(const RequestInfo& requestInfo)
 {
 	RequestResult result;
 	GetGameResultsResponse getGameResultsResponse;
-	std::map<std::string, GameData> players = this->m_game.getPlayers();
+
+	if (!this->m_game.hasGameEnded())
+	{
+		getGameResultsResponse.status = Failiure;
+		result.response = JsonResponsePacketSerializer::serializeResponse(getGameResultsResponse);
+		result.newHandler = const_cast<GameRequestHandler*>(this);
+		return result;
+	}
+
+	const std::map<std::string, GameData>& players = this->m_game.getPlayers();
 
 	getGameResultsResponse.status = Success;
 
-	for (std::map<std::string, GameData>::iterator it = players.begin(); it != players.end(); it++)
+	for (std::map<std::string, GameData>::const_iterator it = players.begin(); it != players.end(); it++)
 	{
 		PlayerResults playerResults;
 
@@ -132,7 +141,16 @@ RequestResult GameRequestHandler::leaveGame(const RequestInfo& requestInfo) cons
 	RequestResult result;
 	LeaveGameResponse leaveGameResponse;
 
+	GameData userGameData = this->m_game.getGameDataForUser(this->m_user);
+
+	this->m_gameManager.submitGameStatusToDB(this->m_user.getUsername(), userGameData);
+
 	m_game.removePlayer(m_user);
+
+	if (this->m_game.getPlayers().size() == 0)
+	{
+		this->m_gameManager.deleteGame(this->m_game.getGameId());
+	}
 
 	leaveGameResponse.status = Success;
 

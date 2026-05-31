@@ -11,6 +11,18 @@ Room::Room(const RoomData& data) : m_metadata(data) {}
 
 
 /*
+	Function returns boolean value of whether the room is full or not.
+	Input: None
+	Output: Whether the room is full or not (bool)
+*/
+
+bool Room::isFull()
+{
+	return m_users.size() == m_metadata.maxPlayers;
+}
+
+
+/*
 	Function returns room data.
 	Input: None
 	Output: Room data (RoomData)

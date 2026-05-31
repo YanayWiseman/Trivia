@@ -33,7 +33,7 @@ std::vector<std::string> Question::getPossibleAnswers() const
 
 int Question::getCorrectAnswerId() const
 {
-    return this->m_correctAnswerId;
+    return this->m_correctAnswerId+1;
 }
 
 /*
