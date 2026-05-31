@@ -122,6 +122,30 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 	return result;
 }
 
+/*
+	Method to process the addQuestion request
+	input: the request's information
+	output: the request's result
+*/
+
+RequestResult RoomAdminRequestHandler::addQuestion(const RequestInfo& requestInfo)
+{
+	RequestResult result;
+	AddQuestionResponse response;
+
+	AddQuestionRequest request = JsonRequestPacketDeserializer::deserializeAddQuestionRequest(requestInfo.buffer);
+	Question question(request.question, request.answers, request.correctAnswerId);
+	this->m_newQuestions.push_back(question);
+
+	response.status = Success;
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = this->m_handlerFactory.createRoomAdminRequestHandler(this->m_user, this->m_room);
+
+	return result;
+}
+
+
 
 /*
 	Method serializes and returns error response.
