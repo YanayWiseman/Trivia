@@ -29,6 +29,7 @@ public:
 	bool isFull();
 	RoomData getData() const;
 	Status addUser(const LoggedUser& usr);
+	void incrementQuestion();
 	void removeUser(const LoggedUser& usr);
 	void setStatus(RoomStatus status);
 	std::vector<std::string> getAllUsers() const;

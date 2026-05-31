@@ -259,6 +259,11 @@ namespace TriviaClient
         public List<PlayerResults> Results { get; set; } = new List<PlayerResults>();
     }
 
+    public class AddQuestionResponse
+    {
+        [JsonProperty("status")]
+        public uint Status { get; set; }
+    }
 
     public enum RoomStatus
     {

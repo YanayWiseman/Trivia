@@ -42,6 +42,9 @@ public:
 	static Buffer serializeResponse(const GetQuestionResponse& getQuestionResponse);
 	static Buffer serializeResponse(const LeaveGameResponse& leaveGameResponse);
 
+	//V4.0.1
+	static Buffer serializeResponse(const AddQuestionResponse& addQuestionRequest);
+
 
 	// singleton
 	static JsonResponsePacketSerializer& getInstance();

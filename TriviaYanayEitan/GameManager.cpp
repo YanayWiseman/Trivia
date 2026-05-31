@@ -29,12 +29,19 @@ GameManager& GameManager::getInstance()
 	Output: the new Game struct created
 */
 
-Game& GameManager::createGame(const Room& room)
+Game& GameManager::createGame(const Room& room, const std::vector<Question>& questionsToAdd)
 {
 	Game game(room.getData().id, room.getData().timePerQuestion);
 
 	std::list<Question> questionsList = this->m_database->getQuestions(AMOUNT_OF_QUESTIONS);
 	std::vector<Question> questionsVector(questionsList.begin(), questionsList.end());
+
+	// add the new questions to the questions vector
+	int i = 0;
+	for (i = 0; i < questionsToAdd.size(); i++)
+	{
+		questionsVector.push_back(questionsToAdd[i]);
+	}
 
 	game.setQuestions(questionsVector);
 	

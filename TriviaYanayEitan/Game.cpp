@@ -10,8 +10,6 @@ Game::Game(unsigned int gameId, unsigned int timePerQuestion) : m_gameId(gameId)
 {
 }
 
-
-
 /*
 	Function checks whether the game has finished for all players.
 	Input: None
@@ -273,4 +271,15 @@ GameData Game::getGameDataForUser(const LoggedUser& user) const
 	}
 
 	return it->second;
+}
+
+/*
+	Method adds a new question to the questions vector
+	input: The question to add
+	output: No return values
+*/
+
+void Game::addQuestion(const Question& question)
+{
+	this->m_questions.push_back(question);
 }
