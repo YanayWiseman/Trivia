@@ -67,6 +67,10 @@ RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestI
 			{
 				return getRoomState(requestInfo);
 			}
+			case ADD_QUESTION_REQUEST:
+			{
+				return addQuestion(requestInfo);
+			}
 			default:
 			{
 				return getErrorResponse("error: Wrong request format!");
@@ -128,23 +132,22 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 	output: the request's result
 */
 
-RequestResult RoomAdminRequestHandler::addQuestion(const RequestInfo& requestInfo)
+RequestResult RoomAdminRequestHandler::addQuestion(const RequestInfo& requestInfo) const
 {
 	RequestResult result;
 	AddQuestionResponse response;
 
 	AddQuestionRequest request = JsonRequestPacketDeserializer::deserializeAddQuestionRequest(requestInfo.buffer);
 	Question question(request.question, request.answers, request.correctAnswerId);
-	this->m_newQuestions.push_back(question);
-
+	this->m_newQuestions.push_back(question);  // will be added to the default 10 questions when creating the game
+	this->m_room.incrementQuestion();
 	response.status = Success;
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
-	result.newHandler = this->m_handlerFactory.createRoomAdminRequestHandler(this->m_user, this->m_room);
+	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
 
 	return result;
 }
-
 
 
 /*

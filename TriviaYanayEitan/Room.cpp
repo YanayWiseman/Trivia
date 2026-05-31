@@ -119,3 +119,14 @@ void Room::setStatus(RoomStatus status)
 {
 	this->m_metadata.status = status;
 }
+
+/*
+	Method increments the question counter
+	input: no input values
+	output: no return values
+*/
+
+void Room::incrementQuestion()
+{
+	this->m_metadata.numOfQuestionsInGame++;
+}

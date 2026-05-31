@@ -257,7 +257,7 @@ AddQuestionRequest JsonRequestPacketDeserializer::deserializeAddQuestionRequest(
 {
 	AddQuestionRequest request;
 
-	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, SUBMIT_ANSWER_REQUEST);
+	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, ADD_QUESTION_REQUEST);
 
 	try
 	{
