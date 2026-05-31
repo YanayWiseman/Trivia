@@ -97,7 +97,7 @@ RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
 	result.newHandler = this->m_handlerFactory.createMenuRequestHandler(this->m_user);
 
-	return result;
+	return result; 
 }
 
 /*
