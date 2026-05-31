@@ -30,14 +30,17 @@ namespace TriviaClient
             this.roomId = roomId;
             this.isAdmin = isAdmin;
             this.username = username;
+
+            InitializeComponent();
+
             if (isAdmin)
             {
                 this.timePerQuestion = timePerQuestion;
                 this.questionCount = questionCount;
+                LeaveRoomButton.IsEnabled = false;
+                LeaveRoomButton.Background = new SolidColorBrush(Colors.Red);
+                LeaveRoomButton.Content = "";
             }
-
-            InitializeComponent();
-
             this.Unloaded += WaitingPage_Unloaded;
 
             if (!this.isAdmin)
@@ -67,8 +70,7 @@ namespace TriviaClient
             {
                 try
                 {
-                    byte[] getRoomStateRequestBuffer = { (byte)RequestCode.GetRoomStateRequestCode };
-
+                    byte[] getRoomStateRequestBuffer = Serializer.SerializeGetRoomStateRequest();
                     GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
 
                     if (getRoomState.Status == 0 || getRoomState.roomStatus == RoomStatus.Closed)
@@ -78,7 +80,7 @@ namespace TriviaClient
                         this.Dispatcher.Invoke(() =>
                         {
                             MessageBox.Show("Room has been closed.");
-                            this.NavigationService.Navigate(new JoinRoomPage(this.username));
+                            this.NavigationService.Navigate(new JoinRoomPage(this.username, true));
                         });
 
                         break;
@@ -86,17 +88,19 @@ namespace TriviaClient
                     if (getRoomState.roomStatus == RoomStatus.InGame)
                     {
                         this.stopThread = true;
+                        uint questionsCount = getRoomState.NumOfQuestionsInGame;
+                        uint timePerQuestion = getRoomState.TimePerQuestion;
                         this.Dispatcher.Invoke(() =>
                         {
-                            this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion, this.username));
+                            this.NavigationService.Navigate(new GamePage(questionsCount, timePerQuestion, this.username));
                         });
+                        break;
                     }
 
                     GetPlayersInRoomRequest request = new GetPlayersInRoomRequest();
                     request.RoomId = this.roomId;
 
                     byte[] requestBuffer = Serializer.serializeGetPlayersRequest(request);
-
                     GetPlayersInRoomResponse response = ClientSession.Communicator.SendRequest<GetPlayersInRoomResponse>(requestBuffer);
 
                     if (response.Status == 1)
@@ -180,7 +184,7 @@ namespace TriviaClient
 
             if (response.Status == 1)
             {
-                this.NavigationService.Navigate(new JoinRoomPage(this.username));
+                this.NavigationService.Navigate(new JoinRoomPage(this.username, true));
 
                 while (this.NavigationService.CanGoBack)
                 {

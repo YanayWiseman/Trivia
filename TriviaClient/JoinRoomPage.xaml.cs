@@ -23,7 +23,8 @@ namespace TriviaClient
         private Thread t;
         private string username;
         private volatile bool stopThread;
-        public JoinRoomPage(string username)
+        private bool backToMenu;
+        public JoinRoomPage(string username, bool backToMenu = false)
         {
             InitializeComponent();
             this.stopThread = false;
@@ -36,6 +37,7 @@ namespace TriviaClient
             t.IsBackground = true;
             t.Start();
             this.username = username;
+            this.backToMenu = backToMenu;
         }
 
         private void JoinRoomPage_Unloaded(object sender, RoutedEventArgs e)
@@ -89,8 +91,11 @@ namespace TriviaClient
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
             this.stopThread = true;
-
-            if (this.NavigationService.CanGoBack)
+            if(this.backToMenu)
+            {
+                this.NavigationService.Navigate(new MenuPage(username));
+            }
+            else if (this.NavigationService.CanGoBack)
             {
                 this.NavigationService.GoBack();
             }

@@ -14,6 +14,7 @@ struct GameData
 	unsigned int correctAnswerCount;
 	unsigned int wrongAnswerCount;
 	float averageAnswerTime;
+	bool finished;
 };
 
 class Game
@@ -31,14 +32,19 @@ public:
 	~Game() = default;
 
 	// methods
+	bool hasGameEnded() const;
 	Question getQuestionsForUser(const LoggedUser& user);
 	void submitAnswer(const LoggedUser& user, unsigned int answerId, float answerTime);
 	void removePlayer(const LoggedUser& user);
+
+	// setters
 	void setPlayers(const std::vector<LoggedUser>& players);
 	void setQuestions(const std::vector<Question>& questions);
-	unsigned int getGameId();
-	std::map<std::string, GameData> getPlayers();
 
+	// getters
+	unsigned int getGameId() const;
+	GameData getGameDataForUser(const LoggedUser& user) const;
+	std::map<std::string, GameData> getPlayers();
 	float getAnswerTime(const LoggedUser& user) const;
 	float getRemainingTime(const LoggedUser& user) const;
 	unsigned int getCurrentCorrectAnswerId(const LoggedUser& user) const;
