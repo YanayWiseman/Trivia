@@ -40,6 +40,7 @@ public:
 	// setters
 	void setPlayers(const std::vector<LoggedUser>& players);
 	void setQuestions(const std::vector<Question>& questions);
+	void addQuestion(const Question& question);
 
 	// getters
 	unsigned int getGameId() const;

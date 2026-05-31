@@ -23,7 +23,7 @@ bool RoomAdminRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) 
 		return false;
 	}
 
-	if (requestInfo.id == CLOSE_ROOM_REQUEST || requestInfo.id == START_GAME_REQUEST || requestInfo.id == GET_ROOM_STATE_REQUEST || requestInfo.id == GET_PLAYERS_IN_ROOM_REQUEST)
+	if (requestInfo.id == CLOSE_ROOM_REQUEST || requestInfo.id == START_GAME_REQUEST || requestInfo.id == GET_ROOM_STATE_REQUEST || requestInfo.id == GET_PLAYERS_IN_ROOM_REQUEST || requestInfo.id == ADD_QUESTION_REQUEST)
 	{
 		return true;
 	}

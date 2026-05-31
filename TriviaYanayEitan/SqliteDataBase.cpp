@@ -315,19 +315,6 @@ std::list<Question> SqliteDatabase::getQuestions(int amount) const
 }
 
 /*
-	Method adds a new question to the database
-	input: The question to add
-	output: No return values
-*/
-
-void SqliteDatabase::addNewQuestion(const Question& question)
-{
-	question.getCorrectAnswerId;
-	question.getPossibleAnswers;
-	question.getQuestion;
-}
-
-/*
 	Helper static method to convert the const unsigned char* that sqlite3_colums_text() returns
 	input: the statement and the column to convert
 	output: the converted string
