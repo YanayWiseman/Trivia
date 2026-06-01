@@ -241,7 +241,33 @@ SubmitAnswerRequest JsonRequestPacketDeserializer::deserializeSubmitAnswerReques
 	}
 	catch (const std::exception& error)
 	{
-		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeCreateRoomRequest: error parsing json");
+		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest: error parsing json");
+	}
+
+	return request;
+}
+
+/*
+	Method to deserialize an add question request given the buffer
+	input: the buffer
+	output: the built submit answer request struct
+*/
+
+AddQuestionRequest JsonRequestPacketDeserializer::deserializeAddQuestionRequest(const Buffer& buffer)
+{
+	AddQuestionRequest request;
+
+	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, ADD_QUESTION_REQUEST);
+
+	try
+	{
+		request.correctAnswerId = jsonData.at("correctAnswerId").get<int>();
+		request.question = jsonData.at("question").get<std::string>();
+		request.answers = jsonData.at("answers").get <std::vector<std::string>>();
+	}
+	catch (const std::exception& error)
+	{
+		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeAddQuestionRequest: error parsing json");
 	}
 
 	return request;

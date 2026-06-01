@@ -124,3 +124,11 @@ struct LeaveGameResponse
 {
 	unsigned int status;
 };
+
+
+//V4.0.1
+
+struct AddQuestionResponse
+{
+	unsigned int status;
+};

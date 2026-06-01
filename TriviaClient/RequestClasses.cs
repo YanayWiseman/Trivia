@@ -69,5 +69,16 @@ namespace TriviaClient
         [JsonProperty("answerId")]
         public uint AnswerId { get; set; }
     }
+    public class AddQuestionRequest
+    {
+        [JsonProperty("question")]
+        public string? Question { get; set; }
+
+        [JsonProperty("answers")]
+        public List<string>? Answers { get; set; }
+
+        [JsonProperty("correctAnswerId")]
+        public int CorrectAnswerId { get; set; }
+    }
 
 }

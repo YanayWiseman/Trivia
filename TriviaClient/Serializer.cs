@@ -140,6 +140,10 @@ namespace TriviaClient
         {
             return SerializeJson(new { }, (int)RequestCode.LeaveRoomRequestCode);
         }
+        public static byte[] SerializeAddQuestionRequest(AddQuestionRequest addQuestionRequest)
+        {
+            return SerializeJson(addQuestionRequest, (int)RequestCode.AddQuestionRequestCode);
+        }
 
         public static byte[] SerializeCloseRoomRequest()
         {

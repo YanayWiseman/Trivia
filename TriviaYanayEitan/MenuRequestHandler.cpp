@@ -229,7 +229,6 @@ RequestResult MenuRequestHandler::createRoom(const RequestInfo& requestInfo) con
 	CreateRoomRequest request = JsonRequestPacketDeserializer::deserializeCreateRoomRequest(requestInfo.buffer);
 	
 	// craft room data
-
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distr(100000, 999999);
@@ -252,7 +251,6 @@ RequestResult MenuRequestHandler::createRoom(const RequestInfo& requestInfo) con
 			}
 		}
 	}
-
 
 	RoomData roomData;
 	roomData.id = roomId;
