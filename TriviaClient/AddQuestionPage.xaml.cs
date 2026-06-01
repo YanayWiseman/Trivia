@@ -51,6 +51,7 @@ namespace TriviaClient
             {
                 MessageBox.Show("Answer id must be a number");
                 return;
+
             }
             if (correctAnswerId <= 0 || correctAnswerId > MAX_ANSWER_ID)
             {
