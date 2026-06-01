@@ -54,4 +54,5 @@ public:
 private:
 	// helper methods
 	static Buffer serializeJson(const json& json, const int code);
+	static Buffer serializeStatusResponse(unsigned int status, const int responseCode);
 };
