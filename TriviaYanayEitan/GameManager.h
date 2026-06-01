@@ -20,7 +20,7 @@ private:
 	GameManager();
 public:
 	// methods
-	Game& createGame(const Room& room);
+	Game& createGame(const Room& room, const std::vector<Question>& questionsToAdd);
 	Game& getGame(unsigned int gameId);
 	void deleteGame(unsigned int gameId);
 	void submitGameStatusToDB(const std::string& username, const GameData& gameData);

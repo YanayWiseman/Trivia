@@ -57,7 +57,6 @@ public:
 	// QUESTIONS operations
 	std::list<Question> getQuestions(int amount) const;
 
-
 	// STATISTICS operations
 	float getPlayerAverageAnswerTime(const std::string& username) const override;
 	int getNumOfCorrectAnswers(const std::string& username) const override;
