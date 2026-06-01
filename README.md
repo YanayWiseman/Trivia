@@ -63,10 +63,35 @@ At signup, users must provide additional fields that are validated server-side u
 
 All fields are stored in the database and the statistics row is initialized to zero on signup.
 
-### ✅ Bonus — Singleton Design Pattern
+### ✅ Bonus 1.0.4 — Singleton Design Pattern
 
 All major server-side managers and services are implemented as Singletons, ensuring a single shared instance throughout the program's lifetime: "SqliteDatabase", "LoginManager", "RoomManager", "GameManager", "StatisticsManager", "RequestHandlerFactory", "Communicator", and "Server".
 
+### ✅ Bonus 4.0.1 - Add Custom Trivia Questions
+
+A dedicated GUI screen allows users to add new trivia questions to the created game.
+
+Features:
+
+- Enter a question
+- Enter the correct answer
+- Enter three incorrect answers
+
+Questions added through this screen become part of the current trivia game questions.
+
+### ✅ Bonus 4.0.1 - Head-to-Head (1v1) Matchmaking
+
+A special "Head-to-Head" game mode was implemented.
+
+Features:
+
+- Dedicated GUI button and screen
+- Two layers enter a matchmaking queue
+- The server waits until exactly two players are available
+- Both players receive a 5 second countdown notification
+- The trivia game automatically starts for both participants simultaneously
+
+This mode provides a fast competitive experience without requiring players to create or join rooms manually.
 ---
 
 ## Running the Project
