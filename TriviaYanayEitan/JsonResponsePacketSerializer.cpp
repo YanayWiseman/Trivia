@@ -45,10 +45,7 @@ Buffer JsonResponsePacketSerializer::serializeJson(const json& json, const int c
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const LoginResponse& loginResponse)
 {
-	json response;
-	response["status"] = loginResponse.status;
-
-	return serializeJson(response, LOGIN_RESPONSE);
+	return serializeStatusResponse(loginResponse.status, LOGIN_RESPONSE);
 }
 
 
@@ -60,10 +57,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LoginResponse& logi
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const SignupResponse& signupResponse)
 {
-	json response;
-	response["status"] = signupResponse.status;
-
-	return serializeJson(response, SIGNUP_RESPONSE);
+	return serializeStatusResponse(signupResponse.status , SIGNUP_RESPONSE);
 }
 
 
@@ -102,10 +96,7 @@ JsonResponsePacketSerializer& JsonResponsePacketSerializer::getInstance()
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const LogoutResponse& logoutResponse)
 {
-	json response;
-	response["status"] = logoutResponse.status;
-
-	return JsonResponsePacketSerializer::serializeJson(response, LOGOUT_RESPONSE);
+	return serializeStatusResponse(logoutResponse.status, LOGOUT_RESPONSE);
 }
 
 /*
@@ -151,7 +142,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetPlayersInRoomRes
 	json response;
 
 	// we need to craft the players in room string
-	response["PlayersInRoom"] = JsonResponsePacketSerializer::vectorToAmpersandString(getPlayersInRoomResponse.players);
+	response["PlayersInRoom"] = getPlayersInRoomResponse.players;
 	response["status"] = getPlayersInRoomResponse.status;
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_PLAYERS_IN_ROOM_RESPONSE);
@@ -168,7 +159,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const getHighScoreRespons
 	json response;
 
 	response["status"] = getHighScoreResponse.status;
-	response["HighScore"] = JsonResponsePacketSerializer::vectorToAmpersandString(getHighScoreResponse.statistics);
+	response["HighScore"] = getHighScoreResponse.statistics;
 
 	return JsonResponsePacketSerializer::serializeJson(response, HIGH_SCORE_RESPONSE);
 }
@@ -184,7 +175,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const getPersonalStatsRes
 	json response;
 
 	response["status"] = getPersonalStatsResponse.status;
-	response["UserStatistics"] = JsonResponsePacketSerializer::vectorToAmpersandString(getPersonalStatsResponse.statistics);
+	response["UserStatistics"] = getPersonalStatsResponse.statistics;
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_PERSONAL_STATS_RESPONSE);
 }
@@ -197,10 +188,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const getPersonalStatsRes
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const JoinRoomResponse& joinRoomResponse)
 {
-	json response;
-	response["status"] = joinRoomResponse.status;
-
-	return JsonResponsePacketSerializer::serializeJson(response, JOIN_ROOM_RESPONSE);
+	return serializeStatusResponse(joinRoomResponse.status, JOIN_ROOM_RESPONSE);
 }
 
 /*
@@ -219,31 +207,6 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const CreateRoomResponse&
 }
 
 /*
-	Helper method to convert a vector into a ampersand seperated string
-	input: the vector
-	output: the string
-*/
-
-std::string JsonResponsePacketSerializer::vectorToAmpersandString(const std::vector<std::string>& vector)
-{
-	size_t i = 0;
-
-	std::string res = "";
-
-	for (i = 0; i < vector.size(); i++)
-	{
-		res += vector[i];
-		if (i != vector.size() - 1)
-		{
-			// the seperator will be &
-			res += "&";
-		}
-	}
-
-	return res;
-}
-
-/*
 	Method to serialize Json CloseRoom response into buffer.
 	Input: CloseRoomResponse (const CloseRoomResponse&)
 	Output: Buffer containing CloseRoom response data according to the protocol.
@@ -251,11 +214,7 @@ std::string JsonResponsePacketSerializer::vectorToAmpersandString(const std::vec
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const CloseRoomResponse& closeRoomResponse)
 {
-	json response;
-
-	response["status"] = closeRoomResponse.status;
-
-	return JsonResponsePacketSerializer::serializeJson(response, CLOSE_ROOM_RESPONSE);
+	return serializeStatusResponse(closeRoomResponse.status, CLOSE_ROOM_RESPONSE);
 }
 
 /*
@@ -266,11 +225,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const CloseRoomResponse& 
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const StartGameResponse& startGameResponse)
 {
-	json response;
-
-	response["status"] = startGameResponse.status;
-
-	return JsonResponsePacketSerializer::serializeJson(response, START_GAME_RESPONSE);
+	return serializeStatusResponse(startGameResponse.status, START_GAME_RESPONSE);
 }
 
 /*
@@ -286,7 +241,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomStateRespons
 	response["status"] = getRoomStateResponse.status;
 	response["hasGameBegun"] = getRoomStateResponse.hasGameBegun;
 	response["timePerQuestion"] = getRoomStateResponse.answerTimeout;
-	response["players"] = JsonResponsePacketSerializer::vectorToAmpersandString(getRoomStateResponse.players);
+	response["players"] = getRoomStateResponse.players;
 	response["questionCount"] = getRoomStateResponse.questionsCount;
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_ROOM_STATE_RESPONSE);
@@ -300,11 +255,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomStateRespons
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveRoomResponse& leaveRoomResponse)
 {
-	json response;
-
-	response["status"] = leaveRoomResponse.status;
-
-	return JsonResponsePacketSerializer::serializeJson(response, LEAVE_ROOM_RESPONSE);
+	return serializeStatusResponse(leaveRoomResponse.status, LEAVE_ROOM_RESPONSE);
 }
 
 
@@ -372,19 +323,6 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetQuestionResponse
 	response["status"] = getQuestionResponse.status;
 	response["question"] = getQuestionResponse.question;
 
-	// turn the answers from this (map)
-	/*"answers":
-	[
-		[0, "bla1"],
-		[1, "bla2"]
-	]
-	to this:
-	"answers":
-	{
-		"0":"bla1",
-		"1" : "bla 2"
-	}  
-	so we can parse it in thee client using deserializeObject()*/
 	json answersJson = json::object();
 
 	for (const auto& pair : getQuestionResponse.answers)
@@ -397,7 +335,6 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetQuestionResponse
 	return JsonResponsePacketSerializer::serializeJson(response, GET_QUESTION_RESPONSE);
 }
 
-
 /*
 	Method to serialize Json LeaveGame response into buffer.
 	Input: leaveGameResponse (const LeaveGameResponse&)
@@ -406,9 +343,55 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetQuestionResponse
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveGameResponse& leaveGameResponse)
 {
+	return serializeStatusResponse(leaveGameResponse.status, LEAVE_GAME_RESPONSE);
+}
+
+
+/*
+	Method to serialize Json OneVsOneStatus response into buffer.
+	Input: oneVsOneStatusResponse (const OneVsOneStatusResponse&)
+	Output: Buffer containing OneVsOneStatus response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const OneVsOneStatusResponse& oneVsOneStatusResponse)
+{
 	json response;
 
-	response["status"] = leaveGameResponse.status;
+	response["status"] = oneVsOneStatusResponse.status;
+	response["queueStatus"] = oneVsOneStatusResponse.queueStatus;
+	response["roomId"] = oneVsOneStatusResponse.roomId;
+	response["gameId"] = oneVsOneStatusResponse.gameId;
+	response["questionsCount"] = oneVsOneStatusResponse.questionsCount;
+	response["answerTimeout"] = oneVsOneStatusResponse.answerTimeout;
+	response["secondsUntilStart"] = oneVsOneStatusResponse.secondsUntilStart;
+	response["opponentUsername"] = oneVsOneStatusResponse.opponentUsername;
 
-	return JsonResponsePacketSerializer::serializeJson(response, LEAVE_GAME_RESPONSE);
+	return JsonResponsePacketSerializer::serializeJson(response, ONE_VS_ONE_STATUS_RESPONSE);
+}
+
+
+/*
+	Method to serialize Json AddQuestionresponse into buffer.
+	Input: addQuestionResponse (const AddQuestionResponse&)
+	Output: Buffer containing AddQuestion response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const AddQuestionResponse& addQuestionResponse)
+{
+	return serializeStatusResponse(addQuestionResponse.status, ADD_QUESTION_RESPONSE);
+}
+
+
+/*
+	Helper method used to avoid code duplication for all responses that consist of only status
+	input: the status to send, and ther response code
+	output: Buffer containing the status response.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeStatusResponse(unsigned int status, const int responseCode)
+{
+	json response;
+	response["status"] = status;
+
+	return serializeJson(response, responseCode);
 }

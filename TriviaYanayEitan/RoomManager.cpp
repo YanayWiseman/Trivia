@@ -98,6 +98,36 @@ Room& RoomManager::getRoom(int id)
 	return it->second;
 }
 
+
+/*
+	Function creates room with random unique id, adds given user to it and adds it to room map.
+	Input: usr (const LoggedUser&), data (RoomData)
+	Output: Created room id (unsigned int)
+*/
+
+unsigned int RoomManager::createRoomWithRandomId(const LoggedUser& usr, RoomData data)
+{
+	std::lock_guard<std::mutex> lock(this->m_roomsMutex);
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distr(100000, 999999);
+
+	int roomId = 0;
+
+	do
+	{
+		roomId = distr(gen);
+	} while (this->m_rooms.find(roomId) != this->m_rooms.end());
+
+	data.id = roomId;
+
+	this->m_rooms.try_emplace(data.id, data);
+	this->m_rooms.at(data.id).addUser(usr);
+
+	return data.id;
+}
+
 /*
 	Function creates single instance of RoomManager.
 	Input: None

@@ -16,10 +16,13 @@
 class RoomAdminRequestHandler : public RoomRequestHandler
 {
 private:
-	
+	//fields
+	mutable std::vector<Question> m_newQuestions;  // mutable so we can change in handleRequest()
+
 	// methods
 	RequestResult closeRoom(const RequestInfo& requestInfo) const;
 	RequestResult startGame(const RequestInfo& requestInfo) const;
+	RequestResult addQuestion(const RequestInfo& requestInfo) const;
 	RequestResult getErrorResponse(const std::string& errorMsg) const;
 
 public:

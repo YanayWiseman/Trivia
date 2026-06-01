@@ -48,3 +48,13 @@ struct SubmitAnswerRequest
 {
     unsigned int answerId;
 };
+
+
+// V4.0.1
+
+struct AddQuestionRequest
+{
+    int correctAnswerId;
+    std::string question;
+    std::vector<std::string> answers;
+};
