@@ -218,16 +218,43 @@ namespace TriviaClient
         public List<PlayerResults> Results { get; set; } = new List<PlayerResults>();
     }
 
-    public class AddQuestionResponse
+    public class OneVsOneStatusResponse
     {
         [JsonProperty("status")]
         public uint Status { get; set; }
-    }
 
+        [JsonProperty("queueStatus")]
+        public uint QueueStatus { get; set; }
+
+        [JsonProperty("roomId")]
+        public uint RoomId { get; set; }
+
+        [JsonProperty("gameId")]
+        public uint GameId { get; set; }
+
+        [JsonProperty("questionsCount")]
+        public uint QuestionsCount { get; set; }
+
+        [JsonProperty("answerTimeout")]
+        public uint AnswerTimeout { get; set; }
+
+        [JsonProperty("secondsUntilStart")]
+        public uint SecondsUntilStart { get; set; }
+
+        [JsonProperty("opponentUsername")]
+        public string OpponentUsername { get; set; } = "";
+    }
     public enum RoomStatus
     {
         Open,
         Closed,
         InGame
+    }
+
+    public enum OneVsOneQueueStatus
+    {
+        OneVsOneNotQueued = 0,
+        OneVsOneWaiting = 1,
+        OneVsOneMatched = 2
     }
 }

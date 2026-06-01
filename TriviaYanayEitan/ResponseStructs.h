@@ -125,10 +125,14 @@ struct LeaveGameResponse
 	unsigned int status;
 };
 
-
-//V4.0.1
-
-struct AddQuestionResponse
+struct OneVsOneStatusResponse
 {
 	unsigned int status;
+	unsigned int queueStatus;
+	unsigned int roomId;
+	unsigned int gameId;
+	unsigned int questionsCount;
+	unsigned int answerTimeout;
+	unsigned int secondsUntilStart;
+	std::string opponentUsername;
 };

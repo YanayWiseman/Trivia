@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TriviaClient
 {
@@ -195,5 +197,43 @@ namespace TriviaClient
 
             return packet;
         }
+
+        /*
+            Function serializes join 1v1 queue request.
+            Input: None
+            Output: Request buffer (byte[])
+        */
+
+        public static byte[] SerializeJoinOneVsOneQueueRequest()
+        {
+            string json = "{}";
+            return BuildPacket(RequestCode.JoinOneVsOneQueueRequest, json);
+        }
+
+        /*
+            Function serializes get 1v1 status request.
+            Input: None
+            Output: Request buffer (byte[])
+        */
+
+        public static byte[] SerializeGetOneVsOneStatusRequest()
+        {
+            string json = "{}";
+            return BuildPacket(RequestCode.GetOneVsOneStatusRequest, json);
+        }
+
+
+        /*
+            Function serializes cancel 1v1 queue request.
+            Input: None
+            Output: Request buffer(byte[])
+        */
+
+        public static byte[] SerializeCancelOneVsOneQueueRequest()
+        {
+            string json = "{}";
+            return BuildPacket(RequestCode.CancelOneVsOneQueueRequest, json);
+        }
     }
 }
+

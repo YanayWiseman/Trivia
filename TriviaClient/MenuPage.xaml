@@ -11,55 +11,63 @@
     <Grid Background="#FF4100">
         <TextBlock x:Name="userNameTextBlock" FontSize="24" Foreground="Black" Margin="30"
                HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Permanent Marker"/>
-        <Border Width="360"
-                Padding="30"
-                Background="Orange"
-                CornerRadius="12"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+        <Border Width="370"
+        Padding="24"
+        Background="Orange"
+        CornerRadius="12"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Height="430">
 
             <StackPanel>
 
                 <TextBlock Text="Machshilim Trivia"
-                           FontSize="32"
-                           FontWeight="Bold"
-                           HorizontalAlignment="Center"
-                           FontFamily="Permanent Marker"
-                           Margin="0,0,0,35"/>
+                   FontSize="30"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   FontFamily="Permanent Marker"
+                   Margin="0,0,0,24"/>
 
                 <Button Content="Create Room"
-                        Height="45"
-                        FontSize="18"
-                        FontFamily="Permanent Marker"
-                        Margin="0,0,0,15"
-                        Click="CreateRoom_Click"/>
+                Height="40"
+                FontSize="17"
+                FontFamily="Permanent Marker"
+                Margin="0,0,0,10"
+                Click="CreateRoom_Click"/>
 
                 <Button Content="Join Room"
-                        Height="45"
-                        FontSize="18"
-                        FontFamily="Permanent Marker"
-                        Margin="0,0,0,15"
-                        Click="JoinRoom_Click"/>
+                Height="40"
+                FontSize="17"
+                FontFamily="Permanent Marker"
+                Margin="0,0,0,10"
+                Click="JoinRoom_Click"/>
+
+                <Button Content="One VS One"
+                Height="40"
+                FontSize="17"
+                FontFamily="Permanent Marker"
+                Margin="0,0,0,10"
+                Click="OneVsOne_Click"/>
 
                 <Button Content="Statistics"
-                        Height="45"
-                        FontSize="18"
-                        FontFamily="Permanent Marker"
-                        Margin="0,0,0,15"
-                        Click="Statistics_Click"/>
+                Height="40"
+                FontSize="17"
+                FontFamily="Permanent Marker"
+                Margin="0,0,0,10"
+                Click="Statistics_Click"/>
 
                 <Button Content="Logout"
-                Height="45"
-                FontSize="18"
+                Height="40"
+                FontSize="17"
                 FontFamily="Permanent Marker"
-                Margin="0,0,0,15"
+                Margin="0,0,0,10"
                 Click="Logout_Click"/>
 
                 <Button Content="Exit"
-                        Height="45"
-                        FontSize="18"
-                        FontFamily="Permanent Marker"
-                        Click="Exit_Click"/>
+                Height="40"
+                FontSize="17"
+                FontFamily="Permanent Marker"
+                Click="Exit_Click"/>
 
             </StackPanel>
         </Border>
