@@ -8,7 +8,8 @@
 
 MenuRequestHandler::MenuRequestHandler(const LoggedUser& user)
 	: m_handlerFactory(RequestHandlerFactory::getInstance()), m_user(user)
-{}
+{
+}
 
 
 /*
@@ -28,6 +29,13 @@ bool MenuRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 	{
 		return true;
 	}
+
+	if (requestInfo.id == JOIN_ONE_VS_ONE_QUEUE_REQUEST || requestInfo.id == GET_ONE_VS_ONE_STATUS_REQUEST || requestInfo.id == CANCEL_ONE_VS_ONE_QUEUE_REQUEST)
+	{
+		return true;
+	}
+
+
 
 	return false;
 }
@@ -69,6 +77,15 @@ RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo) 
 
 			case CREATE_ROOM_REQUEST:
 				return createRoom(requestInfo);
+
+			case JOIN_ONE_VS_ONE_QUEUE_REQUEST:
+				return joinOneVsOneQueue(requestInfo);
+
+			case GET_ONE_VS_ONE_STATUS_REQUEST:
+				return getOneVsOneStatus(requestInfo);
+
+			case CANCEL_ONE_VS_ONE_QUEUE_REQUEST:
+				return cancelOneVsOneQueue(requestInfo);
 
 			default:
 				return getErrorResponse("error: Wrong request format!");
@@ -223,58 +240,27 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo) const
 RequestResult MenuRequestHandler::createRoom(const RequestInfo& requestInfo) const
 {
 	RequestResult result;
-
 	CreateRoomResponse response;
 
 	CreateRoomRequest request = JsonRequestPacketDeserializer::deserializeCreateRoomRequest(requestInfo.buffer);
-	
-	// craft room data
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> distr(100000, 999999);
-	std::vector<RoomData> rooms =  this->m_handlerFactory.getRoomManager().getRooms();
-
-	int roomId = 0;
-	bool isUnique = false;
-
-	while (!isUnique)
-	{
-		roomId = distr(gen);
-		isUnique = true;
-
-		for (RoomData room : rooms)
-		{
-			if (room.id == roomId)
-			{
-				isUnique = false;
-				break;
-			}
-		}
-	}
 
 	RoomData roomData;
-	roomData.id = roomId;
+
 	roomData.maxPlayers = request.maxUsers;
 	roomData.name = request.roomName;
 	roomData.numOfQuestionsInGame = request.questionsCount;
 	roomData.timePerQuestion = request.answerTimeout;
 	roomData.status = Open;
 
-	response.status = this->m_handlerFactory.getRoomManager().createRoom(this->m_user, roomData);
+	unsigned int roomId = this->m_handlerFactory.getRoomManager().createRoomWithRandomId(this->m_user, roomData);
+
+	response.status = Success;
 	response.roomId = roomId;
 
-	// build RequestResult struct
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
 
-	if (response.status == Success)
-	{
-		Room& room = this->m_handlerFactory.getRoomManager().getRoom(roomId);
-		result.newHandler = this->m_handlerFactory.createRoomAdminRequestHandler(this->m_user, room);
-	}
-	else
-	{
-		result.newHandler = this->m_handlerFactory.createMenuRequestHandler(this->m_user);
-	}
+	Room& room = this->m_handlerFactory.getRoomManager().getRoom(roomId);
+	result.newHandler = this->m_handlerFactory.createRoomAdminRequestHandler(this->m_user, room);
 
 	return result;
 }
@@ -293,6 +279,150 @@ RequestResult MenuRequestHandler::getErrorResponse(const std::string& errorMsg) 
 	errorResponse.error = errorMsg;
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(errorResponse);
+	result.newHandler = const_cast<MenuRequestHandler*>(this);
+
+	return result;
+}
+
+
+/*
+	Function calculates how many seconds are left until a 1v1 match starts.
+	Input: matchData (const OneVsOneMatchData&)
+	Output: Seconds until start (unsigned int)
+*/
+
+unsigned int MenuRequestHandler::getSecondsUntilStart(const OneVsOneMatchData& matchData) const
+{
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+
+	if (now >= matchData.startTime)
+	{
+		return 0;
+	}
+
+	return (unsigned int)std::chrono::duration_cast<std::chrono::seconds>(matchData.startTime - now).count();
+}
+
+
+/*
+	Method to process the join 1v1 queue request.
+	Input: the requests information
+	Output: the requests result
+*/
+
+RequestResult MenuRequestHandler::joinOneVsOneQueue(const RequestInfo& requestInfo) const
+{
+	RequestResult result;
+	OneVsOneStatusResponse response;
+	OneVsOneMatchData matchData;
+
+	OneVsOneQueueStatus queueStatus = OneVsOneManager::getInstance().joinQueue(this->m_user, matchData);
+
+	response.status = Success;
+	response.queueStatus = queueStatus;
+
+	if (queueStatus == OneVsOneMatched)
+	{
+		response.roomId = matchData.roomId;
+		response.gameId = matchData.gameId;
+		response.questionsCount = ONE_VS_ONE_QUESTIONS_COUNT;
+		response.answerTimeout = ONE_VS_ONE_TIME_PER_QUESTION;
+		response.secondsUntilStart = this->getSecondsUntilStart(matchData);
+		response.opponentUsername = matchData.opponentUsername;
+
+		Game& game = GameManager::getInstance().getGame(matchData.gameId);
+		result.newHandler = this->m_handlerFactory.createGameRequestHandler(game, this->m_user);
+		OneVsOneManager::getInstance().removeMatch(this->m_user.getUsername());
+	}
+	else
+	{
+		response.roomId = 0;
+		response.gameId = 0;
+		response.questionsCount = 0;
+		response.answerTimeout = 0;
+		response.secondsUntilStart = 0;
+		response.opponentUsername = "";
+
+		result.newHandler = const_cast<MenuRequestHandler*>(this);
+	}
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+
+	return result;
+}
+
+
+/*
+	Method to process the get 1v1 queue status request.
+	Input: the request's information
+	Output: the request's result
+*/
+
+RequestResult MenuRequestHandler::getOneVsOneStatus(const RequestInfo& requestInfo) const
+{
+	RequestResult result;
+	OneVsOneStatusResponse response;
+	OneVsOneMatchData matchData;
+
+	OneVsOneQueueStatus queueStatus = OneVsOneManager::getInstance().getStatus(this->m_user, matchData);
+
+	response.status = Success;
+	response.queueStatus = queueStatus;
+
+	if (queueStatus == OneVsOneMatched)
+	{
+		response.roomId = matchData.roomId;
+		response.gameId = matchData.gameId;
+		response.questionsCount = ONE_VS_ONE_QUESTIONS_COUNT;
+		response.answerTimeout = ONE_VS_ONE_TIME_PER_QUESTION;
+		response.secondsUntilStart = this->getSecondsUntilStart(matchData);
+		response.opponentUsername = matchData.opponentUsername;
+
+		Game& game = GameManager::getInstance().getGame(matchData.gameId);
+		result.newHandler = this->m_handlerFactory.createGameRequestHandler(game, this->m_user);
+		OneVsOneManager::getInstance().removeMatch(this->m_user.getUsername());
+	}
+	else
+	{
+		response.roomId = 0;
+		response.gameId = 0;
+		response.questionsCount = 0;
+		response.answerTimeout = 0;
+		response.secondsUntilStart = 0;
+		response.opponentUsername = "";
+
+		result.newHandler = const_cast<MenuRequestHandler*>(this);
+	}
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+
+	return result;
+}
+
+
+/*
+	Method to process the cancel 1v1 queue request.
+	Input: the request's information
+	Output: the request's result
+*/
+
+RequestResult MenuRequestHandler::cancelOneVsOneQueue(const RequestInfo& requestInfo) const
+{
+	RequestResult result;
+	OneVsOneStatusResponse response;
+
+	OneVsOneManager::getInstance().cancelQueue(this->m_user);
+
+	response.status = Success;
+	response.queueStatus = OneVsOneNotQueued;
+	response.roomId = 0;
+	response.gameId = 0;
+	response.questionsCount = 0;
+	response.answerTimeout = 0;
+	response.secondsUntilStart = 0;
+	response.opponentUsername = "";
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
 	result.newHandler = const_cast<MenuRequestHandler*>(this);
 
 	return result;

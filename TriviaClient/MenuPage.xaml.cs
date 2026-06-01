@@ -57,5 +57,54 @@ namespace TriviaClient
         {
             Application.Current.Shutdown();  // MainWindow.Closing handles the rest
         }
+
+        /*
+    Function sends a 1v1 queue request and navigates according to the response.
+    Input: sender (object), e (RoutedEventArgs)
+    Output: None (void)
+*/
+
+        private void OneVsOne_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                byte[] requestBuffer = Serializer.SerializeJoinOneVsOneQueueRequest();
+
+                OneVsOneStatusResponse response =ClientSession.Communicator.SendRequest<OneVsOneStatusResponse>(requestBuffer);
+
+                if (response.Status != 1)
+                {
+                    MessageBox.Show("Failed to join 1v1 queue.");
+                    return;
+                }
+
+                if (response.QueueStatus == (uint)OneVsOneQueueStatus.OneVsOneWaiting)
+                {
+                    this.NavigationService.Navigate(new OneVsOneQueuePage(userNameTextBlock.Text));
+                }
+                else if (response.QueueStatus == (uint)OneVsOneQueueStatus.OneVsOneMatched)
+                {
+                    this.NavigationService.Navigate(
+                        new OneVsOneCountdownPage(
+                            userNameTextBlock.Text,
+                            response.OpponentUsername,
+                            response.SecondsUntilStart,
+                            response.QuestionsCount,
+                            response.AnswerTimeout
+                        )
+                    );
+                }
+                else
+                {
+                    MessageBox.Show("Unknown 1v1 queue status.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Server error: " + ex.Message);
+            }
+        }
     }
 }
+
+

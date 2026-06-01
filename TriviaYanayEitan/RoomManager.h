@@ -4,6 +4,7 @@
 #include <vector>
 #include <mutex>
 #include <exception>
+#include <random>
 #include "Room.h"
 
 class RoomManager
@@ -24,7 +25,7 @@ public:
 	std::vector<RoomData> getRooms();
 	bool checkIfRoomExists(int id) const;
 	Room& getRoom(int id);
-
+	unsigned int createRoomWithRandomId(const LoggedUser& usr, RoomData data);
 	static RoomManager& getInstance();
 
 	RoomManager(const RoomManager& other) = delete;

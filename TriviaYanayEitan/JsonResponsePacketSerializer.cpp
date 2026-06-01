@@ -346,27 +346,25 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveGameResponse& 
 	return serializeStatusResponse(leaveGameResponse.status, LEAVE_GAME_RESPONSE);
 }
 
-/*
-	Method to serialize Json AddQuestionresponse into buffer.
-	Input: addQuestionResponse (const AddQuestionResponse&)
-	Output: Buffer containing AddQuestion response data according to the protocol.
-*/
-
-Buffer JsonResponsePacketSerializer::serializeResponse(const AddQuestionResponse& addQuestionResponse)
-{
-	return serializeStatusResponse(addQuestionResponse.status, ADD_QUESTION_RESPONSE);
-}
 
 /*
-	Helper method used to avoid code duplication for all responses that consist of only status
-	input: the status to send, and ther response code
-	output: Buffer containing the status response.
+	Method to serialize Json OneVsOneStatus response into buffer.
+	Input: oneVsOneStatusResponse (const OneVsOneStatusResponse&)
+	Output: Buffer containing OneVsOneStatus response data according to the protocol.
 */
 
-Buffer JsonResponsePacketSerializer::serializeStatusResponse(unsigned int status, const int responseCode)
+Buffer JsonResponsePacketSerializer::serializeResponse(const OneVsOneStatusResponse& oneVsOneStatusResponse)
 {
 	json response;
-	response["status"] = status;
 
-	return serializeJson(response, responseCode);
+	response["status"] = oneVsOneStatusResponse.status;
+	response["queueStatus"] = oneVsOneStatusResponse.queueStatus;
+	response["roomId"] = oneVsOneStatusResponse.roomId;
+	response["gameId"] = oneVsOneStatusResponse.gameId;
+	response["questionsCount"] = oneVsOneStatusResponse.questionsCount;
+	response["answerTimeout"] = oneVsOneStatusResponse.answerTimeout;
+	response["secondsUntilStart"] = oneVsOneStatusResponse.secondsUntilStart;
+	response["opponentUsername"] = oneVsOneStatusResponse.opponentUsername;
+
+	return JsonResponsePacketSerializer::serializeJson(response, ONE_VS_ONE_STATUS_RESPONSE);
 }
