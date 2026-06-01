@@ -38,7 +38,7 @@ namespace TriviaClient
                     return;
                 }
 
-                List<string> stats = response.GetStats();
+                List<string> stats = response.Statistics;
 
                 UserStatsListBox.Items.Add("Your name: " + stats[0]);
                 UserStatsListBox.Items.Add("Average Answer Time: " + $"{double.Parse(stats[1]):F2}");

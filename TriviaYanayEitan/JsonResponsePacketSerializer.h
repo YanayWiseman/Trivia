@@ -43,6 +43,9 @@ public:
 	static Buffer serializeResponse(const LeaveGameResponse& leaveGameResponse);
 	static Buffer serializeResponse(const OneVsOneStatusResponse& oneVsOneStatusResponse);
 
+	//V4.0.1
+	static Buffer serializeResponse(const AddQuestionResponse& addQuestionRequest);
+
 
 	// singleton
 	static JsonResponsePacketSerializer& getInstance();
@@ -52,5 +55,5 @@ public:
 private:
 	// helper methods
 	static Buffer serializeJson(const json& json, const int code);
-	static std::string vectorToAmpersandString(const std::vector<std::string>& vec);
+	static Buffer serializeStatusResponse(unsigned int status, const int responseCode);
 };
