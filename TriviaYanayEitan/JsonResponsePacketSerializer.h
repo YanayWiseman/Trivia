@@ -54,5 +54,4 @@ public:
 private:
 	// helper methods
 	static Buffer serializeJson(const json& json, const int code);
-	static std::string vectorToAmpersandString(const std::vector<std::string>& vec);
 };

@@ -151,7 +151,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetPlayersInRoomRes
 	json response;
 
 	// we need to craft the players in room string
-	response["PlayersInRoom"] = JsonResponsePacketSerializer::vectorToAmpersandString(getPlayersInRoomResponse.players);
+	response["PlayersInRoom"] = getPlayersInRoomResponse.players;
 	response["status"] = getPlayersInRoomResponse.status;
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_PLAYERS_IN_ROOM_RESPONSE);
@@ -168,7 +168,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const getHighScoreRespons
 	json response;
 
 	response["status"] = getHighScoreResponse.status;
-	response["HighScore"] = JsonResponsePacketSerializer::vectorToAmpersandString(getHighScoreResponse.statistics);
+	response["HighScore"] = getHighScoreResponse.statistics;
 
 	return JsonResponsePacketSerializer::serializeJson(response, HIGH_SCORE_RESPONSE);
 }
@@ -184,7 +184,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const getPersonalStatsRes
 	json response;
 
 	response["status"] = getPersonalStatsResponse.status;
-	response["UserStatistics"] = JsonResponsePacketSerializer::vectorToAmpersandString(getPersonalStatsResponse.statistics);
+	response["UserStatistics"] = getPersonalStatsResponse.statistics;
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_PERSONAL_STATS_RESPONSE);
 }
@@ -216,31 +216,6 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const CreateRoomResponse&
 	response["roomId"] = createRoomResponse.roomId;
 
 	return JsonResponsePacketSerializer::serializeJson(response, CREATE_ROOM_RESPONSE);
-}
-
-/*
-	Helper method to convert a vector into a ampersand seperated string
-	input: the vector
-	output: the string
-*/
-
-std::string JsonResponsePacketSerializer::vectorToAmpersandString(const std::vector<std::string>& vector)
-{
-	size_t i = 0;
-
-	std::string res = "";
-
-	for (i = 0; i < vector.size(); i++)
-	{
-		res += vector[i];
-		if (i != vector.size() - 1)
-		{
-			// the seperator will be &
-			res += "&";
-		}
-	}
-
-	return res;
 }
 
 /*
@@ -286,7 +261,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetRoomStateRespons
 	response["status"] = getRoomStateResponse.status;
 	response["hasGameBegun"] = getRoomStateResponse.hasGameBegun;
 	response["timePerQuestion"] = getRoomStateResponse.answerTimeout;
-	response["players"] = JsonResponsePacketSerializer::vectorToAmpersandString(getRoomStateResponse.players);
+	response["players"] = getRoomStateResponse.players;
 	response["questionCount"] = getRoomStateResponse.questionsCount;
 
 	return JsonResponsePacketSerializer::serializeJson(response, GET_ROOM_STATE_RESPONSE);
