@@ -129,7 +129,7 @@ namespace TriviaClient
                     GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
 
                     this.stopThread = true;
-                    this.NavigationService.Navigate(new WaitingPage(request.RoomId, username, isAdmin: false));
+                    this.NavigationService.Navigate(new WaitingPage(request.RoomId, selectedRoom.Name, username, isAdmin: false));
                 }
                 else
                 {

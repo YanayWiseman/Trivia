@@ -136,3 +136,9 @@ struct OneVsOneStatusResponse
 	unsigned int secondsUntilStart;
 	std::string opponentUsername;
 };
+
+
+struct AddQuestionResponse
+{
+	unsigned int status;
+};

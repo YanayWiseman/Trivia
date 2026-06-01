@@ -244,6 +244,15 @@ namespace TriviaClient
         [JsonProperty("opponentUsername")]
         public string OpponentUsername { get; set; } = "";
     }
+
+
+    public class AddQuestionResponse
+    {
+        [JsonProperty("status")]
+        public uint Status { get; set; }
+    }
+
+
     public enum RoomStatus
     {
         Open,

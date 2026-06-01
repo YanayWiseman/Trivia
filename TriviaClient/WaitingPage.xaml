@@ -33,7 +33,7 @@
         <Border Width="420" Padding="30" Background="Orange" CornerRadius="12" HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel>
 
-                <TextBlock x:Name="roomName" Text="Room name" FontSize="34" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Permanent Marker" Margin="0,0,0,25"/>
+                <TextBlock x:Name="roomNameTxt" Text="Room name" FontSize="34" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Permanent Marker" Margin="0,0,0,25"/>
 
                 <TextBlock Text="Players" FontSize="16" FontFamily="Permanent Marker" Margin="0,0,0,8"/>
 

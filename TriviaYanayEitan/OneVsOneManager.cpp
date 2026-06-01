@@ -68,7 +68,7 @@ OneVsOneQueueStatus OneVsOneManager::joinQueue(const LoggedUser& user, OneVsOneM
 		Room& room = RoomManager::getInstance().getRoom(roomId);
 		room.addUser(user);
 
-		Game& game = GameManager::getInstance().createGame(room);
+		Game& game = GameManager::getInstance().createGame(room, std::vector<Question>());
 
 		// both clients should start after the same countdown
 		std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now() + std::chrono::seconds(ONE_VS_ONE_COUNTDOWN_SECONDS);

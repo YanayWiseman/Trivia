@@ -27,6 +27,7 @@ namespace TriviaClient
         GetGameResultsRequestCode,
         JoinOneVsOneQueueRequest,
         GetOneVsOneStatusRequest,
-        CancelOneVsOneQueueRequest
+        CancelOneVsOneQueueRequest,
+        AddQuestionRequestCode
     }
 }

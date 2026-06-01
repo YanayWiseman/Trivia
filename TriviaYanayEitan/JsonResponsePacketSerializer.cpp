@@ -368,3 +368,30 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const OneVsOneStatusRespo
 
 	return JsonResponsePacketSerializer::serializeJson(response, ONE_VS_ONE_STATUS_RESPONSE);
 }
+
+
+/*
+	Method to serialize Json AddQuestionresponse into buffer.
+	Input: addQuestionResponse (const AddQuestionResponse&)
+	Output: Buffer containing AddQuestion response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const AddQuestionResponse& addQuestionResponse)
+{
+	return serializeStatusResponse(addQuestionResponse.status, ADD_QUESTION_RESPONSE);
+}
+
+
+/*
+	Helper method used to avoid code duplication for all responses that consist of only status
+	input: the status to send, and ther response code
+	output: Buffer containing the status response.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeStatusResponse(unsigned int status, const int responseCode)
+{
+	json response;
+	response["status"] = status;
+
+	return serializeJson(response, responseCode);
+}

@@ -21,21 +21,23 @@ namespace TriviaClient
         private string username;
         private uint timePerQuestion;
         private uint questionCount;
+        private string roomName;
         const int MAX_ANSWER_ID = 4;
 
-        public AddQuestionPage(uint roomId, string username, uint timePerQuestion, uint questionCount)
+        public AddQuestionPage(uint roomId, string roomName, string username, uint timePerQuestion, uint questionCount)
         {
             this.roomId = roomId;
             this.username = username;
             this.timePerQuestion = timePerQuestion;
             this.questionCount = questionCount;
+            this.roomName = roomName;
 
             InitializeComponent();
         }
 
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new WaitingPage(this.roomId, this.username, this.timePerQuestion, this.questionCount, true));
+            this.NavigationService.Navigate(new WaitingPage(this.roomId, this.roomName, this.username, this.timePerQuestion, this.questionCount, true));
         }
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
@@ -83,7 +85,7 @@ namespace TriviaClient
                 MessageBox.Show("Failed adding question!");
             }
 
-            this.NavigationService.Navigate(new WaitingPage(this.roomId, this.username, this.timePerQuestion, this.questionCount + 1, true));
+            this.NavigationService.Navigate(new WaitingPage(this.roomId, roomName, this.username, this.timePerQuestion, this.questionCount + 1, true));
         }
     }
 }

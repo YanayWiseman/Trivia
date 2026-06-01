@@ -24,14 +24,18 @@ namespace TriviaClient
         private uint timePerQuestion;
         private uint questionCount;
         private string username;
+        private string m_roomName;
 
-        public WaitingPage(uint roomId, string username, uint timePerQuestion = 0, uint questionCount = 0, bool isAdmin = false)
+        public WaitingPage(uint roomId, string roomName, string username, uint timePerQuestion = 0, uint questionCount = 0, bool isAdmin = false)
         {
             this.roomId = roomId;
             this.isAdmin = isAdmin;
             this.username = username;
+            this.m_roomName = roomName;
 
             InitializeComponent();
+
+            roomNameTxt.Text = roomName;
 
             if (isAdmin)
             {
@@ -226,7 +230,7 @@ namespace TriviaClient
         private void AddQuestion_Click(object sender, RoutedEventArgs e)
         {
             this.stopThread = true;
-            this.NavigationService.Navigate(new AddQuestionPage(this.roomId, this.username, this.timePerQuestion, this.questionCount));
+            this.NavigationService.Navigate(new AddQuestionPage(this.roomId, this.m_roomName,this.username, this.timePerQuestion, this.questionCount));
         }
     }
 }
