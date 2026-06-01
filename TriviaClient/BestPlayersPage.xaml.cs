@@ -43,7 +43,7 @@ namespace TriviaClient
                     return;
                 }
 
-                List<string> highScores = response.GetHighScores();
+                List<string> highScores = response.Statistics;
 
                 BestPlayersListBox.Items.Clear();
 

@@ -48,18 +48,7 @@ namespace TriviaClient
         public uint Status { get; set; }
 
         [JsonProperty("PlayersInRoom")]
-        public string? PlayersRaw { get; set; }
-
-        // Method to convert the string into a list
-        public List<string> GetPlayers()
-        {
-            if (string.IsNullOrEmpty(PlayersRaw))
-            {
-                return new List<string>();
-            }
-
-            return PlayersRaw.Split('&').ToList();
-        }
+        public List<string> Players { get; set; } = new();
     }
 
     public class GetHighScoreResponse
@@ -68,17 +57,7 @@ namespace TriviaClient
         public uint Status { get; set; }
 
         [JsonProperty("HighScore")]
-        public string? StatisticsRaw { get; set; }
-
-        public List<string> GetHighScores()
-        {
-            if (string.IsNullOrEmpty(StatisticsRaw))
-            {
-                return new List<string>();
-            }
-
-            return StatisticsRaw.Split('&').ToList();
-        }
+        public List<string> Statistics { get; set; } = new();
     }
 
     public class GetPersonalStatsResponse
@@ -88,17 +67,7 @@ namespace TriviaClient
 
 
         [JsonProperty("UserStatistics")]
-        public string? StatisticsRaw { get; set; }
-
-        public List<string> GetStats()
-        {
-            if (string.IsNullOrEmpty(StatisticsRaw))
-            {
-                return new List<string>();
-            }
-
-            return StatisticsRaw.Split('&').ToList();
-        }
+        public List<string> Statistics { get; set; } = new();
     }
 
     public class JoinRoomResponse
@@ -189,17 +158,7 @@ namespace TriviaClient
         public RoomStatus roomStatus { get; set; }
 
         [JsonProperty("players")]
-        public string? PlayerListRaw { get; set; }
-
-        public List<string> GetPlayers()
-        {
-            if (string.IsNullOrEmpty(PlayerListRaw))
-            {
-                return new List<string>();
-            }
-
-            return PlayerListRaw.Split('&').ToList();
-        }
+        public List<string> Players { get; set; } = new();
 
         [JsonProperty("questionCount")]
         public uint NumOfQuestionsInGame { get; set; }

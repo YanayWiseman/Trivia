@@ -117,7 +117,7 @@ namespace TriviaClient
 
                     if (response.Status == 1)
                     {
-                        this.Dispatcher.Invoke(() => UpdateUiWithPlayers(response.GetPlayers()));
+                        this.Dispatcher.Invoke(() => UpdateUiWithPlayers(response.Players));
                     }
                     else
                     {
