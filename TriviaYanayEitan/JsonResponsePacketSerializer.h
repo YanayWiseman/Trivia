@@ -41,6 +41,7 @@ public:
 	static Buffer serializeResponse(const SubmitAnswerResponse& submitAnswerResponse);
 	static Buffer serializeResponse(const GetQuestionResponse& getQuestionResponse);
 	static Buffer serializeResponse(const LeaveGameResponse& leaveGameResponse);
+	static Buffer serializeResponse(const OneVsOneStatusResponse& oneVsOneStatusResponse);
 
 
 	// singleton

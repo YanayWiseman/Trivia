@@ -412,3 +412,26 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LeaveGameResponse& 
 
 	return JsonResponsePacketSerializer::serializeJson(response, LEAVE_GAME_RESPONSE);
 }
+
+
+/*
+	Method to serialize Json OneVsOneStatus response into buffer.
+	Input: oneVsOneStatusResponse (const OneVsOneStatusResponse&)
+	Output: Buffer containing OneVsOneStatus response data according to the protocol.
+*/
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const OneVsOneStatusResponse& oneVsOneStatusResponse)
+{
+	json response;
+
+	response["status"] = oneVsOneStatusResponse.status;
+	response["queueStatus"] = oneVsOneStatusResponse.queueStatus;
+	response["roomId"] = oneVsOneStatusResponse.roomId;
+	response["gameId"] = oneVsOneStatusResponse.gameId;
+	response["questionsCount"] = oneVsOneStatusResponse.questionsCount;
+	response["answerTimeout"] = oneVsOneStatusResponse.answerTimeout;
+	response["secondsUntilStart"] = oneVsOneStatusResponse.secondsUntilStart;
+	response["opponentUsername"] = oneVsOneStatusResponse.opponentUsername;
+
+	return JsonResponsePacketSerializer::serializeJson(response, ONE_VS_ONE_STATUS_RESPONSE);
+}
