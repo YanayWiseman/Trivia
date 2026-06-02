@@ -8,7 +8,8 @@
 
 OTPCryptoAlgorithm::OTPCryptoAlgorithm()
 {
-
+	// initialize the time seed
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
 /*

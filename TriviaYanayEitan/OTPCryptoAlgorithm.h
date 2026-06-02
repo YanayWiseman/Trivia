@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ctime>
 #include "CryptoAlgorithm.h"
 
 class OTPCryptoAlgorithm : public CryptoAlgorithm
