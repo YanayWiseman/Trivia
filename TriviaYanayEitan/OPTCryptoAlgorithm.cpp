@@ -18,7 +18,9 @@ OTPCryptoAlgorithm::OTPCryptoAlgorithm()
 
 std::string OTPCryptoAlgorithm::encrypt(const std::string& message) const
 {
-	
+	std::string pad = generatePad(message.size());
+
+
 }
 
 /*

@@ -11,6 +11,7 @@ class OTPCryptoAlgorithm : public CryptoAlgorithm
 private:
 	// Methods
 	std::string generatePad(unsigned int length) const;
+	std::string xorStrings(const std::string& str1, const std::string& str2) const;
 
 public:
 	// C'tor
