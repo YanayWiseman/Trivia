@@ -1,5 +1,10 @@
 #include "OTPCryptoAlgorithm.h"
 
+OTPCryptoAlgorithm::OTPCryptoAlgorithm()
+{
+
+}
+
 /*
 	Method encrypts a given message using OTP (One Time Pad)
 	input: The message to encrypt
