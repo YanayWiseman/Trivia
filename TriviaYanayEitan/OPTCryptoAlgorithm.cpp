@@ -58,7 +58,15 @@ std::string OTPCryptoAlgorithm::generatePad(unsigned int length) const
 	return pad;
 }
 
+/*
+	Helper method applies xor operation to two strings creating a new one
+	input: The two strings to xor
+	output: the xored string created from both strings
+*/
+
 std::string OTPCryptoAlgorithm::xorStrings(const std::string & str1, const std::string & str2) const
 {
+	std::string result;
 
+	return result;
 }
