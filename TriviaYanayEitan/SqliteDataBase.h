@@ -66,7 +66,7 @@ public:
 	std::vector<std::string> getHighScores() const override;
 	void submitGameStatistics(const std::string& username, const GameData& gameData) override;
 
-	// USER_CRYPTO operations
-	void saveUserCryptoKey(const std::string& username, const std::string& algorithm, const std::string& keyData) override;
-	std::string getUserCryptoKey(const std::string& username) const override;
+	// CRYPTO_KEYS operations
+	void storeKey(const std::string& keyId, const std::string& keyValue);
+	std::string loadKey(const std::string& keyId) const;
 };

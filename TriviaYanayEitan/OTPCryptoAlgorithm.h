@@ -15,8 +15,6 @@ private:
 	std::string xorStrings(const std::string& str1, const std::string& str2) const;
 
 public:
-	// C'tor
-	OTPCryptoAlgorithm();
 
 	// Methods
 	std::string encrypt(const std::string& message) const override;

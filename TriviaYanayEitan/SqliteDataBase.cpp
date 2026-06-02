@@ -47,11 +47,9 @@ SqliteDatabase::SqliteDatabase()
 		" IS_CORRECT INTEGER NOT NULL CHECK(IS_CORRECT IN (0, 1)),"
 		" FOREIGN KEY (QUESTION_ID) REFERENCES QUESTIONS(ID));");
 
-	executeSqlQuery("CREATE TABLE IF NOT EXISTS USER_CRYPTO ("
-		" USERNAME TEXT PRIMARY KEY,"
-		" ALGORITHM TEXT NOT NULL,"
-		" KEY_DATA TEXT NOT NULL,"
-		" FOREIGN KEY(USERNAME) REFERENCES USER(USERNAME)");
+	executeSqlQuery("CREATE TABLE IF NOT EXISTS CRYPTO_KEYS ("
+		"  KEY_ID TEXT PRIMARY KEY,"
+		"  KEY_VALUE BLOB NOT NULL);");  // binary data
 }
 
 /*
@@ -618,54 +616,57 @@ void SqliteDatabase::submitGameStatistics(const std::string& username, const Gam
 }
 
 /*
-	Method to save a user's crypto key in the database
-	input: The user's name, the algorithm we save the key based on, and the key itself
-	output: No return values
+	Method stores or replaces an encryption key in the database
+	input: keyId is a readable identifier of the encryption method and keyValue is raw binary key bytes stored as a BLOB
+	output: no return values
 */
-
-void SqliteDatabase::saveUserCryptoKey(const std::string& username, const std::string& algorithm, const std::string& keyData)
+void SqliteDatabase::storeKey(const std::string& keyId, const std::string& keyValue)
 {
-	sqlite3_stmt* stmt = prepare("INSERT INTO USER_CRYPTO (USERNAME, ALGORITHM, KET_DATA) VALUES(?, ?, ?);");
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
+	sqlite3_stmt* stmt = prepare("INSERT OR REPLACE INTO CRYPTO_KEYS (KEY_ID, KEY_VALUE) VALUES (?, ?);");
 	if (!stmt)
 	{
 		return;
 	}
 
-	// bind the values
-	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
-	sqlite3_bind_text(stmt, 2, algorithm.c_str(), -1, SQLITE_TRANSIENT);
-	sqlite3_bind_text(stmt, 3, keyData.c_str(), -1, SQLITE_TRANSIENT);
-
+	// bind
+	sqlite3_bind_text(stmt, 1, keyId.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_blob(stmt, 2, keyValue.data(), static_cast<int>(keyValue.size()), SQLITE_TRANSIENT);
+	
 	// step
-	if (sqlite3_step(stmt) != SQLITE_DONE)
-	{
-		std::cout << "crypto data: " << username << " - " << algorithm << " - " << keyData << std::endl;
-	}
+	sqlite3_step(stmt);
 
 	sqlite3_finalize(stmt);
 }
 
 /*
-	Method to get a user's crypto key fron the database
-	input: The user's name
-	output: the user's crypto key
+	Method loads a key from the database by its id
+	input: the key's id
+	output: an empty string if the key is not found otherwise the key values
 */
-
-std::string SqliteDatabase::getUserCryptoKey(const std::string& username) const
+std::string SqliteDatabase::loadKey(const std::string& keyId) const
 {
-	sqlite3_stmt* stmt = prepare("SELECT KEY_DATA FROM USER_CRYPTO WHERE USERNAME = ?");
+	std::lock_guard<std::mutex> lock(m_dbMutex);
+
+	sqlite3_stmt* stmt = prepare("SELECT KEY_VALUE FROM CRYPTO_KEYS WHERE KEY_ID = ?;");
 	if (!stmt)
 	{
 		return "";
 	}
 
-	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+	// bind
+	sqlite3_bind_text(stmt, 1, keyId.c_str(), -1, SQLITE_TRANSIENT);
 
+	// step
+	std::string result;
 	if (sqlite3_step(stmt) == SQLITE_ROW)
 	{
-		     
-		return 
+		const void* blob = sqlite3_column_blob(stmt, 0);
+		int size = sqlite3_column_bytes(stmt, 0);
+		result.assign(static_cast<const char*>(blob), size);
 	}
 
-
+	sqlite3_finalize(stmt);
+	return result;
 }

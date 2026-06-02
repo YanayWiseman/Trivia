@@ -31,7 +31,7 @@ public:
     // QUESTIONS operations
     virtual std::list<Question> getQuestions(int amount) const = 0;
 
-    // USER_CRYPTO operations
-    virtual void saveUserCryptoKey(const std::string& username, const std::string& algorithm, const std::string& keyData) = 0;
-    virtual std::string getUserCryptoKey(const std::string& username) const = 0;
+    // CRYPTO_KEYS operations
+    virtual void storeKey(const std::string& keyId, const std::string& keyValue) = 0;
+    virtual std::string loadKey(const std::string& keyId) const = 0;
 };
