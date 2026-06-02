@@ -616,3 +616,8 @@ void SqliteDatabase::submitGameStatistics(const std::string& username, const Gam
 
 	sqlite3_finalize(updateStmt);
 }
+
+void SqliteDatabase::saveUserCryptoKey(const std::string& username, const std::string& algorithm, const std::string& keyData)
+{
+
+}

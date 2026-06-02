@@ -67,5 +67,5 @@ public:
 	void submitGameStatistics(const std::string& username, const GameData& gameData) override;
 
 	// USER_CRYPTO operations
-	void saveUserCrypto(const std::string& username, const std::string& algorithm, const std::string& keyData) override;
+	void saveUserCryptoKey(const std::string& username, const std::string& algorithm, const std::string& keyData) override;
 };
