@@ -8,8 +8,6 @@
 
 OTPCryptoAlgorithm::OTPCryptoAlgorithm()
 {
-	// initialize the time seed
-	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
 /*
@@ -43,13 +41,16 @@ std::string OTPCryptoAlgorithm::decrypt(const std::string& message) const
 std::string OTPCryptoAlgorithm::generatePad(unsigned int length) const
 {
 	// A pad is a bunch of randomly generated text the same length of the text we want to encrypt
+	std::random_device rnd;
+	std::mt19937 generator(rnd());
+	std::uniform_int_distribution<int> distribution(MIN_PRINTABLE_ASCII, MAX_PRINTABLE_ASCII);
+
 	std::string pad = "";
 	int i = 0;
 
-	for (i = 0; i < length; i++)
+	for (i = 0; i < length; ++i)
 	{
-		char currentChar = static_cast<char>(MIN_PRINTABLE_ASCII + (std::rand() % MAX_PRINTABLE_ASCII - MIN_PRINTABLE_ASCII + 1));
-		pad += currentChar;
+		pad += static_cast<char>(distribution(generator));
 	}
 
 	return pad;

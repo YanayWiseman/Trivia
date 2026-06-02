@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ctime>
+#include <random>
 #include "CryptoAlgorithm.h"
 
 #define MIN_PRINTABLE_ASCII 32
