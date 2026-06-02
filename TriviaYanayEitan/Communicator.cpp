@@ -10,7 +10,7 @@
 Communicator::Communicator() : m_handlerFactory(RequestHandlerFactory::getInstance())
 {
 	// this server use TCP. that why SOCK_STREAM & IPPROTO_TCP
-	// if the server use UDP we will use: SOCK_DGRAM & IPPROTO_UDP
+	// if the server use UDP we will use: SOCK_DGRAM & IPPROTO_UDP 
 	this->m_serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	if (this->m_serverSocket == INVALID_SOCKET)

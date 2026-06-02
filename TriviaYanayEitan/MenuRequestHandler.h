@@ -11,6 +11,7 @@
 #include "RoomAdminRequestHandler.h"
 #include "ResponseStructs.h"
 #include "RoomMemberRequestHandler.h"
+#include "OneVsOneManager.h"
 
 class MenuRequestHandler : public IRequestHandler
 {
@@ -27,6 +28,11 @@ private:
 	RequestResult joinRoom(const RequestInfo& requestInfo) const;
 	RequestResult createRoom(const RequestInfo& requestInfo) const;
 	RequestResult getErrorResponse(const std::string& errorMsg) const;
+
+	RequestResult joinOneVsOneQueue(const RequestInfo& requestInfo) const;
+	RequestResult getOneVsOneStatus(const RequestInfo& requestInfo) const;
+	RequestResult cancelOneVsOneQueue(const RequestInfo& requestInfo) const;
+	unsigned int getSecondsUntilStart(const OneVsOneMatchData& matchData) const;
 
 public:
 	// c'tor

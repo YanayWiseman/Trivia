@@ -23,7 +23,7 @@ bool RoomAdminRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) 
 		return false;
 	}
 
-	if (requestInfo.id == CLOSE_ROOM_REQUEST || requestInfo.id == START_GAME_REQUEST || requestInfo.id == GET_ROOM_STATE_REQUEST || requestInfo.id == GET_PLAYERS_IN_ROOM_REQUEST)
+	if (requestInfo.id == CLOSE_ROOM_REQUEST || requestInfo.id == START_GAME_REQUEST || requestInfo.id == GET_ROOM_STATE_REQUEST || requestInfo.id == GET_PLAYERS_IN_ROOM_REQUEST || requestInfo.id == ADD_QUESTION_REQUEST)
 	{
 		return true;
 	}
@@ -67,6 +67,10 @@ RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestI
 			{
 				return getRoomState(requestInfo);
 			}
+			case ADD_QUESTION_REQUEST:
+			{
+				return addQuestion(requestInfo);
+			}
 			default:
 			{
 				return getErrorResponse("error: Wrong request format!");
@@ -97,7 +101,7 @@ RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
 	result.newHandler = this->m_handlerFactory.createMenuRequestHandler(this->m_user);
 
-	return result;
+	return result; 
 }
 
 /*
@@ -111,13 +115,36 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 	RequestResult result;
 	StartGameResponse response;
 
-	Game& game = GameManager::getInstance().createGame(this->m_room);
+	Game& game = GameManager::getInstance().createGame(this->m_room, this->m_newQuestions);
 
 	this->m_room.setStatus(InGame);
 	response.status = Success;
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
 	result.newHandler = this->m_handlerFactory.createGameRequestHandler(game, this->m_user);
+
+	return result;
+}
+
+/*
+	Method to process the addQuestion request
+	input: the request's information
+	output: the request's result
+*/
+
+RequestResult RoomAdminRequestHandler::addQuestion(const RequestInfo& requestInfo) const
+{
+	RequestResult result;
+	AddQuestionResponse response;
+
+	AddQuestionRequest request = JsonRequestPacketDeserializer::deserializeAddQuestionRequest(requestInfo.buffer);
+	Question question(request.question, request.answers, request.correctAnswerId);
+	this->m_newQuestions.push_back(question);  // will be added to the default 10 questions when creating the game
+	this->m_room.incrementQuestion();
+	response.status = Success;
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<RoomAdminRequestHandler*>(this);
 
 	return result;
 }

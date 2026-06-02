@@ -30,5 +30,4 @@ public:
 
     // QUESTIONS operations
     virtual std::list<Question> getQuestions(int amount) const = 0;
-
 };

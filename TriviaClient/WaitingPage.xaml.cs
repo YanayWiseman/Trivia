@@ -24,22 +24,38 @@ namespace TriviaClient
         private uint timePerQuestion;
         private uint questionCount;
         private string username;
+        private string m_roomName;
 
-        public WaitingPage(uint roomId, string username, uint timePerQuestion = 0, uint questionCount = 0, bool isAdmin = false)
+        public WaitingPage(uint roomId, string roomName, string username, uint timePerQuestion = 0, uint questionCount = 0, bool isAdmin = false)
         {
             this.roomId = roomId;
             this.isAdmin = isAdmin;
             this.username = username;
+            this.m_roomName = roomName;
 
             InitializeComponent();
+
+            roomNameTxt.Text = roomName;
 
             if (isAdmin)
             {
                 this.timePerQuestion = timePerQuestion;
                 this.questionCount = questionCount;
+
+                // disable leaving room
                 LeaveRoomButton.IsEnabled = false;
                 LeaveRoomButton.Background = new SolidColorBrush(Colors.Red);
                 LeaveRoomButton.Content = "";
+                
+                // enable the add question button
+                addQuestionButton.IsEnabled = true;
+            }
+            else
+            {
+                // disable the add question button
+                addQuestionButton.IsEnabled = false;
+                addQuestionButton.Background = new SolidColorBrush(Colors.Red);
+                addQuestionButton.Content = "";
             }
             this.Unloaded += WaitingPage_Unloaded;
 
@@ -105,7 +121,7 @@ namespace TriviaClient
 
                     if (response.Status == 1)
                     {
-                        this.Dispatcher.Invoke(() => UpdateUiWithPlayers(response.GetPlayers()));
+                        this.Dispatcher.Invoke(() => UpdateUiWithPlayers(response.Players));
                     }
                     else
                     {
@@ -158,9 +174,9 @@ namespace TriviaClient
             if (response.Status == 1)
             {
                 this.stopThread = true;
-                // temp
                 if (this.NavigationService != null)
                 {
+                    MessageBox.Show(this.questionCount.ToString());
                     this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion, this.username));
                 }
                 else
@@ -211,6 +227,10 @@ namespace TriviaClient
                 ClientSession.Communicator.SendRequest<LeaveRoomResponse>(requestBuffer);
             }
         }
-
+        private void AddQuestion_Click(object sender, RoutedEventArgs e)
+        {
+            this.stopThread = true;
+            this.NavigationService.Navigate(new AddQuestionPage(this.roomId, this.m_roomName,this.username, this.timePerQuestion, this.questionCount));
+        }
     }
 }
