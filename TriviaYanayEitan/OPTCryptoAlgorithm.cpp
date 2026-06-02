@@ -11,6 +11,12 @@ std::string OTPCryptoAlgorithm::encrypt(const std::string& message) const
 	return "";
 }
 
+/*
+	Method decrypts a given cipher according to OTP (One Time Pad)
+	input: The cipher to decrypt
+	output: The decrypted message
+*/
+
 std::string OTPCryptoAlgorithm::decrypt(const std::string& message) const
 {
 	return "";
