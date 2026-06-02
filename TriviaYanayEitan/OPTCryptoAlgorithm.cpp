@@ -48,7 +48,8 @@ std::string OTPCryptoAlgorithm::generatePad(unsigned int length) const
 
 	for (i = 0; i < length; i++)
 	{
-		char currentChar = static_cast<char>()
+		char currentChar = static_cast<char>(MIN_PRINTABLE_ASCII + (std::rand() % MAX_PRINTABLE_ASCII - MIN_PRINTABLE_ASCII + 1));
+		pad += currentChar;
 	}
 
 	return pad;
