@@ -645,3 +645,7 @@ void SqliteDatabase::saveUserCryptoKey(const std::string& username, const std::s
 	sqlite3_finalize(stmt);
 }
 
+std::string SqliteDatabase::getUserCryptoKey(const std::string& username) const
+{
+
+}
