@@ -57,3 +57,8 @@ std::string OTPCryptoAlgorithm::generatePad(unsigned int length) const
 
 	return pad;
 }
+
+std::string OTPCryptoAlgorithm::xorStrings(const std::string & str1, const std::string & str2) const
+{
+
+}
