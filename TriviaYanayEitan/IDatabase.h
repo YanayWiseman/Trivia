@@ -30,4 +30,7 @@ public:
 
     // QUESTIONS operations
     virtual std::list<Question> getQuestions(int amount) const = 0;
+
+    // USER_CRYPTO operations
+    virtual void saveUserCrypto(const std::string& username, const std::string& algorithm, const std::string& keyData) = 0;
 };

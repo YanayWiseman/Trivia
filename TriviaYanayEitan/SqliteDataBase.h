@@ -65,4 +65,7 @@ public:
 	int getPlayerScore(const std::string& username) const override;
 	std::vector<std::string> getHighScores() const override;
 	void submitGameStatistics(const std::string& username, const GameData& gameData) override;
+
+	// USER_CRYPTO operations
+	void saveUserCrypto(const std::string& username, const std::string& algorithm, const std::string& keyData) override;
 };
