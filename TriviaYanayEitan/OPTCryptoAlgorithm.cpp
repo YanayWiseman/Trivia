@@ -30,5 +30,14 @@ std::string OTPCryptoAlgorithm::decrypt(const std::string& message) const
 
 std::string OTPCryptoAlgorithm::generatePad(unsigned int length) const
 {
-	return "";
+	// A pad is a bunch of randomly generated text the same length of the text we want to encrypt
+	std::string pad = "";
+	int i = 0;
+
+	for (i = 0; i < length; i++)
+	{
+		char currentChar = static_cast<>
+	}
+
+	return pad;
 }
