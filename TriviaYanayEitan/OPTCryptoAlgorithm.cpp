@@ -18,7 +18,7 @@ OTPCryptoAlgorithm::OTPCryptoAlgorithm()
 
 std::string OTPCryptoAlgorithm::encrypt(const std::string& message) const
 {
-	std::string pad = generatePad(message.size());
+	std::string pad = generatePad(message.length());
 
 
 }
@@ -66,7 +66,14 @@ std::string OTPCryptoAlgorithm::generatePad(unsigned int length) const
 
 std::string OTPCryptoAlgorithm::xorStrings(const std::string & str1, const std::string & str2) const
 {
-	std::string result;
+	// We can allocate the exact memory since we know the length of the result
+	std::string result(str1.length(), '\0');
+	int i = 0;
+
+	for (i = 0; i < str1.length(); i++)  // str1.length() == str2.length() gurenteed
+	{
+		result += str1[i] ^ str2[i];  // ^ is xor
+	}
 
 	return result;
 }
