@@ -8,7 +8,7 @@
 
 std::string OTPCryptoAlgorithm::encrypt(const std::string& message) const
 {
-	return "";
+	
 }
 
 /*
