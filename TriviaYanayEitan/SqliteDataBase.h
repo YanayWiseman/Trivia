@@ -68,4 +68,5 @@ public:
 
 	// USER_CRYPTO operations
 	void saveUserCryptoKey(const std::string& username, const std::string& algorithm, const std::string& keyData) override;
+	std::string getUserCryptoKey(const std::string& username) const override;
 };

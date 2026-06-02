@@ -33,4 +33,5 @@ public:
 
     // USER_CRYPTO operations
     virtual void saveUserCryptoKey(const std::string& username, const std::string& algorithm, const std::string& keyData) = 0;
+    virtual std::string getUserCryptoKey(const std::string& username) const = 0;
 };
