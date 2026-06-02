@@ -10,16 +10,13 @@
 class OTPCryptoAlgorithm : public CryptoAlgorithm
 {
 private:
-	// Fields
-	IDatabase* m_database;
-
 	// Methods
 	std::string generatePad(unsigned int length) const;
 	std::string xorStrings(const std::string& str1, const std::string& str2) const;
 
 public:
 	// C'tor
-	OTPCryptoAlgorithm(IDatabase* database);
+	OTPCryptoAlgorithm();
 
 	// Methods
 	std::string encrypt(const std::string& message) const override;

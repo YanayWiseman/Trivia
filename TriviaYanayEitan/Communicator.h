@@ -12,6 +12,7 @@
 #include "IRequestHandler.h"
 #include "LoginRequestHandler.h"
 #include "JsonResponsePacketSerializer.h"
+#include "CryptoAlgorithm.h"
 
 #define PORT 12334
 #define BUFFER_SIZE 1024
@@ -25,6 +26,7 @@ private:
 	std::map<SOCKET, IRequestHandler*> m_clients;
 	std::mutex m_clientsMutex;
 	std::mutex m_printMutex;
+	CryptoAlgorithm* m_crypto;
 
 	// methods
 	Communicator();
