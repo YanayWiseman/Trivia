@@ -3,6 +3,9 @@
 #include <ctime>
 #include "CryptoAlgorithm.h"
 
+#define MIN_PRINTABLE_ASCII 32
+#define MAX_PRINTABLE_ASCII 126
+
 class OTPCryptoAlgorithm : public CryptoAlgorithm
 {
 private:

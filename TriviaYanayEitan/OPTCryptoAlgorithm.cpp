@@ -48,7 +48,7 @@ std::string OTPCryptoAlgorithm::generatePad(unsigned int length) const
 
 	for (i = 0; i < length; i++)
 	{
-		char currentChar = static_cast<>
+		char currentChar = static_cast<char>()
 	}
 
 	return pad;
