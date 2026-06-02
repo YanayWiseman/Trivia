@@ -617,7 +617,30 @@ void SqliteDatabase::submitGameStatistics(const std::string& username, const Gam
 	sqlite3_finalize(updateStmt);
 }
 
+/*
+	Method to save a user's crypto key in the database
+	input: The user's name, the algorithm we save the key based on, and the key itself
+	output: No return values
+*/
+
 void SqliteDatabase::saveUserCryptoKey(const std::string& username, const std::string& algorithm, const std::string& keyData)
 {
+	sqlite3_stmt* stmt = prepare("INSERT INTO USER_CRYPTO (USERNAME, ALGORITHM, KET_DATA) VALUES(?, ?, ?);");
+	if (!stmt)
+	{
+		return;
+	}
 
+	// bind the values
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 2, algorithm.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 3, keyData.c_str(), -1, SQLITE_TRANSIENT);
+
+	// step
+	if (sqlite3_step(stmt) != SQLITE_DONE)
+	{
+		std::cout << "crypto data: " << username << " - " << algorithm << " - " << keyData << std::endl;
+	}
+
+	sqlite3_finalize(stmt);
 }
