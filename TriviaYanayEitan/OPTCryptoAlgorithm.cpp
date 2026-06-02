@@ -18,8 +18,11 @@ OTPCryptoAlgorithm::OTPCryptoAlgorithm()
 
 std::string OTPCryptoAlgorithm::encrypt(const std::string& message) const
 {
+	// randomly generate a pad with the same length of the message
 	std::string pad = generatePad(message.length());
 
+	// xor the message and the pad
+	std::string cipherText = xorStrings(message, pad);
 
 }
 
