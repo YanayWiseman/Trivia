@@ -22,6 +22,12 @@ std::string OTPCryptoAlgorithm::decrypt(const std::string& message) const
 	return "";
 }
 
+/*
+	Helper method generates a pad to encrypt using OPT
+	input: The length of the message (also the length of the pad that will be generated)
+	output: The randomly generated pad
+*/
+
 std::string OTPCryptoAlgorithm::generatePad(unsigned int length) const
 {
 	return "";
