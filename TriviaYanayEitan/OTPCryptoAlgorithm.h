@@ -2,7 +2,7 @@
 
 #include <random>
 #include "CryptoAlgorithm.h"
-#include "IDatabase.h"
+#include "SqliteDatabase.h"
 
 #define MIN_PRINTABLE_ASCII 32
 #define MAX_PRINTABLE_ASCII 126

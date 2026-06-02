@@ -6,8 +6,9 @@
 	output: no return values
 */
 
-OTPCryptoAlgorithm::OTPCryptoAlgorithm()
+OTPCryptoAlgorithm::OTPCryptoAlgorithm(IDatabase* database) : m_database(&SqliteDatabase::getInstance())
 {
+
 }
 
 /*
