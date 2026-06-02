@@ -24,6 +24,7 @@ std::string OTPCryptoAlgorithm::encrypt(const std::string& message) const
 	// xor the message and the pad
 	std::string cipherText = xorStrings(message, pad);
 
+	return cipherText;
 }
 
 /*
@@ -75,7 +76,7 @@ std::string OTPCryptoAlgorithm::xorStrings(const std::string & str1, const std::
 
 	for (i = 0; i < str1.length(); i++)  // str1.length() == str2.length() gurenteed
 	{
-		result += str1[i] ^ str2[i];  // ^ is xor
+		result[i] = str1[i] ^ str2[i];  // ^ is xor
 	}
 
 	return result;
