@@ -21,3 +21,8 @@ std::string OTPCryptoAlgorithm::decrypt(const std::string& message) const
 {
 	return "";
 }
+
+std::string OTPCryptoAlgorithm::generatePad(unsigned int length) const
+{
+	return "";
+}
