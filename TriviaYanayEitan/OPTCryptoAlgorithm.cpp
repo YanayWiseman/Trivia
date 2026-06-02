@@ -1,5 +1,11 @@
 #include "OTPCryptoAlgorithm.h"
 
+/*
+	Constructor for the OTPCryptoAlgorithm object
+	input: no input values
+	output: no return values
+*/
+
 OTPCryptoAlgorithm::OTPCryptoAlgorithm()
 {
 
