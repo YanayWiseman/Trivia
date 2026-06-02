@@ -645,7 +645,27 @@ void SqliteDatabase::saveUserCryptoKey(const std::string& username, const std::s
 	sqlite3_finalize(stmt);
 }
 
+/*
+	Method to get a user's crypto key fron the database
+	input: The user's name
+	output: the user's crypto key
+*/
+
 std::string SqliteDatabase::getUserCryptoKey(const std::string& username) const
 {
+	sqlite3_stmt* stmt = prepare("SELECT KEY_DATA FROM USER_CRYPTO WHERE USERNAME = ?");
+	if (!stmt)
+	{
+		return "";
+	}
+
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		     
+		return 
+	}
+
 
 }

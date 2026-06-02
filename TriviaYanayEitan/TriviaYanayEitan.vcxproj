@@ -153,6 +153,7 @@
     <ClInclude Include="Communicator.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="CryptoAlgorithm.h" />
+    <ClInclude Include="CryptoManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameRequestHandler.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="RoomMemberRequestHandler.h" />
     <ClInclude Include="RoomRequestHandler.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="SessionManager.h" />
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="SqliteDatabase.h" />
     <ClInclude Include="StatisticsManager.h" />
