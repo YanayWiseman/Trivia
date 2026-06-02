@@ -41,7 +41,7 @@ namespace TriviaClient
                 {
                     MessageBox.Show("Failed to load best players.");
                     return;
-                }
+                } 
 
                 List<string> highScores = response.Statistics;
 
