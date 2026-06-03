@@ -36,9 +36,28 @@ namespace TriviaClient
             return result;
         }
 
-        public byte[] Decrypt(byte[] data)
+        public byte[] Decrypt(byte[] cypher)
         {
+            if (cypher.Length < 4)
+            {
+                throw new Exception("OTP Decrypt: cypher too short");
+            }
 
+            int keyLen = (cypher[0] << 24) | (cypher[1] << 16) | (cypher[2] << 8) | cypher[3];
+
+            if (cypher.Length != 4 + 2 * keyLen)
+            {
+                throw new Exception("OTP Decrypt: cypher size mismatch");
+            }
+
+            byte[] plaintext = new byte[keyLen];
+            int i = 0;
+            for (i = 0; i < keyLen; i++)
+            {
+                plaintext[i] = (byte)(cypher[4 + keyLen + i] ^ cypher[4 + i]);
+            }
+
+            return plaintext;
         }
     }
 }
