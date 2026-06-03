@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+#include <ctime>
 #include "CryptoAlgorithm.h"
 #include "SqliteDatabase.h"
 
