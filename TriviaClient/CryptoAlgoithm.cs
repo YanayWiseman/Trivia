@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TriviaClient
 {
-    internal interface CryptoAlgoithm
+    internal interface ICryptoAlgoithm
     {
         byte[] Encrypt(byte[] data); 
         byte[] Decrypt(byte[] data);
