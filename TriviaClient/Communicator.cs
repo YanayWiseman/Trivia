@@ -14,6 +14,7 @@ namespace TriviaClient
 
         private TcpClient m_tcpClient;
         private NetworkStream m_clientStream;
+        private ICryptoAlgoithm m_cryptoAlgoithm;
 
         // mutex
         private readonly object m_lock = new object();
@@ -31,6 +32,8 @@ namespace TriviaClient
 
             m_tcpClient.Connect(serverEndPoint);
             this.m_clientStream = this.m_tcpClient.GetStream();
+
+           this.m_cryptoAlgoithm = new OTPCryptoAlgorithm();
         }
 
         /*
@@ -70,7 +73,20 @@ namespace TriviaClient
         */
         private void SendToServer(byte[] requestBuffer)
         {
-            this.m_clientStream.Write(requestBuffer);
+            byte[] encrypted = this.m_cryptoAlgoithm.Encrypt(requestBuffer);
+
+            int len = encrypted.Length;
+            byte[] lenBytes = new byte[]
+            {
+                (byte)((len >> 24) & 0xFF),
+                (byte)((len >> 16) & 0xFF),
+                (byte)((len >>  8) & 0xFF),
+                (byte)((len) & 0xFF)
+            };
+
+            byte[] toSend = lenBytes.Concat(encrypted).ToArray();
+
+            this.m_clientStream.Write(toSend, 0, toSend.Length);
         }
 
         /*
@@ -80,21 +96,12 @@ namespace TriviaClient
         */
         private byte[] GetResponse()
         {
-            // first read the headers
-            byte[] headers = ReadExactBytes(5);
+            byte[] lenBytes = ReadExactBytes(4);
+            int encLen = (lenBytes[0] << 24) | (lenBytes[1] << 16) | (lenBytes[2] << 8) | lenBytes[3];
 
-            // get the json's size
-            int jsonSize = 
-                (headers[1] << 24) |
-                (headers[2] << 16) |
-                (headers[3] << 8) |
-                 headers[4];
+            byte[] encrypted = ReadExactBytes(encLen);
 
-            // read exact amount that the response says
-            byte[] response = ReadExactBytes(jsonSize);
-
-            // add it to the headers, convert to byte array and return
-            return headers.Concat(response).ToArray();
+            return this.m_cryptoAlgoithm.Decrypt(encrypted);
         }
 
         /*
