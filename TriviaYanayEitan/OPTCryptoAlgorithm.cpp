@@ -1,88 +1,102 @@
 #include "OTPCryptoAlgorithm.h"
+#include "SqliteDataBase.h"
+
 
 /*
-	Method encrypts a given message using OTP (One Time Pad)
-	input: The message to encrypt
-	output: The encrypted message
+	Function encrypts a given message using OTP pad from the database.
+	Input: message (const std::string&), keyId (const std::string&)
+	Output: The encrypted message
 */
 
-std::string OTPCryptoAlgorithm::encrypt(const std::string& message) const
+std::string OTPCryptoAlgorithm::encrypt(const std::string& message, const std::string& keyId) const
 {
-	// randomly generate a pad with the same length of the message
-	std::string pad = generatePad(message.length());
-
-	// store the key in database  (key id is the current timestamp as string)
-	std::string keyId = "otp_" + std::to_string(time(nullptr));
-	SqliteDatabase::getInstance().storeKey(keyId, pad);
-
-	// xor the message with the pad
-	std::string cipherText = xorStrings(message, pad);
-
-	// embed the keyId length + keyId in front of the ciphertext
-	// format: [4 bytes: keyId length][keyId bytes][ciphertext bytes]
-	uint32_t idLen = static_cast<uint32_t>(keyId.size());
-	std::string result(4 + idLen + cipherText.size(), '\0');
-
-	// add the keyid length
-	result[0] = static_cast<char>((idLen >> 24) & 0xFF);
-	result[1] = static_cast<char>((idLen >> 16) & 0xFF);
-	result[2] = static_cast<char>((idLen >> 8) & 0xFF);
-	result[3] = static_cast<char>((idLen) & 0xFF);
-
-	// add the key id
-	for (uint32_t i = 0; i < idLen; i++)
-	{
-		result[4 + i] = keyId[i];
-	}
-
-	// add the cipher text
-	size_t i = 0;
-	for (i = 0; i < cipherText.size(); i++)
-	{
-		result[4 + idLen + i] = cipherText[i];
-	}
-
-	return result;
-}
-
-/*
-	Method decrypts a given cipher according to OTP (One Time Pad)
-	input: The cipher to decrypt
-	output: The decrypted message
-*/
-
-std::string OTPCryptoAlgorithm::decrypt(const std::string& message) const
-{
-	if (message.size() < 4)
-	{
-		throw std::runtime_error("OTP decrypt: message too short");
-	}
-
-	// parse the keyId length from the first 4 bytes
-	uint32_t idLen =
-		(static_cast<uint8_t>(message[0]) << 24) |
-		(static_cast<uint8_t>(message[1]) << 16) |
-		(static_cast<uint8_t>(message[2]) << 8) |
-		(static_cast<uint8_t>(message[3]));
-
-	if (message.size() < 4 + idLen)
-	{
-		throw std::runtime_error("OTP decrypt: message truncated");
-	}
-
-	// extract the keyId and look up the pad from the fatabase
-	std::string keyId = message.substr(4, idLen);
-	std::string cipherText = message.substr(4 + idLen);
-
 	std::string pad = SqliteDatabase::getInstance().loadKey(keyId);
+	unsigned int offset = SqliteDatabase::getInstance().loadOffset(keyId);
+
 	if (pad.empty())
 	{
-		throw std::runtime_error("OTP decrypt: key not found in DB for id: " + keyId);
+		throw std::runtime_error("OTP encrypt: key not found: " + keyId);
 	}
 
-	// xor ciphertext with the pad to recover the original message
-	return xorStrings(cipherText, pad);
+
+	// Pad has a finite length, so it may be exhausted eventually.
+
+	if (offset + message.length() > pad.length())
+	{
+		throw std::runtime_error("OTP encrypt: pad exhausted");
+	}
+
+
+	// Create a new string for our cipher text and fill it with our message, XORed with the pad.
+
+	std::string cipherText;
+	cipherText.resize(message.length());
+
+	int i = 0;
+	for (i = 0; i < message.length(); i++)
+	{
+		cipherText[i] = message[i] ^ pad[offset + i];
+	}
+
+	SqliteDatabase::getInstance().storeOffset(keyId, offset + static_cast<unsigned int>(message.length()));
+
+	return buildPacket(offset, cipherText);
 }
+
+
+/*
+	Function decrypts a given OTP packet.
+	Input: packet (const std::string&), keyId (const std::string&)
+	Output: The decrypted message
+*/
+
+std::string OTPCryptoAlgorithm::decrypt(const std::string& packet, const std::string& keyId) const
+{
+	if (packet.length() < MIN_LEN)
+	{
+		throw std::runtime_error("OTP decrypt: packet too short");
+	}
+
+	unsigned int offset = readUInt32(packet, OFFEST_INDX);
+	unsigned int cipherLen = readUInt32(packet, CIPHER_LEN_INDX);
+
+	if (packet.length() != MIN_LEN + cipherLen)
+	{
+		throw std::runtime_error("OTP decrypt: packet size mismatch");
+	}
+
+
+	std::string pad = SqliteDatabase::getInstance().loadKey(keyId);
+
+	if (pad.empty())
+	{
+		throw std::runtime_error("OTP decrypt: key not found: " + keyId);
+	}
+
+	if (offset + cipherLen > pad.length())
+	{
+		throw std::runtime_error("OTP decrypt: pad exhausted or invalid offset");
+	}
+
+	unsigned int expectedOffset = SqliteDatabase::getInstance().loadOffset(keyId);
+	if (offset != expectedOffset)
+	{
+		throw std::runtime_error("OTP decrypt: unexpected offset");
+	}
+
+	std::string plainText(cipherLen, '\0');
+
+	int i = 0;
+	for (i = 0; i < cipherLen; i++)
+	{
+		plainText[i] = packet[MIN_LEN + i] ^ pad[offset + i];
+	}
+
+	SqliteDatabase::getInstance().storeOffset(keyId, offset + cipherLen);
+
+	return plainText;
+}
+
 
 /*
 	Helper method generates a pad to encrypt using OPT
@@ -92,38 +106,69 @@ std::string OTPCryptoAlgorithm::decrypt(const std::string& message) const
 
 std::string OTPCryptoAlgorithm::generatePad(unsigned int length) const
 {
-	// A pad is a bunch of randomly generated text the same length of the text we want to encrypt
 	std::random_device rnd;
-	std::mt19937 generator(rnd());
-	std::uniform_int_distribution<int> distribution(MIN_PRINTABLE_ASCII, MAX_PRINTABLE_ASCII);
+	std::string pad(length, '\0');
 
-	std::string pad = "";
 	int i = 0;
-
-	for (i = 0; i < length; ++i)
+	for (i = 0; i < length; i++)
 	{
-		pad += static_cast<char>(distribution(generator));
+		// Takes only 8 bits of the random number.
+		pad[i] = static_cast<char>(rnd() & 0xFF);
 	}
 
 	return pad;
 }
 
+
 /*
-	Helper method applies xor operation to two strings creating a new one
-	input: The two strings to xor
-	output: the xored string created from both strings
+	Function builds an OTP encrypted packet.
+	Input: offset (unsigned int), cipherText (const std::string&)
+	Output: The full encrypted packet (std::string)
 */
 
-std::string OTPCryptoAlgorithm::xorStrings(const std::string & str1, const std::string & str2) const
+std::string OTPCryptoAlgorithm::buildPacket(unsigned int offset, const std::string& cipherText) const
 {
-	// We can allocate the exact memory since we know the length of the result
-	std::string result(str1.length(), '\0');
-	int i = 0;
+	std::string packet(MIN_LEN + cipherText.length(), '\0');
 
-	for (i = 0; i < str1.length(); i++)  // str1.length() == str2.length() gurenteed
+	writeUInt32(packet, 0, offset);
+	writeUInt32(packet, 4, static_cast<unsigned int>(cipherText.length()));
+
+	int i = 0;
+	for (i = 0; i < cipherText.length(); i++)
 	{
-		result[i] = str1[i] ^ str2[i];  // ^ is xor
+		packet[MIN_LEN + i] = cipherText[i];
 	}
 
-	return result;
+	return packet;
+}
+
+
+/*
+	Function writes an unsigned integer into a string in big-endian format.
+	Input: buffer (std::string&),  index (int), value (unsigned int)
+	Output: None (void)
+*/
+
+void OTPCryptoAlgorithm::writeUInt32(std::string& buffer, int index, unsigned int value) const
+{
+	buffer[index] = static_cast<char>((value >> 24) & 0xFF);
+	buffer[index + 1] = static_cast<char>((value >> 16) & 0xFF);
+	buffer[index + 2] = static_cast<char>((value >> 8) & 0xFF);
+	buffer[index + 3] = static_cast<char>(value & 0xFF);
+}
+
+
+/*
+	Function reads an unsigned integer from a string in big-endian format.
+	Input: buffer (const std::string&), index (int)
+	Output: The unsigned integer read from the buffer.
+*/
+
+unsigned int OTPCryptoAlgorithm::readUInt32(const std::string& buffer, int index) const
+{
+	return
+		(static_cast<unsigned char>(buffer[index]) << 24) |
+		(static_cast<unsigned char>(buffer[index + 1]) << 16) |
+		(static_cast<unsigned char>(buffer[index + 2]) << 8) |
+		(static_cast<unsigned char>(buffer[index + 3]));
 }

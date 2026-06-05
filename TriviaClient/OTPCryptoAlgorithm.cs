@@ -1,63 +1,109 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace TriviaClient
 {
     internal class OTPCryptoAlgorithm : ICryptoAlgoithm
     {
-        private readonly Random m_rnd = new Random();
+        private readonly byte[] m_pad;
+        private int m_offset;
+
+        public OTPCryptoAlgorithm(byte[] pad, int offset)
+        {
+            this.m_pad = pad;
+            this.m_offset = offset;
+        }
+
         public byte[] Encrypt(byte[] data)
         {
-            // randomly generate the pad
-            byte[] pad = new byte[data.Length];
-            this.m_rnd.NextBytes(pad);   // fill it up with random values
+            if (this.m_offset + data.Length > this.m_pad.Length)
+            {
+                throw new Exception("OTP Encrypt: pad exhausted");
+            }
 
-            // first 4 bytes is the key length
-            int keyLen = pad.Length;
-            byte[] result = new byte[4 + keyLen + keyLen];
-
-            result[0] = (byte)((keyLen >> 24) & 0xFF);
-            result[1] = (byte)((keyLen >> 16) & 0xFF);
-            result[2] = (byte)((keyLen >> 8) & 0xFF);
-            result[3] = (byte)((keyLen) & 0xFF);
-
-            Array.Copy(pad, 0, result, 4, keyLen);
+            byte[] cipherText = new byte[data.Length];
 
             int i = 0;
             for (i = 0; i < data.Length; i++)
             {
-                result[4 + keyLen + i] = (byte)(data[i] ^ pad[i]);  // xor
+                cipherText[i] = (byte)(data[i] ^ this.m_pad[this.m_offset + i]);
             }
 
-            return result;
+            byte[] packet = BuildPacket(this.m_offset, cipherText);
+
+            this.m_offset += data.Length;
+
+            return packet;
         }
 
-        public byte[] Decrypt(byte[] cypher)
+        public byte[] Decrypt(byte[] packet)
         {
-            if (cypher.Length < 4)
+            if (packet.Length < 8)
             {
-                throw new Exception("OTP Decrypt: cypher too short");
+                throw new Exception("OTP Decrypt: packet too short");
             }
 
-            int keyLen = (cypher[0] << 24) | (cypher[1] << 16) | (cypher[2] << 8) | cypher[3];
+            int offset = ReadInt32(packet, 0);
+            int cipherLen = ReadInt32(packet, 4);
 
-            if (cypher.Length != 4 + 2 * keyLen)
+            if (packet.Length != 8 + cipherLen)
             {
-                throw new Exception("OTP Decrypt: cypher size mismatch");
+                throw new Exception("OTP Decrypt: packet size mismatch");
             }
 
-            byte[] plaintext = new byte[keyLen];
+            if (offset + cipherLen > this.m_pad.Length)
+            {
+                throw new Exception("OTP Decrypt: pad exhausted or invalid offset");
+            }
+
+            if (offset != this.m_offset)
+            {
+                throw new Exception("OTP Decrypt: unexpected offset");
+            }
+
+            byte[] plainText = new byte[cipherLen];
+
             int i = 0;
-            for (i = 0; i < keyLen; i++)
+            for (i = 0; i < cipherLen; i++)
             {
-                plaintext[i] = (byte)(cypher[4 + keyLen + i] ^ cypher[4 + i]);
+                plainText[i] = (byte)(packet[8 + i] ^ this.m_pad[offset + i]);
             }
 
-            return plaintext;
+            this.m_offset += cipherLen;
+
+            return plainText;
+        }
+
+        private byte[] BuildPacket(int offset, byte[] cipherText)
+        {
+            byte[] packet = new byte[8 + cipherText.Length];
+
+            WriteInt32(packet, 0, offset);
+            WriteInt32(packet, 4, cipherText.Length);
+
+            int i = 0;
+            for (i = 0; i < cipherText.Length; i++)
+            {
+                packet[8 + i] = cipherText[i];
+            }
+
+            return packet;
+        }
+
+        private void WriteInt32(byte[] buffer, int index, int value)
+        {
+            buffer[index] = (byte)((value >> 24) & 0xFF);
+            buffer[index + 1] = (byte)((value >> 16) & 0xFF);
+            buffer[index + 2] = (byte)((value >> 8) & 0xFF);
+            buffer[index + 3] = (byte)(value & 0xFF);
+        }
+
+        private int ReadInt32(byte[] buffer, int index)
+        {
+            return
+                (buffer[index] << 24) |
+                (buffer[index + 1] << 16) |
+                (buffer[index + 2] << 8) |
+                buffer[index + 3];
         }
     }
 }

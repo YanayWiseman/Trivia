@@ -67,6 +67,21 @@ namespace TriviaClient
 
                 if (response.Status == 1)
                 {
+                    byte[] clientToServerPad = Convert.FromBase64String(response.clientToServerKey);
+                    byte[] serverToClientPad = Convert.FromBase64String(response.serverToClientKey);
+
+                    CryptoSession.Username = username;
+
+                    CryptoSession.ClientToServerKeyId = response.clientToServerKeyId;
+                    CryptoSession.ServerToClientKeyId = response.serverToClientKeyId;
+
+                    CryptoSession.RequestCrypto = new OTPCryptoAlgorithm(clientToServerPad, 0);
+                    CryptoSession.ResponseCrypto = new OTPCryptoAlgorithm(serverToClientPad, 0);
+
+                    MessageBox.Show("C2S key length: " + clientToServerPad.Length);
+                    MessageBox.Show("S2C key length: " + serverToClientPad.Length);
+                    MessageBox.Show("Crypto ready: " + CryptoSession.IsReady);
+
                     this.NavigationService.Navigate(new MainPage());
                 }
                 else

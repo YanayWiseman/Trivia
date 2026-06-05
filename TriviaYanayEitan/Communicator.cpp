@@ -1,6 +1,5 @@
 #include "Communicator.h"
 #include "RequestHandlerFactory.h"
-#include "OTPCryptoAlgorithm.h"
 
 /*
 	Constructor method to construct the Communicator object by opening the socket
@@ -9,7 +8,7 @@
 */
 
 Communicator::Communicator()
-	: m_handlerFactory(RequestHandlerFactory::getInstance()), m_crypto(new OTPCryptoAlgorithm())
+	: m_handlerFactory(RequestHandlerFactory::getInstance())
 {
 	// this server use TCP. that why SOCK_STREAM & IPPROTO_TCP
 	// if the server use UDP we will use: SOCK_DGRAM & IPPROTO_UDP 
@@ -192,10 +191,9 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 			{
 				break;
 			}
-			std::string decrypted = this->m_crypto->decrypt(encData);
 
 			// build Buffer
-			Buffer buffer(decrypted.begin(), decrypted.end());
+			Buffer buffer(encData.begin(), encData.end());
 
 			// Create requestInfo and handle request
 			RequestInfo requestInfo;
@@ -219,11 +217,9 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 				break;
 			}
 
-			// encrypt
 			std::string plainResponse(resultBuffer.response.begin(), resultBuffer.response.end());
-			std::string encrypted = this->m_crypto->encrypt(plainResponse);
 
-			uint32_t outLen = static_cast<uint32_t>(encrypted.size());
+			uint32_t outLen = static_cast<uint32_t>(plainResponse.size());
 			char outLenBuffer[4];
 			outLenBuffer[0] = static_cast<char>((outLen >> 24) & 0xFF);
 			outLenBuffer[1] = static_cast<char>((outLen >> 16) & 0xFF);
@@ -231,7 +227,7 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 			outLenBuffer[3] = static_cast<char>((outLen) & 0xFF);
 
 			std::string outMsg(outLenBuffer, 4);
-			outMsg += encrypted;
+			outMsg += plainResponse;
 
 			if (!sendAll(clientSocket, outMsg))
 			{

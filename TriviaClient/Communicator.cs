@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TriviaClient
 {
@@ -14,32 +11,27 @@ namespace TriviaClient
 
         private TcpClient m_tcpClient;
         private NetworkStream m_clientStream;
-        private ICryptoAlgoithm m_cryptoAlgoithm;
 
-        // mutex
         private readonly object m_lock = new object();
 
         /*
-            Constructor method to construct the communicator object
-            input: no input values
-            output: no return valus
+            Constructor method to construct the communicator object.
+            Input: no input values
+            Output: no return values
         */
         public Communicator()
         {
-            // create the tcp client and connect to the server
             this.m_tcpClient = new TcpClient();
             IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), PORT);
 
-            m_tcpClient.Connect(serverEndPoint);
+            this.m_tcpClient.Connect(serverEndPoint);
             this.m_clientStream = this.m_tcpClient.GetStream();
-
-           this.m_cryptoAlgoithm = new OTPCryptoAlgorithm();
         }
 
         /*
-            Method to disconnect the communicator
-            input: no input values
-            output: no return valus
+            Method disconnects the communicator.
+            Input: no input values
+            Output: no return values
         */
         public void Disconnect()
         {
@@ -48,66 +40,194 @@ namespace TriviaClient
         }
 
         /*
-            Method to send a request to the server and get the deserialized response
-            input: the request buffer as a byte array
-            output: the deserialized response (Template)
+            Method sends a normal unencrypted request to the server.
+            Input: requestBuffer (byte[]) - The normal request packet.
+            Output: The deserialized response.
         */
         public T SendRequest<T>(byte[] requestBuffer)
         {
             lock (this.m_lock)
             {
-                // send request and recieve response
-                SendToServer(requestBuffer);
+                SendRawPacket(requestBuffer);
 
-                byte[] response = GetResponse();
+                byte[] response = GetRawPacket();
 
-                // deserialize the response
                 return Deserializer.DeserializeResponse<T>(response);
             }
         }
 
         /*
-            Helper method to send a request to the server
-            input: the request buffer as a byte array
-            output: no return values
+            Method sends an OTP encrypted request to the server.
+            Input: requestBuffer (byte[]) - The normal request packet before encryption.
+            Output: The deserialized decrypted response.
         */
-        private void SendToServer(byte[] requestBuffer)
+        public T SendEncryptedRequest<T>(byte[] requestBuffer)
         {
-            byte[] encrypted = this.m_cryptoAlgoithm.Encrypt(requestBuffer);
+            lock (this.m_lock)
+            {
+                if (!CryptoSession.IsReady)
+                {
+                    throw new Exception("OTP crypto session is not ready");
+                }
 
-            int len = encrypted.Length;
+                byte[] encryptedRequest = EncryptNormalPacketBody(requestBuffer, CryptoSession.RequestCrypto);
+
+                SendRawPacket(encryptedRequest);
+
+                byte[] encryptedResponse = GetRawPacket();
+
+                byte[] decryptedResponse = DecryptNormalPacketBody(encryptedResponse, CryptoSession.ResponseCrypto);
+
+                return Deserializer.DeserializeResponse<T>(decryptedResponse);
+            }
+        }
+
+        /*
+            Helper method sends a raw packet to the server.
+            Input: packet (byte[]) - The full packet to send.
+            Output: no return values
+        */
+        private void SendRawPacket(byte[] packet)
+        {
+            int len = packet.Length;
+
             byte[] lenBytes = new byte[]
             {
                 (byte)((len >> 24) & 0xFF),
                 (byte)((len >> 16) & 0xFF),
-                (byte)((len >>  8) & 0xFF),
-                (byte)((len) & 0xFF)
+                (byte)((len >> 8) & 0xFF),
+                (byte)(len & 0xFF)
             };
 
-            byte[] toSend = lenBytes.Concat(encrypted).ToArray();
+            byte[] toSend = lenBytes.Concat(packet).ToArray();
 
             this.m_clientStream.Write(toSend, 0, toSend.Length);
         }
 
         /*
-            Helper method to get the response from the server
-            input: no input values
-            output:the response buffer as a byte array 
+            Helper method reads a raw packet from the server.
+            Input: no input values
+            Output: The raw packet as a byte array.
         */
-        private byte[] GetResponse()
+        private byte[] GetRawPacket()
         {
             byte[] lenBytes = ReadExactBytes(4);
-            int encLen = (lenBytes[0] << 24) | (lenBytes[1] << 16) | (lenBytes[2] << 8) | lenBytes[3];
 
-            byte[] encrypted = ReadExactBytes(encLen);
+            int len =
+                (lenBytes[0] << 24) |
+                (lenBytes[1] << 16) |
+                (lenBytes[2] << 8) |
+                lenBytes[3];
 
-            return this.m_cryptoAlgoithm.Decrypt(encrypted);
+            return ReadExactBytes(len);
         }
 
         /*
-            Helper method to read the exact amount of bytes asked for from the socket stream
-            input: the size to read
-            output: a byte array the size requested
+            Helper method encrypts only the body of a normal protocol packet.
+            Input: normalPacket (byte[]), crypto (OTPCryptoAlgorithm)
+            Output: Packet in format [code][encrypted length][encrypted body].
+        */
+        private byte[] EncryptNormalPacketBody(byte[] normalPacket, OTPCryptoAlgorithm crypto)
+        {
+            if (normalPacket.Length < 5)
+            {
+                throw new Exception("Packet too short");
+            }
+
+            byte code = normalPacket[0];
+
+            int bodyLength =
+                (normalPacket[1] << 24) |
+                (normalPacket[2] << 16) |
+                (normalPacket[3] << 8) |
+                normalPacket[4];
+
+            if (normalPacket.Length != 5 + bodyLength)
+            {
+                throw new Exception("Packet length mismatch");
+            }
+
+            byte[] body = new byte[bodyLength];
+
+            int i = 0;
+            for (i = 0; i < bodyLength; i++)
+            {
+                body[i] = normalPacket[5 + i];
+            }
+
+            byte[] encryptedBody = crypto.Encrypt(body);
+
+            return BuildNormalPacket(code, encryptedBody);
+        }
+
+        /*
+            Helper method decrypts only the body of a normal protocol packet.
+            Input: encryptedPacket (byte[]), crypto (OTPCryptoAlgorithm)
+            Output: Packet in format [code][decrypted length][decrypted body].
+        */
+        private byte[] DecryptNormalPacketBody(byte[] encryptedPacket, OTPCryptoAlgorithm crypto)
+        {
+            if (encryptedPacket.Length < 5)
+            {
+                throw new Exception("Packet too short");
+            }
+
+            byte code = encryptedPacket[0];
+
+            int bodyLength =
+                (encryptedPacket[1] << 24) |
+                (encryptedPacket[2] << 16) |
+                (encryptedPacket[3] << 8) |
+                encryptedPacket[4];
+
+            if (encryptedPacket.Length != 5 + bodyLength)
+            {
+                throw new Exception("Packet length mismatch");
+            }
+
+            byte[] encryptedBody = new byte[bodyLength];
+
+            int i = 0;
+            for (i = 0; i < bodyLength; i++)
+            {
+                encryptedBody[i] = encryptedPacket[5 + i];
+            }
+
+            byte[] decryptedBody = crypto.Decrypt(encryptedBody);
+
+            return BuildNormalPacket(code, decryptedBody);
+        }
+
+        /*
+            Helper method builds a normal protocol packet.
+            Input: code (byte), body (byte[])
+            Output: Packet in format [code][length][body].
+        */
+        private byte[] BuildNormalPacket(byte code, byte[] body)
+        {
+            byte[] packet = new byte[5 + body.Length];
+
+            packet[0] = code;
+
+            int length = body.Length;
+            packet[1] = (byte)((length >> 24) & 0xFF);
+            packet[2] = (byte)((length >> 16) & 0xFF);
+            packet[3] = (byte)((length >> 8) & 0xFF);
+            packet[4] = (byte)(length & 0xFF);
+
+            int i = 0;
+            for (i = 0; i < body.Length; i++)
+            {
+                packet[5 + i] = body[i];
+            }
+
+            return packet;
+        }
+
+        /*
+            Helper method reads the exact amount of bytes from the socket stream.
+            Input: bytesAmount (int) - The amount of bytes to read.
+            Output: A byte array containing exactly the requested amount of bytes.
         */
         private byte[] ReadExactBytes(int bytesAmount)
         {
@@ -115,16 +235,13 @@ namespace TriviaClient
 
             int totalRead = 0;
 
-            // while we still dont have all of the bytes
             while (totalRead < bytesAmount)
             {
-                // TCP gurentees whole of the packet will make it, in order
-                // but it doesnt mean that it will be in one go, so we iterate it
-                // TCP is a stream.
                 int bytesRead = this.m_clientStream.Read(buffer, totalRead, bytesAmount - totalRead);
+
                 if (bytesRead == 0)
                 {
-                    throw new Exception("Failed to read server's response");
+                    throw new Exception("Failed to read server response");
                 }
 
                 totalRead += bytesRead;

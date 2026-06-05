@@ -57,7 +57,15 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const LoginResponse& logi
 
 Buffer JsonResponsePacketSerializer::serializeResponse(const SignupResponse& signupResponse)
 {
-	return serializeStatusResponse(signupResponse.status , SIGNUP_RESPONSE);
+	json responseJson;
+
+	responseJson["status"] = signupResponse.status;
+	responseJson["clientToServerKeyId"] = signupResponse.clientToServerKeyId;
+	responseJson["serverToClientKeyId"] = signupResponse.serverToClientKeyId;
+	responseJson["clientToServerKey"] = signupResponse.clientToServerKey;
+	responseJson["serverToClientKey"] = signupResponse.serverToClientKey;
+
+	return responseJson;
 }
 
 

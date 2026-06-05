@@ -17,8 +17,11 @@ namespace TriviaClient
 
     public class SignupResponse
     {
-        [JsonProperty("status")]
         public uint Status { get; set; }
+        public string clientToServerKeyId { get; set; }
+        public string serverToClientKeyId { get; set; }
+        public string clientToServerKey { get; set; }
+        public string serverToClientKey { get; set; }
     }
 
     public class ErrorResponse
