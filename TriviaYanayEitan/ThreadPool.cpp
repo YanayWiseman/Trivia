@@ -43,6 +43,12 @@ ThreadPool::~ThreadPool()
 	}
 }
 
+/*
+	Method adds a task to the task queue and notifies one thread
+	input: The task to add
+	output: no return values
+*/
+
 void ThreadPool::enqueue(std::function<void()> task)
 {
 
