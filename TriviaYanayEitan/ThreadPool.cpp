@@ -53,7 +53,7 @@ void ThreadPool::enqueue(std::function<void()> task)
 {
 	{
 		std::lock_guard<std::mutex> locker(this->m_queueMutex);
-		this->m_tasks.push(task);
+		this->m_tasks.push(std::move(task));
 	}
 	
 	this->m_condition.notify_one();
