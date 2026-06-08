@@ -1,7 +1,7 @@
 #include "ThreadPool.h"
 
 /*
-	Constructor for the ThreadPool object
+	Constructor method for the ThreadPool object
 	input: The pool's size (amount of threads it will contain and manage)
 	output: no return values
 */
@@ -17,7 +17,13 @@ ThreadPool::ThreadPool(int numOfThreads)
 	}
 }
 
+/*
+	Destructor method for the ThreadPool object
+	input: No input values
+	output: No return values
+*/
+
 ThreadPool::~ThreadPool()
-{ 
+{
 
 }
