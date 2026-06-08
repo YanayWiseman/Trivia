@@ -34,6 +34,8 @@ Communicator::~Communicator()
 		closesocket(this->m_serverSocket);
 	}
 	catch (...) {}
+
+	delete this->m_threadPool;
 }
 
 /*
