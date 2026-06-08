@@ -18,6 +18,10 @@ private:
 	// used to put workers to sleep when there are no tasks, and wake them when one arrives
 	// much cheaper than busy waiting (spinning in a loop checking the queue)
 	std::condition_variable m_condition;
+
+	// methods
+	void threadLoop();
+
 public:
 	// c'tor & d'tor
 	ThreadPool(int numOfThreads);
