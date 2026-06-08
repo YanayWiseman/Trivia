@@ -16,3 +16,8 @@ ThreadPool::ThreadPool(int numOfThreads)
 		this->m_threads.emplace_back();  // TODO
 	}
 }
+
+ThreadPool::~ThreadPool()
+{
+
+}

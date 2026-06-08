@@ -18,6 +18,7 @@ private:
 	// much cheaper than busy waiting (spinning in a loop checking the queue)
 	std::condition_variable m_condition;
 public:
-	// c'tor
+	// c'tor & d'tor
 	ThreadPool(int numOfThreads);
+	~ThreadPool();
 };
