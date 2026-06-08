@@ -30,4 +30,15 @@ ThreadPool::~ThreadPool()
 		std::lock_guard<std::mutex> locker(this->m_queueMutex);
 		this->m_stop = true;
 	}
+
+	// wake up all of the threads so they can see m_stop and stop
+	this->m_condition.notify_all();
+
+	for (std::thread& thread : this->m_threads)
+	{
+		if (thread.joinable())
+		{
+			thread.join();
+		}
+	}
 }
