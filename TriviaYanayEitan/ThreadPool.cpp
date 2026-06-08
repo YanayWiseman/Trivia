@@ -42,3 +42,9 @@ ThreadPool::~ThreadPool()
 		}
 	}
 }
+
+void ThreadPool::enqueue(std::function<void()> task)
+{
+
+}
+
