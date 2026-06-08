@@ -15,6 +15,7 @@
 
 #define PORT 12334
 #define BUFFER_SIZE 1024
+#define THREAD_POOL_SIZE 20
 
 class Communicator
 {

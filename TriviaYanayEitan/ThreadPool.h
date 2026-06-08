@@ -7,8 +7,6 @@
 #include <mutex>
 #include <condition_variable>
 
-#define THREAD_POOL_SIZE 20
-
 class ThreadPool
 {
 private:
