@@ -8,5 +8,11 @@
 
 ThreadPool::ThreadPool(int numOfThreads)
 {
+	int i = 0;
 
+	// fill up m_threads
+	for (i = 0; i < numOfThreads; i++)
+	{
+		this->m_threads.emplace_back();  // TODO
+	}
 }
