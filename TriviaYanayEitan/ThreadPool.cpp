@@ -59,3 +59,7 @@ void ThreadPool::enqueue(std::function<void()> task)
 	this->m_condition.notify_one();
 }
 
+void ThreadPool::threadLoop()
+{
+
+}
