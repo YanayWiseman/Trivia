@@ -22,4 +22,7 @@ public:
 	// c'tor & d'tor
 	ThreadPool(int numOfThreads);
 	~ThreadPool();
+
+	// methods
+	void enqueue(std::function<void()> task);
 };
