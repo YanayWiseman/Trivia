@@ -88,9 +88,10 @@ void Communicator::startHandleRequests()
 			continue;
 		}
 
-		// now we spawn the client thread function
-		std::thread clientThread(&Communicator::handleNewClient, this, clientSocket);
-		clientThread.detach();
+		this->m_threadPool->enqueue([this, clientSocket]()
+			{
+				handleNewClient(clientSocket);
+			});
 	}
 }
 
