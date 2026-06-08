@@ -6,7 +6,7 @@
 	output: no return values
 */
 
-ThreadPool::ThreadPool(int numOfThreads)
+ThreadPool::ThreadPool(int numOfThreads) : m_stop(false)
 {
 	int i = 0;
 
@@ -25,5 +25,9 @@ ThreadPool::ThreadPool(int numOfThreads)
 
 ThreadPool::~ThreadPool()
 {
-
+	{
+		// lock the queue mutex
+		std::lock_guard<std::mutex> locker(this->m_queueMutex);
+		this->m_stop = true;
+	}
 }
