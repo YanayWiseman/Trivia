@@ -69,6 +69,31 @@ void ThreadPool::enqueue(std::function<void()> task)
 */
 
 void ThreadPool::threadLoop()
-{ 
+{
+	while (true)
+	{
+		std::function<void()> task;
 
+		{
+			std::unique_lock<std::mutex> locker(this->m_queueMutex);
+
+			// sleep until a task in enqueued or the pool is stopping
+			this->m_condition.wait(locker, [this]()
+				{
+					return this->m_stop || !this->m_tasks.empty();
+				});
+
+			// was woken up because of the d'tor
+			if (this->m_stop && this->m_tasks.empty())
+			{
+				return;
+			}
+
+			task = std::move(this->m_tasks.front());
+			this->m_tasks.pop();
+		}
+
+		// we run the task outside if the mutex's scope to allow other threads to work simultaniously
+		task();
+	}
 }
