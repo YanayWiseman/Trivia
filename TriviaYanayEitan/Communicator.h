@@ -27,6 +27,7 @@ private:
 	std::map<SOCKET, IRequestHandler*> m_clients;
 	std::mutex m_clientsMutex;
 	std::mutex m_printMutex;
+	ThreadPool* m_threadPool;
 
 	// methods
 	Communicator();
