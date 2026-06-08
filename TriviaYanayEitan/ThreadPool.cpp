@@ -13,7 +13,9 @@ ThreadPool::ThreadPool(int numOfThreads) : m_stop(false)
 	// fill up m_threads
 	for (i = 0; i < numOfThreads; i++)
 	{
-		this->m_threads.emplace_back();  // TODO
+		// &ThreadPool::threadLoop is a pointer to the thread function
+		// 'this' passes the current object as the implicit first argument
+		this->m_threads.emplace_back(&ThreadPool::threadLoop, this);
 	}
 }
 
@@ -58,6 +60,13 @@ void ThreadPool::enqueue(std::function<void()> task)
 	
 	this->m_condition.notify_one();
 }
+
+/*
+	This is the method that every thread runs forever, the thread is either sleeping(blocked by wait())
+	or working (running one task and going back to sleep)
+	input: No input values (except from the default this* pointer passed by the thread initialization in the c'tor)
+	output: No return values
+*/
 
 void ThreadPool::threadLoop()
 {
