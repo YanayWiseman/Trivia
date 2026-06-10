@@ -8,6 +8,18 @@
 #include "SqliteDatabase.h"
 #include "Constants.h"
 #include "UserInfo.h"
+#include "OTPCryptoAlgorithm.h"
+
+const unsigned int OTP_PAD_SIZE = 1024 * 1024;
+
+struct SignupResult
+{
+	Status status;
+	std::string clientToServerKeyId;
+	std::string serverToClientKeyId;
+	std::string clientToServerPad;
+	std::string serverToClientPad;
+};
 
 class LoginManager
 {
@@ -29,7 +41,7 @@ private:
 public:
 	// methods
 	~LoginManager() = default;
-	Status signup(const UserInfo& user);
+	SignupResult signup(const UserInfo& user);
 	Status login(const std::string& username, const std::string& password);
 	void logout(const std::string& username);
 

@@ -69,4 +69,6 @@ public:
 	// CRYPTO_KEYS operations
 	void storeKey(const std::string& keyId, const std::string& keyValue);
 	std::string loadKey(const std::string& keyId) const;
+	void storeOffset(const std::string& keyId, unsigned int offset);
+	unsigned int loadOffset(const std::string& keyId) const;
 };
