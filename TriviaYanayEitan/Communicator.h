@@ -26,7 +26,6 @@ private:
 	std::map<SOCKET, IRequestHandler*> m_clients;
 	std::mutex m_clientsMutex;
 	std::mutex m_printMutex;
-	CryptoAlgorithm* m_crypto;
 
 	// methods
 	Communicator();

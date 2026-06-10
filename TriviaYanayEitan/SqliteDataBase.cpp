@@ -50,6 +50,10 @@ SqliteDatabase::SqliteDatabase()
 	executeSqlQuery("CREATE TABLE IF NOT EXISTS CRYPTO_KEYS ("
 		"  KEY_ID TEXT PRIMARY KEY,"
 		"  KEY_VALUE BLOB NOT NULL);");  // binary data
+
+	executeSqlQuery("CREATE TABLE IF NOT EXISTS CRYPTO_OFFSETS ("
+			"KEY_ID TEXT PRIMARY KEY NOT NULL,"
+			"OFFSET_VALUE INTEGER NOT NULL); ");
 }
 
 /*
@@ -669,4 +673,67 @@ std::string SqliteDatabase::loadKey(const std::string& keyId) const
 
 	sqlite3_finalize(stmt);
 	return result;
+}
+
+
+/*
+	Method stores or replaces the current offset of an OTP pad.
+	Input:
+		keyId (const std::string&) - The identifier of the OTP pad.
+		offset (unsigned int) - The next unused byte index in the pad.
+	Output:
+		None.
+*/
+
+void SqliteDatabase::storeOffset(const std::string& keyId, unsigned int offset)
+{
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
+	sqlite3_stmt* stmt = prepare("INSERT OR REPLACE INTO CRYPTO_OFFSETS (KEY_ID, OFFSET_VALUE) VALUES (?, ?);");
+	if (!stmt)
+	{
+		return;
+	}
+
+	sqlite3_bind_text(stmt, 1, keyId.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt, 2, static_cast<int>(offset));
+
+	int result = sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+
+	if (result != SQLITE_DONE)
+	{
+		throw std::runtime_error("Failed to store OTP offset");
+	}
+}
+
+/*
+	Method loads the current offset of an OTP pad.
+	Input:
+		keyId (const std::string&) - The identifier of the OTP pad.
+	Output:
+		The next unused byte index in the pad.
+*/
+
+unsigned int SqliteDatabase::loadOffset(const std::string& keyId) const
+{
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
+	sqlite3_stmt* stmt = prepare("SELECT OFFSET_VALUE FROM CRYPTO_OFFSETS WHERE KEY_ID = ?;");
+	if (!stmt)
+	{
+		return 0;
+	}
+
+	sqlite3_bind_text(stmt, 1, keyId.c_str(), -1, SQLITE_TRANSIENT);
+
+	unsigned int offset = 0;
+
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		offset = static_cast<unsigned int>(sqlite3_column_int(stmt, 0));
+	}
+
+	sqlite3_finalize(stmt);
+	return offset;
 }

@@ -1,22 +1,23 @@
 #pragma once
 
+#include <stdexcept>
 #include <random>
-#include "CryptoAlgorithm.h"
-#include "SqliteDatabase.h"
+#include <string>
 
-#define MIN_PRINTABLE_ASCII 32
-#define MAX_PRINTABLE_ASCII 126
+#define MIN_LEN 8
+#define OFFEST_INDX 0
+#define CIPHER_LEN_INDX 4
 
-class OTPCryptoAlgorithm : public CryptoAlgorithm
+class OTPCryptoAlgorithm
 {
 private:
-	// Methods
-	std::string generatePad(unsigned int length) const;
-	std::string xorStrings(const std::string& str1, const std::string& str2) const;
+	std::string buildPacket(unsigned int offset, const std::string& cipherText) const;
+	void writeUInt32(std::string& buffer, int index, unsigned int value) const;
+	unsigned int readUInt32(const std::string& buffer, int index) const;
 
 public:
+	std::string encrypt(const std::string& message, const std::string& keyId) const;
+	std::string decrypt(const std::string& packet, const std::string& keyId) const;
 
-	// Methods
-	std::string encrypt(const std::string& message) const override;
-	std::string decrypt(const std::string& cipher) const override;
+	std::string generatePad(unsigned int length) const;
 };

@@ -19,6 +19,18 @@ namespace TriviaClient
     {
         [JsonProperty("status")]
         public uint Status { get; set; }
+
+        [JsonProperty("clientToServerKeyId")]
+        public string ClientToServerKeyId { get; set; }
+
+        [JsonProperty("serverToClientKeyId")]
+        public string ServerToClientKeyId { get; set; }
+
+        [JsonProperty("clientToServerKey")]
+        public string ClientToServerKey { get; set; }
+
+        [JsonProperty("serverToClientKey")]
+        public string ServerToClientKey { get; set; }
     }
 
     public class ErrorResponse

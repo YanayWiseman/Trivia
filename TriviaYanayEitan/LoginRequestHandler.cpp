@@ -107,7 +107,8 @@ RequestResult LoginRequestHandler::login(const RequestInfo& info) const
 RequestResult LoginRequestHandler::signup(const RequestInfo& info) const
 {
 	RequestResult result;
-	SignupResponse signupResponse;
+	SignupResponse response;
+
 	SignupRequest signupRequest = JsonRequestPacketDeserializer::deserializeSignupRequest(info.buffer);
 
 	UserInfo user;
@@ -118,18 +119,27 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& info) const
 	user.phone = signupRequest.phone;
 	user.birthdate = signupRequest.birthdate;
 
-	signupResponse.status = this->m_handlerFactory.getLoginmanager().signup(user);
+	SignupResult signupResult = this->m_handlerFactory.getLoginmanager().signup(user);
 
-	result.response = JsonResponsePacketSerializer::serializeResponse(signupResponse);
+	response.status = signupResult.status;
 
-	if (signupResponse.status == Failiure)
+	if (signupResult.status == Success)
 	{
-		result.newHandler = const_cast<LoginRequestHandler*>(this);
+		response.clientToServerKeyId = signupResult.clientToServerKeyId;
+		response.serverToClientKeyId = signupResult.serverToClientKeyId;
+		response.clientToServerKey = Base64::encode(signupResult.clientToServerPad);
+		response.serverToClientKey = Base64::encode(signupResult.serverToClientPad);
 	}
 	else
 	{
-		// dont create a MenuRequestHandler yet, we need to log in first
+		response.clientToServerKeyId = "";
+		response.serverToClientKeyId = "";
+		response.clientToServerKey = "";
+		response.serverToClientKey = "";
 	}
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = nullptr;
 
 	return result;
 }
