@@ -25,34 +25,51 @@ SignupResult LoginManager::signup(const UserInfo& user)
     SignupResult result;
     result.status = Failiure;
 
+    std::cout << "Signup username received: [" << user.username << "]" << std::endl;
+
     if (!isUserInfoValid(user))
     {
+        std::cout << "signup failed: invalid user info" << std::endl;
         return result;
     }
 
     if (this->m_database->doesUserExist(user.username))
     {
+        std::cout << "signup failed: user already exists" << std::endl;
         return result;
     }
 
     if (!this->m_database->addNewUser(user))
     {
+        std::cout << "signup failed: addNewUser failed" << std::endl;
         return result;
     }
 
-    OTPCryptoAlgorithm otp;
+    try
+    {
+        OTPCryptoAlgorithm otp;
 
-    result.clientToServerKeyId = "otp_" + user.username + "_c2s";
-    result.serverToClientKeyId = "otp_" + user.username + "_s2c";
+        result.clientToServerKeyId = "otp_" + user.username + "_c2s";
+        result.serverToClientKeyId = "otp_" + user.username + "_s2c";
 
-    result.clientToServerPad = otp.generatePad(OTP_PAD_SIZE);
-    result.serverToClientPad = otp.generatePad(OTP_PAD_SIZE);
 
-    SqliteDatabase::getInstance().storeKey(result.clientToServerKeyId, result.clientToServerPad);
-    SqliteDatabase::getInstance().storeKey(result.serverToClientKeyId, result.serverToClientPad);
+        result.clientToServerPad = otp.generatePad(OTP_PAD_SIZE);
+        result.serverToClientPad = otp.generatePad(OTP_PAD_SIZE);
 
-    SqliteDatabase::getInstance().storeOffset(result.clientToServerKeyId, 0);
-    SqliteDatabase::getInstance().storeOffset(result.serverToClientKeyId, 0);
+        SqliteDatabase::getInstance().storeKey(result.clientToServerKeyId, result.clientToServerPad);
+        SqliteDatabase::getInstance().storeKey(result.serverToClientKeyId, result.serverToClientPad);
+
+        SqliteDatabase::getInstance().storeOffset(result.clientToServerKeyId, 0);
+        SqliteDatabase::getInstance().storeOffset(result.serverToClientKeyId, 0);
+
+        result.status = Success;    
+    }
+
+    catch (const std::exception& error)
+    {
+        std::cout << "OTP signup failed: " << error.what() << std::endl;
+        result.status = Failiure;
+    }
 
     result.status = Success;
 

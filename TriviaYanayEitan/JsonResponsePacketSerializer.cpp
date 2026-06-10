@@ -65,7 +65,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const SignupResponse& sig
 	responseJson["clientToServerKey"] = signupResponse.clientToServerKey;
 	responseJson["serverToClientKey"] = signupResponse.serverToClientKey;
 
-	return responseJson;
+	return serializeJson(responseJson, SIGNUP_RESPONSE);
 }
 
 
