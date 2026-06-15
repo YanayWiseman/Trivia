@@ -67,6 +67,17 @@ namespace TriviaClient
 
                 if (response.Status == 1)
                 {
+                    byte[] clientToServerPad = Convert.FromBase64String(response.ClientToServerKey);
+                    byte[] serverToClientPad = Convert.FromBase64String(response.ServerToClientKey);
+
+                    CryptoSession.Username = username;
+
+                    CryptoSession.ClientToServerKeyId = response.ClientToServerKeyId;
+                    CryptoSession.ServerToClientKeyId = response.ServerToClientKeyId;
+
+                    CryptoSession.RequestCrypto = new OTPCryptoAlgorithm(clientToServerPad, 0);
+                    CryptoSession.ResponseCrypto = new OTPCryptoAlgorithm(serverToClientPad, 0);
+
                     this.NavigationService.Navigate(new MainPage());
                 }
                 else

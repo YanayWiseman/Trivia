@@ -7,7 +7,8 @@
 	output: no return values
 */
 
-Communicator::Communicator() : m_handlerFactory(RequestHandlerFactory::getInstance()), m_threadPool(new ThreadPool(THREAD_POOL_SIZE))
+Communicator::Communicator()
+	: m_handlerFactory(RequestHandlerFactory::getInstance()), m_threadPool(new ThreadPool(THREAD_POOL_SIZE))
 {
 	// this server use TCP. that why SOCK_STREAM & IPPROTO_TCP
 	// if the server use UDP we will use: SOCK_DGRAM & IPPROTO_UDP 
@@ -95,6 +96,53 @@ void Communicator::startHandleRequests()
 	}
 }
 
+
+/*
+	Helper to read exactly count bytes from a socket into dest
+	input: the socket to read from, where to put the output, and the length
+	output: false if the connection closed or an error occurred
+*/
+
+static bool recvExact(SOCKET sock, char* dest, int count)
+{
+	int total = 0;
+	while (total < count)
+	{
+		int curr = recv(sock, dest + total, count - total, 0);
+		if (curr <= 0)
+		{
+			return false;
+		}
+		total += curr;
+	}
+
+	return true;
+}
+
+/*
+	Helper to send all of the given data into the socket
+	input: the socket to send to and the data to insert into it
+	output: false if the connection closed or an error occurred
+*/
+
+static bool sendAll(SOCKET sock, const std::string& data)
+{
+	int total = 0;
+	int size = static_cast<int>(data.size());
+
+	while (total < size)
+	{
+		int curr = send(sock, reinterpret_cast<const char*>(data.data()) + total, size - total, 0);
+		if (curr == SOCKET_ERROR)
+		{
+			return false;
+		}
+
+		total += curr;
+	}
+	return true;
+}
+
 /*
 	This method the the client thread's thread function, that operates the interaction between
 	the server and the client
@@ -124,73 +172,85 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 
 		while (true)
 		{
-			int bytesRecieved = recv(clientSocket, cBuffer, sizeof(cBuffer) - 1, 0);
-
-			if (bytesRecieved > 0)
+			char lenBuf[4];  // read 4 byte plaintext length prefix
+			if (!recvExact(clientSocket, lenBuf, 4))
 			{
-				// Create handler and turn buffer from chars to Bytes
+				break;
+			}
 
-				cBuffer[bytesRecieved] = '\0';
+			uint32_t encLen =
+				(static_cast<uint8_t>(lenBuf[0]) << 24) |
+				(static_cast<uint8_t>(lenBuf[1]) << 16) |
+				(static_cast<uint8_t>(lenBuf[2]) << 8) |
+				(static_cast<uint8_t>(lenBuf[3]));
 
-				Buffer buffer;
-				int i = 0;
+			if (encLen == 0 || encLen > 1024 * 1024)  // max 1 MB
+			{
+				break;
+			}
 
-				for (i = 0; i < bytesRecieved; i++)
-				{
-					buffer.push_back((Byte)cBuffer[i]);
-				}
+			std::string encData(encLen, '\0');
+			if (!recvExact(clientSocket, &encData[0], static_cast<int>(encLen)))
+			{
+				break;
+			}
 
+			// build Buffer
+			Buffer buffer(encData.begin(), encData.end());
 
-				// Create requestInfo and handle request
+			// Create requestInfo and handle request
+			RequestInfo requestInfo;
+			requestInfo.id = buffer[0];
+			requestInfo.buffer = buffer;
 
-				RequestInfo requestInfo;
-				requestInfo.id = buffer[0];
-				requestInfo.buffer = buffer;
+			time_t now = time(nullptr);
+			requestInfo.receivalTime = now;
 
-				time_t now = time(nullptr);
-				requestInfo.receivalTime = now;
+			// Get current handler from map
+			{
+				std::lock_guard<std::mutex> lock(this->m_clientsMutex);
+				handler = this->m_clients[clientSocket];
+			}
 
+			RequestResult resultBuffer = handler->handleRequest(requestInfo);
 
-				// Get current handler from map
-				{
-					std::lock_guard<std::mutex> lock(this->m_clientsMutex);
-					handler = this->m_clients[clientSocket];
-				}
+			if (resultBuffer.response.empty())
+			{
+				std::cerr << "Error: handler returned empty response" << std::endl;
+				break;
+			}
 
+			std::string plainResponse(resultBuffer.response.begin(), resultBuffer.response.end());
 
-				RequestResult resultBuffer = handler->handleRequest(requestInfo);
+			uint32_t outLen = static_cast<uint32_t>(plainResponse.size());
+			char outLenBuffer[4];
+			outLenBuffer[0] = static_cast<char>((outLen >> 24) & 0xFF);
+			outLenBuffer[1] = static_cast<char>((outLen >> 16) & 0xFF);
+			outLenBuffer[2] = static_cast<char>((outLen >> 8) & 0xFF);
+			outLenBuffer[3] = static_cast<char>((outLen) & 0xFF);
 
-				if (resultBuffer.response.empty())
-				{
-					std::cerr << "Error: handler returned empty response" << std::endl;
-					break;
-				}
+			std::string outMsg(outLenBuffer, 4);
+			outMsg += plainResponse;
 
-				if (send(clientSocket, reinterpret_cast<const char*>(resultBuffer.response.data()), (int)resultBuffer.response.size(), 0) == SOCKET_ERROR)
+			if (!sendAll(clientSocket, outMsg))
+			{
+				std::cerr << "send failed" << std::endl;
+				break;
+			}
+
+			// Update handler if needed
+
+			if (resultBuffer.newHandler != nullptr && resultBuffer.newHandler != handler)
+			{
+				std::lock_guard<std::mutex> lock(this->m_clientsMutex);
+				delete this->m_clients[clientSocket];				if (send(clientSocket, reinterpret_cast<const char*>(resultBuffer.response.data()), (int)resultBuffer.response.size(), 0) == SOCKET_ERROR)
 				{
 					std::cerr << "send failed" << std::endl;
 					break;
 				}
 
-				// Update handler if needed
-
-				if (resultBuffer.newHandler != nullptr && resultBuffer.newHandler != handler)
-				{
-					std::lock_guard<std::mutex> lock(this->m_clientsMutex);
-					delete this->m_clients[clientSocket];
-					this->m_clients[clientSocket] = resultBuffer.newHandler;
-					handler = resultBuffer.newHandler;
-				}
-
-			}
-			else if (bytesRecieved == 0)
-			{
-				break;
-			}
-			else
-			{
-				std::cerr << "error: recv failed: " << WSAGetLastError() << std::endl;
-				break;
+				this->m_clients[clientSocket] = resultBuffer.newHandler;
+				handler = resultBuffer.newHandler;
 			}
 		}
 	}

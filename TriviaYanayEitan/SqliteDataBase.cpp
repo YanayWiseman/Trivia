@@ -46,6 +46,14 @@ SqliteDatabase::SqliteDatabase()
 		" ANSWER TEXT NOT NULL,"
 		" IS_CORRECT INTEGER NOT NULL CHECK(IS_CORRECT IN (0, 1)),"
 		" FOREIGN KEY (QUESTION_ID) REFERENCES QUESTIONS(ID));");
+
+	executeSqlQuery("CREATE TABLE IF NOT EXISTS CRYPTO_KEYS ("
+		"  KEY_ID TEXT PRIMARY KEY,"
+		"  KEY_VALUE BLOB NOT NULL);");  // binary data
+
+	executeSqlQuery("CREATE TABLE IF NOT EXISTS CRYPTO_OFFSETS ("
+			"KEY_ID TEXT PRIMARY KEY NOT NULL,"
+			"OFFSET_VALUE INTEGER NOT NULL); ");
 }
 
 /*
@@ -609,4 +617,123 @@ void SqliteDatabase::submitGameStatistics(const std::string& username, const Gam
 	}
 
 	sqlite3_finalize(updateStmt);
+}
+
+/*
+	Method stores or replaces an encryption key in the database
+	input: keyId is a readable identifier of the encryption method and keyValue is raw binary key bytes stored as a BLOB
+	output: no return values
+*/
+void SqliteDatabase::storeKey(const std::string& keyId, const std::string& keyValue)
+{
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
+	sqlite3_stmt* stmt = prepare("INSERT OR REPLACE INTO CRYPTO_KEYS (KEY_ID, KEY_VALUE) VALUES (?, ?);");
+	if (!stmt)
+	{
+		return;
+	}
+
+	// bind
+	sqlite3_bind_text(stmt, 1, keyId.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_blob(stmt, 2, keyValue.data(), static_cast<int>(keyValue.size()), SQLITE_TRANSIENT);
+	
+	// step
+	sqlite3_step(stmt);
+
+	sqlite3_finalize(stmt);
+}
+
+/*
+	Method loads a key from the database by its id
+	input: the key's id
+	output: an empty string if the key is not found otherwise the key values
+*/
+std::string SqliteDatabase::loadKey(const std::string& keyId) const
+{
+	std::lock_guard<std::mutex> lock(m_dbMutex);
+
+	sqlite3_stmt* stmt = prepare("SELECT KEY_VALUE FROM CRYPTO_KEYS WHERE KEY_ID = ?;");
+	if (!stmt)
+	{
+		return "";
+	}
+
+	// bind
+	sqlite3_bind_text(stmt, 1, keyId.c_str(), -1, SQLITE_TRANSIENT);
+
+	// step
+	std::string result;
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		const void* blob = sqlite3_column_blob(stmt, 0);
+		int size = sqlite3_column_bytes(stmt, 0);
+		result.assign(static_cast<const char*>(blob), size);
+	}
+
+	sqlite3_finalize(stmt);
+	return result;
+}
+
+
+/*
+	Method stores or replaces the current offset of an OTP pad.
+	Input:
+		keyId (const std::string&) - The identifier of the OTP pad.
+		offset (unsigned int) - The next unused byte index in the pad.
+	Output:
+		None.
+*/
+
+void SqliteDatabase::storeOffset(const std::string& keyId, unsigned int offset)
+{
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
+	sqlite3_stmt* stmt = prepare("INSERT OR REPLACE INTO CRYPTO_OFFSETS (KEY_ID, OFFSET_VALUE) VALUES (?, ?);");
+	if (!stmt)
+	{
+		return;
+	}
+
+	sqlite3_bind_text(stmt, 1, keyId.c_str(), -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt, 2, static_cast<int>(offset));
+
+	int result = sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+
+	if (result != SQLITE_DONE)
+	{
+		throw std::runtime_error("Failed to store OTP offset");
+	}
+}
+
+/*
+	Method loads the current offset of an OTP pad.
+	Input:
+		keyId (const std::string&) - The identifier of the OTP pad.
+	Output:
+		The next unused byte index in the pad.
+*/
+
+unsigned int SqliteDatabase::loadOffset(const std::string& keyId) const
+{
+	std::lock_guard<std::mutex> lock(this->m_dbMutex);
+
+	sqlite3_stmt* stmt = prepare("SELECT OFFSET_VALUE FROM CRYPTO_OFFSETS WHERE KEY_ID = ?;");
+	if (!stmt)
+	{
+		return 0;
+	}
+
+	sqlite3_bind_text(stmt, 1, keyId.c_str(), -1, SQLITE_TRANSIENT);
+
+	unsigned int offset = 0;
+
+	if (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		offset = static_cast<unsigned int>(sqlite3_column_int(stmt, 0));
+	}
+
+	sqlite3_finalize(stmt);
+	return offset;
 }

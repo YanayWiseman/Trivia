@@ -15,6 +15,10 @@ struct LoginResponse
 struct SignupResponse
 {
 	unsigned int status;
+	std::string clientToServerKeyId;
+	std::string serverToClientKeyId;
+	std::string clientToServerKey;
+	std::string serverToClientKey;
 };
 
 struct ErrorResponse

@@ -65,4 +65,10 @@ public:
 	int getPlayerScore(const std::string& username) const override;
 	std::vector<std::string> getHighScores() const override;
 	void submitGameStatistics(const std::string& username, const GameData& gameData) override;
+
+	// CRYPTO_KEYS operations
+	void storeKey(const std::string& keyId, const std::string& keyValue);
+	std::string loadKey(const std::string& keyId) const;
+	void storeOffset(const std::string& keyId, unsigned int offset);
+	unsigned int loadOffset(const std::string& keyId) const;
 };

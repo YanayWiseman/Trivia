@@ -12,6 +12,7 @@
 #include "IRequestHandler.h"
 #include "LoginRequestHandler.h"
 #include "JsonResponsePacketSerializer.h"
+#include "CryptoAlgorithm.h"
 #include "ThreadPool.h"
 
 #define PORT 12334

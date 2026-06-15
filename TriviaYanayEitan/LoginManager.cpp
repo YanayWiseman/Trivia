@@ -18,20 +18,62 @@ LoginManager::LoginManager()
     Output: Whether function succeeded or not (Status)
 */
 
-Status LoginManager::signup(const UserInfo& user)
+SignupResult LoginManager::signup(const UserInfo& user)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
+    SignupResult result;
+    result.status = Failiure;
 
-    if(isUserInfoValid(user))
+    std::cout << "Signup username received: [" << user.username << "]" << std::endl;
+
+    if (!isUserInfoValid(user))
     {
-        if (!this->m_database->doesUserExist(user.username))
-        {
-            return this->m_database->addNewUser(user);
-        }
+        std::cout << "signup failed: invalid user info" << std::endl;
+        return result;
     }
 
-    return Failiure;
+    if (this->m_database->doesUserExist(user.username))
+    {
+        std::cout << "signup failed: user already exists" << std::endl;
+        return result;
+    }
+
+    if (!this->m_database->addNewUser(user))
+    {
+        std::cout << "signup failed: addNewUser failed" << std::endl;
+        return result;
+    }
+
+    try
+    {
+        OTPCryptoAlgorithm otp;
+
+        result.clientToServerKeyId = "otp_" + user.username + "_c2s";
+        result.serverToClientKeyId = "otp_" + user.username + "_s2c";
+
+
+        result.clientToServerPad = otp.generatePad(OTP_PAD_SIZE);
+        result.serverToClientPad = otp.generatePad(OTP_PAD_SIZE);
+
+        SqliteDatabase::getInstance().storeKey(result.clientToServerKeyId, result.clientToServerPad);
+        SqliteDatabase::getInstance().storeKey(result.serverToClientKeyId, result.serverToClientPad);
+
+        SqliteDatabase::getInstance().storeOffset(result.clientToServerKeyId, 0);
+        SqliteDatabase::getInstance().storeOffset(result.serverToClientKeyId, 0);
+
+        result.status = Success;    
+    }
+
+    catch (const std::exception& error)
+    {
+        std::cout << "OTP signup failed: " << error.what() << std::endl;
+        result.status = Failiure;
+    }
+
+    result.status = Success;
+
+    return result;
 }
 
 
