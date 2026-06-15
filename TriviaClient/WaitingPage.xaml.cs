@@ -176,7 +176,6 @@ namespace TriviaClient
                 this.stopThread = true;
                 if (this.NavigationService != null)
                 {
-                    MessageBox.Show(this.questionCount.ToString());
                     this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion, this.username));
                 }
                 else
