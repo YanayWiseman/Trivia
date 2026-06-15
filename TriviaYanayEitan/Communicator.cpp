@@ -8,7 +8,7 @@
 */
 
 Communicator::Communicator()
-	: m_handlerFactory(RequestHandlerFactory::getInstance())
+	: m_handlerFactory(RequestHandlerFactory::getInstance()), m_threadPool(new ThreadPool(THREAD_POOL_SIZE))
 {
 	// this server use TCP. that why SOCK_STREAM & IPPROTO_TCP
 	// if the server use UDP we will use: SOCK_DGRAM & IPPROTO_UDP 
@@ -35,6 +35,8 @@ Communicator::~Communicator()
 		closesocket(this->m_serverSocket);
 	}
 	catch (...) {}
+
+	delete this->m_threadPool;
 }
 
 /*
@@ -87,9 +89,10 @@ void Communicator::startHandleRequests()
 			continue;
 		}
 
-		// now we spawn the client thread function
-		std::thread clientThread(&Communicator::handleNewClient, this, clientSocket);
-		clientThread.detach();
+		this->m_threadPool->enqueue([this, clientSocket]()
+			{
+				handleNewClient(clientSocket);
+			});
 	}
 }
 
@@ -240,7 +243,12 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 			if (resultBuffer.newHandler != nullptr && resultBuffer.newHandler != handler)
 			{
 				std::lock_guard<std::mutex> lock(this->m_clientsMutex);
-				delete this->m_clients[clientSocket];
+				delete this->m_clients[clientSocket];				if (send(clientSocket, reinterpret_cast<const char*>(resultBuffer.response.data()), (int)resultBuffer.response.size(), 0) == SOCKET_ERROR)
+				{
+					std::cerr << "send failed" << std::endl;
+					break;
+				}
+
 				this->m_clients[clientSocket] = resultBuffer.newHandler;
 				handler = resultBuffer.newHandler;
 			}

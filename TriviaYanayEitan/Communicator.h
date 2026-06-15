@@ -13,9 +13,11 @@
 #include "LoginRequestHandler.h"
 #include "JsonResponsePacketSerializer.h"
 #include "CryptoAlgorithm.h"
+#include "ThreadPool.h"
 
 #define PORT 12334
 #define BUFFER_SIZE 1024
+#define THREAD_POOL_SIZE 20
 
 class Communicator
 {
@@ -26,6 +28,7 @@ private:
 	std::map<SOCKET, IRequestHandler*> m_clients;
 	std::mutex m_clientsMutex;
 	std::mutex m_printMutex;
+	ThreadPool* m_threadPool;
 
 	// methods
 	Communicator();
