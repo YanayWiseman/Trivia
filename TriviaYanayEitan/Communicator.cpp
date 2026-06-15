@@ -7,7 +7,7 @@
 	output: no return values
 */
 
-Communicator::Communicator() : m_handlerFactory(RequestHandlerFactory::getInstance())
+Communicator::Communicator() : m_handlerFactory(RequestHandlerFactory::getInstance()), m_threadPool(new ThreadPool(THREAD_POOL_SIZE))
 {
 	// this server use TCP. that why SOCK_STREAM & IPPROTO_TCP
 	// if the server use UDP we will use: SOCK_DGRAM & IPPROTO_UDP 
@@ -34,6 +34,8 @@ Communicator::~Communicator()
 		closesocket(this->m_serverSocket);
 	}
 	catch (...) {}
+
+	delete this->m_threadPool;
 }
 
 /*
@@ -86,9 +88,10 @@ void Communicator::startHandleRequests()
 			continue;
 		}
 
-		// now we spawn the client thread function
-		std::thread clientThread(&Communicator::handleNewClient, this, clientSocket);
-		clientThread.detach();
+		this->m_threadPool->enqueue([this, clientSocket]()
+			{
+				handleNewClient(clientSocket);
+			});
 	}
 }
 
