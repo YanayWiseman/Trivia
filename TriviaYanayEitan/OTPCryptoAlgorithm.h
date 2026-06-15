@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <random>
 #include <string>
+#include <mutex>
 
 #define MIN_LEN 8
 #define OFFEST_INDX 0
@@ -11,6 +12,7 @@
 class OTPCryptoAlgorithm
 {
 private:
+	static std::mutex m_mutex;
 	std::string buildPacket(unsigned int offset, const std::string& cipherText) const;
 	void writeUInt32(std::string& buffer, int index, unsigned int value) const;
 	unsigned int readUInt32(const std::string& buffer, int index) const;

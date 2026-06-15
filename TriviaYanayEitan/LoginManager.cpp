@@ -71,8 +71,6 @@ SignupResult LoginManager::signup(const UserInfo& user)
         result.status = Failiure;
     }
 
-    result.status = Success;
-
     return result;
 }
 

@@ -1,6 +1,6 @@
 #include "OTPCryptoAlgorithm.h"
 #include "SqliteDataBase.h"
-
+std::mutex OTPCryptoAlgorithm::m_mutex;
 
 /*
 	Function encrypts a given message using OTP pad from the database.
@@ -10,6 +10,8 @@
 
 std::string OTPCryptoAlgorithm::encrypt(const std::string& message, const std::string& keyId) const
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	std::string pad = SqliteDatabase::getInstance().loadKey(keyId);
 	unsigned int offset = SqliteDatabase::getInstance().loadOffset(keyId);
 
@@ -52,6 +54,8 @@ std::string OTPCryptoAlgorithm::encrypt(const std::string& message, const std::s
 
 std::string OTPCryptoAlgorithm::decrypt(const std::string& packet, const std::string& keyId) const
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	if (packet.length() < MIN_LEN)
 	{
 		throw std::runtime_error("OTP decrypt: packet too short");
@@ -81,7 +85,7 @@ std::string OTPCryptoAlgorithm::decrypt(const std::string& packet, const std::st
 	unsigned int expectedOffset = SqliteDatabase::getInstance().loadOffset(keyId);
 	if (offset != expectedOffset)
 	{
-		throw std::runtime_error("OTP decrypt: unexpected offset");
+		throw std::runtime_error("OTP decrypt: unexpected offset. Expected " + std::to_string(expectedOffset) + ", received " + std::to_string(offset));
 	}
 
 	std::string plainText(cipherLen, '\0');
