@@ -10,53 +10,84 @@
       Title="AddQuestionPage">
 
     <Grid Background="#FF4100">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.2*"/>
-            <ColumnDefinition Width="0.6*"/>
-            <ColumnDefinition Width="0.2*"/>
-        </Grid.ColumnDefinitions>
-
-        <Button Content="Go Back" Grid.Column="2" Height="30" Width="90" HorizontalAlignment="Right" VerticalAlignment="Top"
-                Margin="0,25,25,0" Background="Orange" FontFamily="Permanent Marker" Click="GoBack_Click">
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}" CornerRadius="10" >
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-        <Border Width="420" Grid.Column="1" Padding="25" Background="Orange" CornerRadius="12" HorizontalAlignment="Center"
+        <Border Grid.Column="1" Width="520" Padding="25" Background="Orange" CornerRadius="12" HorizontalAlignment="Center"
                 VerticalAlignment="Center">
+            
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <StackPanel>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.65*"/>
+                    <ColumnDefinition Width="0.35*"/>
+                </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Add Question" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20" FontFamily="Permanent Marker"/>
 
-                <TextBlock Text="Question" FontFamily="Permanent Marker"/>
-                <userControls:ClearableTextBox x:Name="QuestionBox" Height="40" Margin="0,0,0,15" PlaceHolder="Enter question..." />
-
-                <TextBlock Text="Answers" FontFamily="Permanent Marker"/>
+                <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="ADD QUESTION" FontSize="28" FontWeight="Bold"
+                           HorizontalAlignment="Center" Margin="0,0,0,20" FontFamily="Permanent Marker"/>
                 
-                <userControls:ClearableTextBox x:Name="Answer1Box" Height="40" Margin="0,0,0,10" PlaceHolder="Answer 1" />
-                <userControls:ClearableTextBox x:Name="Answer2Box" Height="40" Margin="0,0,0,10" PlaceHolder="Answer 2" />
-                <userControls:ClearableTextBox x:Name="Answer3Box" Height="40" Margin="0,0,0,10" PlaceHolder="Answer 3" />
-                <userControls:ClearableTextBox x:Name="Answer4Box" Height="40" Margin="0,0,0,10" PlaceHolder="Answer 4" />
+                <ScrollViewer Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Grid.Row="1" Grid.Column="0">
 
-                <TextBlock Text="Correct Answer Index (1–4)" FontFamily="Permanent Marker" Margin="0,0,0,5"/>
+                        <TextBlock Text="Question" FontFamily="Permanent Marker"/>
+                        <userControls:ClearableTextBox x:Name="QuestionBox" Height="40" Margin="0,0,0,15" PlaceHolder="Enter question..." />
 
-                <TextBox x:Name="CorrectIndexBox" Height="35" FontSize="16" FontFamily="Permanent Marker" Margin="0,0,0,20"/>
+                        <TextBlock Text="Answers" FontFamily="Permanent Marker"/>
 
-            </StackPanel>
+                        <userControls:ClearableTextBox x:Name="Answer1Box" Height="40" Margin="0,0,0,8" PlaceHolder="Answer 1" />
+
+                        <userControls:ClearableTextBox x:Name="Answer2Box" Height="40" Margin="0,0,0,8" PlaceHolder="Answer 2" />
+
+                        <userControls:ClearableTextBox x:Name="Answer3Box" Height="40" Margin="0,0,0,8" PlaceHolder="Answer 3" />
+
+                        <userControls:ClearableTextBox x:Name="Answer4Box" Height="40" Margin="0,0,0,12" PlaceHolder="Answer 4" />
+
+
+                        <TextBlock Text="Correct Answer Index (1–4)" FontFamily="Permanent Marker" Margin="0,0,0,5"/>
+
+                        <TextBox x:Name="CorrectIndexBox" Height="35" FontSize="16" FontFamily="Permanent Marker"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="15,40,0,0">
+
+                    <TextBlock Text="Image (optional)" FontFamily="Permanent Marker" FontSize="18" HorizontalAlignment="Center"
+                               Margin="0,0,0,10"/>
+
+                    <Button x:Name="PickImageButton" Content="Pick Image" Height="35" Background="Red"
+                            FontFamily="Permanent Marker" Margin="0,0,0,10" Click="PickImage_Click">
+
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                            CornerRadius="8">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <TextBlock x:Name="ImageStatusText" Text="No image selected" FontFamily="Permanent Marker" FontSize="12"
+                               Foreground="DarkRed" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                </StackPanel>
+
+
+                <Button Grid.Row="2" Grid.ColumnSpan="2" Content="Submit Question" Height="40" Width="200" Margin="0,20,0,0"
+                        HorizontalAlignment="Center" Background="Red" FontFamily="Permanent Marker" Click="SubmitQuestion_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+
+                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="5">
+
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
         </Border>
-        <Button Content="Submit Question" Height="40" Margin="25,0,0,0" Background="Orange" FontFamily="Permanent Marker" Click="Submit_Click">
-            <Button.Template>
-            <ControlTemplate TargetType="Button">
-                <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-            </ControlTemplate>
-            </Button.Template>
-        </Button>
     </Grid>
 </Page>
