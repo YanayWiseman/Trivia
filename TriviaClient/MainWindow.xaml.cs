@@ -1,14 +1,9 @@
-﻿using System.ComponentModel;
-using System.Text;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
+
 
 namespace TriviaClient
 {
@@ -17,29 +12,47 @@ namespace TriviaClient
         public MainWindow()
         {
             InitializeComponent();
-            this.Closing += MainWindow_Closing;
+            LoadBackgroundVideo();
         }
 
-        private void MainWindow_Closing(object? sender, CancelEventArgs e)
+        private void LoadBackgroundVideo()
         {
-            // check if were on WaitingPage first because it needs its own cleanup
-            Page? currentPage = MainFrame.Content as Page;
+            string videoPath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Assets",
+                "background.mp4"
+            );
 
-            if (currentPage is LoginPage || currentPage is SignUpPage || currentPage is MainPage)
+            if (!File.Exists(videoPath))
             {
-                // not logged in yet, just close
+                MessageBox.Show(
+                    "Video not found:\n" + videoPath,
+                    "Missing background video",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+
                 return;
             }
-            if (currentPage is WaitingPage waitingPage)
-            {
-                waitingPage.CleanupOnClose();
-            }
 
-            // then always logout
-            byte[] requestBuffer = Serializer.SerializeLogoutRequest();
-            ClientSession.Communicator.SendRequest<LogoutResponse>(requestBuffer);
+            BackgroundVideo.Source = new Uri(videoPath, UriKind.Absolute);
+            BackgroundVideo.Play();
+        }
 
-            ClientSession.Communicator.Disconnect();
+        private void BackgroundVideo_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            BackgroundVideo.Position = TimeSpan.Zero;
+            BackgroundVideo.Play();
+        }
+
+        private void BackgroundVideo_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            MessageBox.Show(
+                "Video failed to play:\n" + e.ErrorException.Message,
+                "Media error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
         }
     }
 }

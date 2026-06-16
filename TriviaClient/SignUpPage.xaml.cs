@@ -88,7 +88,6 @@ namespace TriviaClient
                     CryptoSession.Initialize(username, response.ClientToServerKeyId, response.ServerToClientKeyId, clientToServerPad, serverToClientPad);
                     CryptoSession.Save();
 
-                    MessageBox.Show("Signup succeeded. Encryption keys were saved.");
                     NavigationService.Navigate(new LoginPage());
                 }
                 else

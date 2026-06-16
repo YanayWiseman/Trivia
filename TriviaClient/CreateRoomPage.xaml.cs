@@ -80,7 +80,6 @@ namespace TriviaClient
 
                 if (response.Status == 1)
                 {
-                    MessageBox.Show("Room created successfully.");
                     this.NavigationService.Navigate(new WaitingPage(id, roomName, this.username, request.AnswerTimeout, request.QuestionsCount, isAdmin: true));
                 }
                 else
