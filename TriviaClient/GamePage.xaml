@@ -7,11 +7,15 @@
       d:DesignHeight="450"
       d:DesignWidth="800"
       Title="GamePage">
-
     <Grid Background="#FF4100">
 
-        <Grid Height="70"
-              VerticalAlignment="Top"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0"
               Background="#E63A00">
 
             <TextBlock x:Name="questionNumberTextBlock"
@@ -43,29 +47,31 @@
 
         </Grid>
 
+        <Border Grid.Row="1" Background="Orange" CornerRadius="16" Padding="15"
+        Margin="60,25,60,15" VerticalAlignment="Top">
+            <StackPanel>
 
-        <Border Background="Orange"
-                CornerRadius="16"
-                Padding="25"
-                Margin="60,95,60,0"
-                Height="135"
-                VerticalAlignment="Top">
+                <Image x:Name="questionImage"
+               MaxHeight="160"
+               Stretch="Uniform"
+               HorizontalAlignment="Center"
+               Margin="0,0,0,8"
+               Visibility="Collapsed"/>
 
-            <TextBlock x:Name="questionTextBlock"
-                       Text="Question?"
-                       FontSize="28"
-                       FontWeight="Bold"
-                       FontFamily="Permanent Marker"
-                       Foreground="Black"
-                       TextWrapping="Wrap"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
-
+                <TextBlock x:Name="questionTextBlock"
+                   Text="Question?"
+                   FontSize="28"
+                   FontWeight="Bold"
+                   FontFamily="Permanent Marker"
+                   Foreground="Black"
+                   TextWrapping="Wrap"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
+            </StackPanel>
         </Border>
 
-
-        <Grid Margin="60,255,60,35">
+        <Grid Grid.Row="2" Margin="60,10,60,35">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

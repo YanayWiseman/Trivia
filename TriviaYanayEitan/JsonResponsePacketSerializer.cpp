@@ -330,6 +330,7 @@ Buffer JsonResponsePacketSerializer::serializeResponse(const GetQuestionResponse
 
 	response["status"] = getQuestionResponse.status;
 	response["question"] = getQuestionResponse.question;
+	response["imageBase64"] = getQuestionResponse.imageBase64;
 
 	json answersJson = json::object();
 

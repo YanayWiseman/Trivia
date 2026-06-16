@@ -276,7 +276,7 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 
 				OTPCryptoAlgorithm otp;
 				std::string encryptedResponse = otp.encrypt(normalResponse, serverToClientKeyId);
-
+				
 				outerResponse = buildEncryptedOuterPacket(encryptedResponse);
 			}
 			else

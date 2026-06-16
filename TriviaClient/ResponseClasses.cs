@@ -189,6 +189,9 @@ namespace TriviaClient
 
         [JsonProperty("answers")]
         public Dictionary<uint, string> Answers { get; set; } = new Dictionary<uint, string>();
+
+        [JsonProperty("imageBase64")]
+        public string ImageBase64 { get; set; } = "";
     }
 
     public class SubmitAnswerResponse

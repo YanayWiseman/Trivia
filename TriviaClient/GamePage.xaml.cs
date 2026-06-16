@@ -136,6 +136,7 @@ namespace TriviaClient
 
             questionNumberTextBlock.Text = "Question " + this.questionNumber + " / " + this.questionCount;
             questionTextBlock.Text = response.Question;
+            DisplayQuestionImage(response.ImageBase64);
 
             DisplayAnswers(response.Answers);
 
@@ -359,7 +360,39 @@ namespace TriviaClient
                 this.answerButtons[i].Focusable = true;
             }
         }
+        /*
+            Method displays the question image if one was provided, hides it otherwise.
+            input: base64 string (empty means no image)
+            output: None
+           */
+        private void DisplayQuestionImage(string imageBase64)
+        {
+            if (string.IsNullOrEmpty(imageBase64))
+            {
+                questionImage.Visibility = Visibility.Collapsed;
+                return;
+            }
 
+            try
+            {
+                byte[] imageBytes = Convert.FromBase64String(imageBase64);
+                using (var ms = new System.IO.MemoryStream(imageBytes))
+                {
+                    var bitmapImage = new BitmapImage();
+                    bitmapImage.BeginInit();
+                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapImage.StreamSource = ms;
+                    bitmapImage.EndInit();
+                    questionImage.Source = bitmapImage;
+                    questionImage.Visibility = Visibility.Visible;
+                }
+            }
+            catch
+            {
+                // if image is corrupt or invalid just hide it
+                questionImage.Visibility = Visibility.Collapsed;
+            }
+        }
 
         /*
             Function stops the game timer and moves the user to the results page
