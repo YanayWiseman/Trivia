@@ -43,7 +43,7 @@ namespace TriviaClient
             try
             {
                 byte[] requestBuffer = Serializer.SerializeLogoutRequest();
-                ClientSession.Communicator.SendRequest<LogoutResponse>(requestBuffer);
+                ClientSession.Communicator.SendEncryptedRequest<LogoutResponse>(requestBuffer);
                 ClientSession.Communicator.Disconnect();
                 ClientSession.Communicator = new Communicator();
                 this.NavigationService.Navigate(new MainPage());
@@ -70,7 +70,7 @@ namespace TriviaClient
             {
                 byte[] requestBuffer = Serializer.SerializeJoinOneVsOneQueueRequest();
 
-                OneVsOneStatusResponse response =ClientSession.Communicator.SendRequest<OneVsOneStatusResponse>(requestBuffer);
+                OneVsOneStatusResponse response =ClientSession.Communicator.SendEncryptedRequest<OneVsOneStatusResponse>(requestBuffer);
 
                 if (response.Status != 1)
                 {

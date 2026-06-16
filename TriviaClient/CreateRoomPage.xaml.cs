@@ -74,7 +74,7 @@ namespace TriviaClient
             {
                 byte[] requestBuffer = Serializer.serializeCreateRoomRequest(request);
 
-                CreateRoomResponse response = ClientSession.Communicator.SendRequest<CreateRoomResponse>(requestBuffer);
+                CreateRoomResponse response = ClientSession.Communicator.SendEncryptedRequest<CreateRoomResponse>(requestBuffer);
 
                 uint id = response.RoomId;
 

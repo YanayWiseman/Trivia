@@ -79,7 +79,7 @@ namespace TriviaClient
                 CorrectAnswerId = correctAnswerId
             };
             byte[] addQuestionRequestBuffer = Serializer.SerializeAddQuestionRequest(addQuestioRequest);
-            AddQuestionResponse addQuestionResponse = ClientSession.Communicator.SendRequest<AddQuestionResponse>(addQuestionRequestBuffer);
+            AddQuestionResponse addQuestionResponse = ClientSession.Communicator.SendEncryptedRequest<AddQuestionResponse>(addQuestionRequestBuffer);
             if(addQuestionResponse.Status == 0)
             {
                 MessageBox.Show("Failed adding question!");

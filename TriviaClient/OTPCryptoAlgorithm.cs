@@ -7,14 +7,45 @@ namespace TriviaClient
         private readonly byte[] m_pad;
         private int m_offset;
 
+        public int Offset
+        {
+            get
+            {
+                return this.m_offset;
+            }
+        }
+
+        public byte[] Pad
+        {
+            get
+            {
+                return (byte[])this.m_pad.Clone();
+            }
+        }
+
         public OTPCryptoAlgorithm(byte[] pad, int offset)
         {
-            this.m_pad = pad;
+            if (pad == null || pad.Length == 0)
+            {
+                throw new ArgumentException("OTP pad cannot be empty");
+            }
+
+            if (offset < 0 || offset > pad.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
+            this.m_pad = (byte[])pad.Clone();
             this.m_offset = offset;
         }
 
         public byte[] Encrypt(byte[] data)
         {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
             if (this.m_offset + data.Length > this.m_pad.Length)
             {
                 throw new Exception("OTP Encrypt: pad exhausted");
@@ -22,10 +53,10 @@ namespace TriviaClient
 
             byte[] cipherText = new byte[data.Length];
 
-            int i = 0;
-            for (i = 0; i < data.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
-                cipherText[i] = (byte)(data[i] ^ this.m_pad[this.m_offset + i]);
+                cipherText[i] =
+                    (byte)(data[i] ^ this.m_pad[this.m_offset + i]);
             }
 
             byte[] packet = BuildPacket(this.m_offset, cipherText);
@@ -37,38 +68,43 @@ namespace TriviaClient
 
         public byte[] Decrypt(byte[] packet)
         {
-            if (packet.Length < 8)
+            if (packet == null || packet.Length < 8)
             {
                 throw new Exception("OTP Decrypt: packet too short");
             }
 
             int offset = ReadInt32(packet, 0);
-            int cipherLen = ReadInt32(packet, 4);
+            int cipherLength = ReadInt32(packet, 4);
 
-            if (packet.Length != 8 + cipherLen)
+            if (offset < 0 || cipherLength < 0)
+            {
+                throw new Exception("OTP Decrypt: invalid packet values");
+            }
+
+            if (packet.Length != 8 + cipherLength)
             {
                 throw new Exception("OTP Decrypt: packet size mismatch");
             }
 
-            if (offset + cipherLen > this.m_pad.Length)
+            if (offset != this.m_offset)
+            {
+                throw new Exception("OTP Decrypt: unexpected offset. Expected " + this.m_offset + " received " + offset);
+            }
+
+            if (offset + cipherLength > this.m_pad.Length)
             {
                 throw new Exception("OTP Decrypt: pad exhausted or invalid offset");
             }
 
-            if (offset != this.m_offset)
+            byte[] plainText = new byte[cipherLength];
+
+            for (int i = 0; i < cipherLength; i++)
             {
-                throw new Exception("OTP Decrypt: unexpected offset");
+                plainText[i] =
+                    (byte)(packet[8 + i] ^ this.m_pad[offset + i]);
             }
 
-            byte[] plainText = new byte[cipherLen];
-
-            int i = 0;
-            for (i = 0; i < cipherLen; i++)
-            {
-                plainText[i] = (byte)(packet[8 + i] ^ this.m_pad[offset + i]);
-            }
-
-            this.m_offset += cipherLen;
+            this.m_offset += cipherLength;
 
             return plainText;
         }
@@ -80,16 +116,17 @@ namespace TriviaClient
             WriteInt32(packet, 0, offset);
             WriteInt32(packet, 4, cipherText.Length);
 
-            int i = 0;
-            for (i = 0; i < cipherText.Length; i++)
-            {
-                packet[8 + i] = cipherText[i];
-            }
+            Array.Copy(
+                cipherText,
+                0,
+                packet,
+                8,
+                cipherText.Length);
 
             return packet;
         }
 
-        private void WriteInt32(byte[] buffer, int index, int value)
+        private static void WriteInt32(byte[] buffer, int index, int value)
         {
             buffer[index] = (byte)((value >> 24) & 0xFF);
             buffer[index + 1] = (byte)((value >> 16) & 0xFF);
@@ -97,7 +134,7 @@ namespace TriviaClient
             buffer[index + 3] = (byte)(value & 0xFF);
         }
 
-        private int ReadInt32(byte[] buffer, int index)
+        private static int ReadInt32(byte[] buffer, int index)
         {
             return
                 (buffer[index] << 24) |

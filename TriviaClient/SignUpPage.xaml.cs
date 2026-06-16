@@ -21,6 +21,7 @@ namespace TriviaClient
         {
             InitializeComponent();
         }
+
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
             if (this.NavigationService.CanGoBack)
@@ -28,6 +29,12 @@ namespace TriviaClient
                 this.NavigationService.GoBack();
             }
         }
+
+        /*
+            Function signs the user up and saves the OTP pads received from the server.
+            Input: sender (object), e (RoutedEventArgs)
+            Output: None
+        */
 
         private void GoToMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -63,6 +70,11 @@ namespace TriviaClient
             {
                 byte[] requestBuffer = Serializer.serializeSignupRequest(request);
 
+                /*
+                    Signup is sent without OTP encryption because the client
+                    does not have its pads until the server returns them.
+                */
+
                 SignupResponse response = ClientSession.Communicator.SendRequest<SignupResponse>(requestBuffer);
 
                 if (response.Status == 1)
@@ -70,15 +82,11 @@ namespace TriviaClient
                     byte[] clientToServerPad = Convert.FromBase64String(response.ClientToServerKey);
                     byte[] serverToClientPad = Convert.FromBase64String(response.ServerToClientKey);
 
-                    CryptoSession.Username = username;
+                    CryptoSession.Initialize(username, response.ClientToServerKeyId, response.ServerToClientKeyId, clientToServerPad, serverToClientPad);
+                    CryptoSession.Save();
 
-                    CryptoSession.ClientToServerKeyId = response.ClientToServerKeyId;
-                    CryptoSession.ServerToClientKeyId = response.ServerToClientKeyId;
-
-                    CryptoSession.RequestCrypto = new OTPCryptoAlgorithm(clientToServerPad, 0);
-                    CryptoSession.ResponseCrypto = new OTPCryptoAlgorithm(serverToClientPad, 0);
-
-                    this.NavigationService.Navigate(new MainPage());
+                    MessageBox.Show("Signup succeeded. Encryption keys were saved.");
+                    this.NavigationService.Navigate(new LoginPage());
                 }
                 else
                 {

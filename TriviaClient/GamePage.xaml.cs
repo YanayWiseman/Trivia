@@ -124,7 +124,7 @@ namespace TriviaClient
             EnableAnswerButtons();
 
             byte[] request = Serializer.SerializeGetQuestionRequest();
-            GetQuestionResponse response = ClientSession.Communicator.SendRequest<GetQuestionResponse>(request);
+            GetQuestionResponse response = ClientSession.Communicator.SendEncryptedRequest<GetQuestionResponse>(request);
 
             if (response.Status != 1)
             {
@@ -178,7 +178,7 @@ namespace TriviaClient
                 {
                     byte[] requestBuffer = Serializer.SerializeSubmitAnswerRequest(request);
 
-                    return ClientSession.Communicator.SendRequest<SubmitAnswerResponse>(requestBuffer);
+                    return ClientSession.Communicator.SendEncryptedRequest<SubmitAnswerResponse>(requestBuffer);
                 });
 
                 this.waitingForAnswerResult = false;

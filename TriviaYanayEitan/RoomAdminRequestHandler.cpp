@@ -79,6 +79,7 @@ RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestI
 	}
 	catch (const std::exception& error)
 	{
+		std::cerr << error.what() << std::endl;
 		return getErrorResponse(error.what());
 	}
 }
