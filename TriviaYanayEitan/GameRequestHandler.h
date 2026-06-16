@@ -1,11 +1,13 @@
 #pragma once
 
+#include <mutex>
 #include "IRequestHandler.h"
 #include "Game.h"
 #include "LoggedUser.h"
 #include "GameManager.h"
 #include "HandlersStructs.h"
 #include "ResponseStructs.h"
+
 
 #define NO_ANSWER 0
 

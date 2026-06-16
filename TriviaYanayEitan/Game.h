@@ -5,6 +5,7 @@
 #include <chrono>
 #include "Question.h"
 #include "LoggedUser.h"
+#include <mutex>
 
 struct GameData
 {
@@ -21,10 +22,13 @@ class Game
 {
 private:
 	// fields
+	mutable std::mutex m_mutex;
 	std::vector<Question> m_questions;
 	std::map<std::string, GameData> m_players;
 	unsigned int m_gameId;
 	unsigned int m_timePerQuestion;
+
+	float calculateAnswerTime(const GameData& gameData) const;
 
 public:
 	// c'tor
