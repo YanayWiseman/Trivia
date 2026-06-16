@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ namespace TriviaClient
         {
             InitializeComponent();
             LoadBackgroundVideo();
+            this.Closing += MainWindow_Closing;
         }
 
         private void LoadBackgroundVideo()
@@ -53,6 +55,28 @@ namespace TriviaClient
                 MessageBoxButton.OK,
                 MessageBoxImage.Error
             );
+        }
+
+        private void MainWindow_Closing(object? sender, CancelEventArgs e)
+        {
+            // check if were on WaitingPage first because it needs its own cleanup
+            Page? currentPage = MainFrame.Content as Page;
+
+            if (currentPage is LoginPage || currentPage is SignUpPage || currentPage is MainPage)
+            {
+                // not logged in yet, just close
+                return;
+            }
+            if (currentPage is WaitingPage waitingPage)
+            {
+                waitingPage.CleanupOnClose();
+            }
+
+            // then always logout
+            byte[] requestBuffer = Serializer.SerializeLogoutRequest();
+            ClientSession.Communicator.SendRequest<LogoutResponse>(requestBuffer);
+
+            ClientSession.Communicator.Disconnect();
         }
     }
 }

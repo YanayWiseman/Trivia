@@ -92,7 +92,7 @@ namespace TriviaClient
                 }
                 else
                 {
-                    MessageBox.Show("Signup failed.");
+                    MessageBox.Show("Signup failed." + response.Status);
                 }
             }
             catch (Exception ex)
