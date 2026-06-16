@@ -9,6 +9,7 @@ private:
 	std::string m_question;
 	std::vector<std::string> m_possibleAnswers;
 	int m_correctAnswerId;
+	std::string m_imageBase64;
 
 public:
 	Question(const std::string& qText, const std::vector<std::string>& answers, int correctAnsId);
