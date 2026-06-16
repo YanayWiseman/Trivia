@@ -264,6 +264,7 @@ AddQuestionRequest JsonRequestPacketDeserializer::deserializeAddQuestionRequest(
 		request.correctAnswerId = jsonData.at("correctAnswerId").get<int>();
 		request.question = jsonData.at("question").get<std::string>();
 		request.answers = jsonData.at("answers").get <std::vector<std::string>>();
+		request.imageBase64 = jsonData.value("imageBase64", "");  // optional field, default to empty string if not present
 	}
 	catch (const std::exception& error)
 	{
