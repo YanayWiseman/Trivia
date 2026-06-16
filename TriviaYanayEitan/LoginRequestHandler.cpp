@@ -139,7 +139,7 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& info) const
 	}
 
 	result.response = JsonResponsePacketSerializer::serializeResponse(response);
-	result.newHandler = nullptr;
+	result.newHandler = const_cast<LoginRequestHandler*>(this);
 
 	return result;
 }

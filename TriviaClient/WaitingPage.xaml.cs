@@ -136,7 +136,7 @@ namespace TriviaClient
                         this.Dispatcher.Invoke(() => MessageBox.Show("Server error: " + ex.Message));
                     }
                 }
-                Thread.Sleep(3000);
+                Thread.Sleep(500);
             }
         }
         private void UpdateUiWithPlayers(List<string> players)
