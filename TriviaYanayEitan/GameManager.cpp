@@ -31,33 +31,32 @@ GameManager& GameManager::getInstance()
 
 Game& GameManager::createGame(const Room& room, const std::vector<Question>& questionsToAdd)
 {
-	Game game(room.getData().id, room.getData().timePerQuestion);
+	auto game = std::make_unique<Game>(room.getData().id, room.getData().timePerQuestion);
 
-	std::list<Question> questionsList = this->m_database->getQuestions(AMOUNT_OF_QUESTIONS);
+	std::list<Question> questionsList = m_database->getQuestions(AMOUNT_OF_QUESTIONS);
 	std::vector<Question> questionsVector(questionsList.begin(), questionsList.end());
 
-	// add the new questions to the questions vector
-	int i = 0;
-	for (i = 0; i < questionsToAdd.size(); i++)
+	for (const Question& question : questionsToAdd)
 	{
-		questionsVector.push_back(questionsToAdd[i]);
+		questionsVector.push_back(question);
 	}
 
-	game.setQuestions(questionsVector);
-	
+	game->setQuestions(questionsVector);
+
 	std::vector<std::string> usernames = room.getAllUsers();
 	std::vector<LoggedUser> loggedUsers;
 
-	for (int i = 0; i < usernames.size(); i++)
+	for (const std::string& username : usernames)
 	{
-		loggedUsers.push_back(LoggedUser(usernames[i]));
+		loggedUsers.emplace_back(username);
 	}
 
-	game.setPlayers(loggedUsers);
+	game->setPlayers(loggedUsers);
 
-	this->m_games.push_back(game);
+	std::lock_guard<std::mutex> lock(m_mutex);
 
-	return this->m_games.back();
+	m_games.push_back(std::move(game));
+	return *m_games.back();
 }
 
 
@@ -69,11 +68,13 @@ Game& GameManager::createGame(const Room& room, const std::vector<Question>& que
 
 Game& GameManager::getGame(unsigned int gameId)
 {
-	for (int i = 0; i < this->m_games.size(); i++)
+	std::lock_guard<std::mutex> lock(m_mutex);
+
+	for (const auto& game : m_games)
 	{
-		if (this->m_games[i].getGameId() == gameId)
+		if (game->getGameId() == gameId)
 		{
-			return this->m_games[i];
+			return *game;
 		}
 	}
 
@@ -88,9 +89,11 @@ Game& GameManager::getGame(unsigned int gameId)
 
 void GameManager::deleteGame(unsigned int gameId)
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	for (auto it = this->m_games.begin(); it != this->m_games.end(); it++)
 	{
-		if (it->getGameId() == gameId)
+		if ((*it)->getGameId() == gameId)
 		{
 			// delete the game
 			this->m_games.erase(it);
@@ -108,5 +111,7 @@ void GameManager::deleteGame(unsigned int gameId)
 
 void GameManager::submitGameStatusToDB(const std::string& username, const GameData& gameData)
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	this->m_database->submitGameStatistics(username, gameData);
 }

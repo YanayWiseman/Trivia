@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+#include <mutex>
 #include <list>
 #include <string>
 #include <vector>
@@ -7,14 +9,16 @@
 #include "Room.h"
 #include "Game.h"
 
+
 #define AMOUNT_OF_QUESTIONS 10
 
 class GameManager
 {
 private:
 	// fields
+	mutable std::mutex m_mutex;
 	IDatabase* m_database;
-	std::vector<Game> m_games;
+	std::vector<std::unique_ptr<Game>> m_games;
 
 	// methods
 	GameManager();
