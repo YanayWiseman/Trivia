@@ -57,4 +57,5 @@ struct AddQuestionRequest
     int correctAnswerId;
     std::string question;
     std::vector<std::string> answers;
+    std::string imageBase64;  // empty means no image
 };
