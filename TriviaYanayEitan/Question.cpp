@@ -42,7 +42,10 @@ int Question::getCorrectAnswerId() const
     Output: None (constructor)
 */
 
-Question::Question(const std::string& qText, const std::vector<std::string>& answers, int correctAnsId, const std::string& imageBase64) : m_question(qText), m_possibleAnswers(answers), m_correctAnswerId(correctAnsId), m_imageBase64(imageBase64)
-{}
+Question::Question(const std::string& qText, const std::vector<std::string>& answers, int correctAnsId, const std::string& imageBase64)
+    : m_question(qText), m_possibleAnswers(answers), m_correctAnswerId(correctAnsId), m_imageBase64(imageBase64)
+{
+
+}
 
 
