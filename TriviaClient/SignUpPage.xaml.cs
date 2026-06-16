@@ -39,6 +39,14 @@ namespace TriviaClient
 
         private async void GoToMenu_Click(object sender, RoutedEventArgs e)
         {
+            NavigationService navigation = this.NavigationService;
+
+            if (navigation == null)
+            {
+                MessageBox.Show("Navigation service is unavailable.");
+                return;
+            }
+
             string username = UsernameTextBox.Text;
             string password = PasswordTextBox.Text;
             string email = EmailTextBox.Text;
@@ -57,7 +65,7 @@ namespace TriviaClient
                 return;
             }
 
-            bool verified = await VerifyEmail(email);
+            bool verified = await VerifyEmail(email, navigation);
 
             if (!verified)
             {
@@ -88,11 +96,18 @@ namespace TriviaClient
                     CryptoSession.Initialize(username, response.ClientToServerKeyId, response.ServerToClientKeyId, clientToServerPad, serverToClientPad);
                     CryptoSession.Save();
 
-                    NavigationService.Navigate(new LoginPage());
+                    navigation.Navigate(new LoginPage());
                 }
                 else
                 {
-                    MessageBox.Show("Signup failed." + response.Status);
+                    MessageBox.Show("Signup failed.");
+
+                    if (navigation.CanGoBack)
+                    {
+                        navigation.GoBack();
+                    }
+
+                    return;
                 }
             }
             catch (Exception ex)
@@ -101,16 +116,15 @@ namespace TriviaClient
             }
         }
 
-        private async Task<bool> VerifyEmail(string email)
+        private async Task<bool> VerifyEmail(string email, NavigationService navigation)
         {
             VerificationPage verificationPage = new VerificationPage(email);
-            NavigationService navigation = NavigationService;
 
             navigation.Navigate(verificationPage);
 
             bool verified = await verificationPage.WaitForResultAsync();
 
-            if (navigation.CanGoBack)
+            if (!verified && navigation.CanGoBack)
             {
                 navigation.GoBack();
             }
