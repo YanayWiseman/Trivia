@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace TriviaClient
 {
     public partial class SignUpPage : Page
@@ -36,7 +37,7 @@ namespace TriviaClient
             Output: None
         */
 
-        private void GoToMenu_Click(object sender, RoutedEventArgs e)
+        private async void GoToMenu_Click(object sender, RoutedEventArgs e)
         {
             string username = UsernameTextBox.Text;
             string password = PasswordTextBox.Text;
@@ -56,6 +57,13 @@ namespace TriviaClient
                 return;
             }
 
+            bool verified = await VerifyEmail(email);
+
+            if (!verified)
+            {
+                return;
+            }
+
             SignupRequest request = new SignupRequest
             {
                 Username = username,
@@ -70,11 +78,6 @@ namespace TriviaClient
             {
                 byte[] requestBuffer = Serializer.serializeSignupRequest(request);
 
-                /*
-                    Signup is sent without OTP encryption because the client
-                    does not have its pads until the server returns them.
-                */
-
                 SignupResponse response = ClientSession.Communicator.SendRequest<SignupResponse>(requestBuffer);
 
                 if (response.Status == 1)
@@ -86,7 +89,7 @@ namespace TriviaClient
                     CryptoSession.Save();
 
                     MessageBox.Show("Signup succeeded. Encryption keys were saved.");
-                    this.NavigationService.Navigate(new LoginPage());
+                    NavigationService.Navigate(new LoginPage());
                 }
                 else
                 {
@@ -97,6 +100,23 @@ namespace TriviaClient
             {
                 MessageBox.Show("Server error: " + ex.Message);
             }
+        }
+
+        private async Task<bool> VerifyEmail(string email)
+        {
+            VerificationPage verificationPage = new VerificationPage(email);
+            NavigationService navigation = NavigationService;
+
+            navigation.Navigate(verificationPage);
+
+            bool verified = await verificationPage.WaitForResultAsync();
+
+            if (navigation.CanGoBack)
+            {
+                navigation.GoBack();
+            }
+
+            return verified;
         }
     }
 }
