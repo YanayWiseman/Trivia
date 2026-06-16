@@ -35,7 +35,13 @@ int Question::getCorrectAnswerId() const
 {
     return this->m_correctAnswerId+1;
 }
-// Add getter:
+
+/*
+    Getter method to get the image in base64 field
+    input: No input values
+    output: The question in base64 format
+*/
+
 std::string Question::getImageBase64() const
 {
 }
