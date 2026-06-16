@@ -12,7 +12,7 @@ private:
 	std::string m_imageBase64;
 
 public:
-	Question(const std::string& qText, const std::vector<std::string>& answers, int correctAnsId);
+	Question(const std::string& qText, const std::vector<std::string>& answers, int correctAnsId, const std::string& imageBase64);
 	~Question() = default;
 	int getCorrectAnswerId() const;
 	std::string getQuestion() const;
