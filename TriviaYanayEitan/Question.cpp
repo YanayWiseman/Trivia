@@ -35,6 +35,10 @@ int Question::getCorrectAnswerId() const
 {
     return this->m_correctAnswerId+1;
 }
+// Add getter:
+std::string Question::getImageBase64() const
+{
+}
 
 /*
     Function constructs Question object.
