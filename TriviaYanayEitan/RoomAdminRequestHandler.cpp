@@ -139,7 +139,7 @@ RequestResult RoomAdminRequestHandler::addQuestion(const RequestInfo& requestInf
 	AddQuestionResponse response;
 
 	AddQuestionRequest request = JsonRequestPacketDeserializer::deserializeAddQuestionRequest(requestInfo.buffer);
-	Question question(request.question, request.answers, request.correctAnswerId);
+	Question question(request.question, request.answers, request.correctAnswerId, request.imageBase64);
 	this->m_newQuestions.push_back(question);  // will be added to the default 10 questions when creating the game
 	this->m_room.incrementQuestion();
 	response.status = Success;
