@@ -44,6 +44,7 @@ int Question::getCorrectAnswerId() const
 
 std::string Question::getImageBase64() const
 {
+    return this->m_imageBase64;
 }
 
 /*
