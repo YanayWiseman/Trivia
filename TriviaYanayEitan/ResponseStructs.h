@@ -122,6 +122,7 @@ struct GetQuestionResponse
 	unsigned int status;
 	std::string question;
 	std::map<unsigned int, std::string> answers;
+	std::string imageBase64;  // empty means no image
 };
 
 struct LeaveGameResponse
