@@ -314,7 +314,7 @@ std::list<Question> SqliteDatabase::getQuestions(int amount) const
 		sqlite3_finalize(answerStmt);
 		answerStmt = nullptr;
 
-		questions.push_back(Question(questionText, answers, correctAnsId));
+		questions.push_back(Question(questionText, answers, correctAnsId, ""));
 	}
 
 	sqlite3_finalize(questionStmt);

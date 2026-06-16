@@ -28,28 +28,29 @@
 
                 <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="ADD QUESTION" FontSize="28" FontWeight="Bold"
                            HorizontalAlignment="Center" Margin="0,0,0,20" FontFamily="Permanent Marker"/>
+                
+                <ScrollViewer Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Grid.Row="1" Grid.Column="0">
 
-                <StackPanel Grid.Row="1" Grid.Column="0">
+                        <TextBlock Text="Question" FontFamily="Permanent Marker"/>
+                        <userControls:ClearableTextBox x:Name="QuestionBox" Height="40" Margin="0,0,0,15" PlaceHolder="Enter question..." />
 
-                    <TextBlock Text="Question" FontFamily="Permanent Marker"/>
-                    <userControls:ClearableTextBox x:Name="QuestionBox" Height="40" Margin="0,0,0,15" PlaceHolder="Enter question..." />
+                        <TextBlock Text="Answers" FontFamily="Permanent Marker"/>
 
-                    <TextBlock Text="Answers" FontFamily="Permanent Marker"/>
+                        <userControls:ClearableTextBox x:Name="Answer1Box" Height="40" Margin="0,0,0,8" PlaceHolder="Answer 1" />
 
-                    <userControls:ClearableTextBox x:Name="Answer1Box" Height="40" Margin="0,0,0,8" PlaceHolder="Answer 1" />
+                        <userControls:ClearableTextBox x:Name="Answer2Box" Height="40" Margin="0,0,0,8" PlaceHolder="Answer 2" />
 
-                    <userControls:ClearableTextBox x:Name="Answer2Box" Height="40" Margin="0,0,0,8" PlaceHolder="Answer 2" />
+                        <userControls:ClearableTextBox x:Name="Answer3Box" Height="40" Margin="0,0,0,8" PlaceHolder="Answer 3" />
 
-                    <userControls:ClearableTextBox x:Name="Answer3Box" Height="40" Margin="0,0,0,8" PlaceHolder="Answer 3" />
-
-                    <userControls:ClearableTextBox x:Name="Answer4Box" Height="40" Margin="0,0,0,12" PlaceHolder="Answer 4" />
+                        <userControls:ClearableTextBox x:Name="Answer4Box" Height="40" Margin="0,0,0,12" PlaceHolder="Answer 4" />
 
 
-                    <TextBlock Text="Correct Answer Index (1–4)" FontFamily="Permanent Marker" Margin="0,0,0,5"/>
+                        <TextBlock Text="Correct Answer Index (1–4)" FontFamily="Permanent Marker" Margin="0,0,0,5"/>
 
-                    <TextBox x:Name="CorrectIndexBox" Height="35" FontSize="16" FontFamily="Permanent Marker"/>
-                </StackPanel>
-
+                        <TextBox x:Name="CorrectIndexBox" Height="35" FontSize="16" FontFamily="Permanent Marker"/>
+                    </StackPanel>
+                </ScrollViewer>
 
                 <StackPanel Grid.Row="1" Grid.Column="1" Margin="15,40,0,0">
 

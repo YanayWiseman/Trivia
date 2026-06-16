@@ -67,7 +67,7 @@ namespace TriviaClient
         {
             this.NavigationService.Navigate(new WaitingPage(this.roomId, this.roomName, this.username, this.timePerQuestion, this.questionCount, true));
         }
-        private void Submit_Click(object sender, RoutedEventArgs e)
+        private void SubmitQuestion_Click(object sender, RoutedEventArgs e)
         {
             // input validation
             int correctAnswerId = 0;
