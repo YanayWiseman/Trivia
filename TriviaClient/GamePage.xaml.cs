@@ -37,7 +37,7 @@ namespace TriviaClient
         private string username;
         private int correctAnswersCounter;
         private bool isAdmin;
-
+        private static Random rnd = new Random();
 
         /*
             Function constructs a GamePage object
@@ -92,14 +92,12 @@ namespace TriviaClient
 
         /*
             Function displays the answer options on the answer buttons
-            Input: answers (Dictionary<uint, string>)
+            Input: answers (List<KeyValuePair<uint, string>>)
             Output: None (void)
         */
 
-        private void DisplayAnswers(Dictionary<uint, string> answers)
+        private void DisplayAnswers(List<KeyValuePair<uint, string>> answerList)
         {
-            List<KeyValuePair<uint, string>> answerList = answers.ToList();
-
             for (int i = 0; i < this.answerButtons.Count; i++)
             {
                 if (i < answerList.Count)
@@ -147,7 +145,7 @@ namespace TriviaClient
             questionTextBlock.Text = response.Question;
             DisplayQuestionImage(response.ImageBase64);
 
-            DisplayAnswers(response.Answers);
+            DisplayAnswers(ShuffleAnswers(response.Answers));
 
             this.timeLeft = this.timePerQuestion;
             timerTextBlock.Text = this.timeLeft.ToString();
@@ -156,6 +154,19 @@ namespace TriviaClient
             this.timer.Start();
         }
 
+
+        private List<KeyValuePair<uint, string>> ShuffleAnswers(Dictionary<uint, string> answers)
+        {
+            var list = answers.ToList();
+
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = rnd.Next(i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+
+            return list;
+        }
 
         /*
             Function updates the game timer and submits an empty answer when time runs out
