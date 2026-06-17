@@ -44,7 +44,7 @@
         </ScrollViewer>
 
 
-        <Button Grid.Row="2" Height="45" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BackToMenu_Click" FontSize="25">
+        <Button Grid.Row="2" Height="45" Content="Back To Menu" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BackToMenu_Click" FontSize="25">
             </Button>
     </Grid>
 </Page>
