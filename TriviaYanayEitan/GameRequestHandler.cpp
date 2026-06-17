@@ -1,0 +1,247 @@
+#include "GameRequestHandler.h"
+#include "MenuRequestHandler.h"
+#include "RequestHandlerFactory.h"
+#include "JsonRequestPacketDeserializer.h"
+#include "JsonResponsePacketSerializer.h"
+#include "Constants.h"
+#include <thread>
+#include <chrono>
+
+/*
+	Function creates GameRequestHandler object.
+	Input: game (Game&), user (const LoggedUser&), gameManager (GameManager&), handlerFactory (RequestHandlerFactory&)
+	Output: None (constructor)
+*/
+
+GameRequestHandler::GameRequestHandler(Game& game, const LoggedUser& user)
+	: m_game(game), m_user(user), m_gameManager(GameManager::getInstance()), m_handlerFactory(RequestHandlerFactory::getInstance())
+{
+}
+
+
+/*
+	Function submits answer of current user to current game.
+	Input: requestInfo (const RequestInfo&)
+	Output: Request result (RequestResult)
+*/
+
+RequestResult GameRequestHandler::submitAnswer(const RequestInfo& requestInfo) const
+{
+	RequestResult result;
+
+	SubmitAnswerRequest submitAnswerRequest = JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(requestInfo.buffer);
+
+	unsigned int correctAnswerId = this->m_game.getCurrentCorrectAnswerId(this->m_user);
+
+	float answerTime = this->m_game.getAnswerTime(this->m_user);
+	float remainingTime = this->m_game.getRemainingTime(this->m_user);
+
+	if (answerTime < this->m_game.getTimePerQuestion())
+	{
+		this->m_game.submitAnswer(this->m_user, submitAnswerRequest.answerId, answerTime);
+	}
+	else
+	{
+		this->m_game.submitAnswer(this->m_user, NO_ANSWER, (float)this->m_game.getTimePerQuestion());
+	}
+
+	std::this_thread::sleep_for(std::chrono::milliseconds((int)(remainingTime * 1000)));
+
+	SubmitAnswerResponse response;
+	response.status = Success;
+	response.correctAnswerId = correctAnswerId;
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(response);
+	result.newHandler = const_cast<GameRequestHandler*>(this);
+
+	return result;
+}
+
+
+/*
+	Function returns current question for current user.
+	Input: requestInfo (const RequestInfo&)
+	Output: Request result (RequestResult)
+*/
+
+RequestResult GameRequestHandler::getQuestion(const RequestInfo& requestInfo) const
+{
+	RequestResult result;
+	GetQuestionResponse getQuestionResponse;
+
+	Question question = m_game.getQuestionsForUser(m_user);
+	std::vector<std::string> answers = question.getPossibleAnswers();
+
+	getQuestionResponse.status = Success;
+	getQuestionResponse.imageBase64 = question.getImageBase64();
+	getQuestionResponse.question = question.getQuestion();
+
+	for (unsigned int i = 0; i < answers.size(); i++)
+	{
+		getQuestionResponse.answers[i + 1] = answers[i];
+	}
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(getQuestionResponse);
+	result.newHandler = const_cast<GameRequestHandler*>(this);
+
+	return result;
+
+}
+
+
+/*
+	Function returns game results of current game.
+	Input: requestInfo (const RequestInfo&)
+	Output: Request result (RequestResult)
+*/
+
+RequestResult GameRequestHandler::getGameResults(const RequestInfo& requestInfo) const
+{
+	RequestResult result;
+	GetGameResultsResponse getGameResultsResponse;
+
+	if (!this->m_game.hasGameEnded())
+	{
+		getGameResultsResponse.status = Failiure;
+		result.response = JsonResponsePacketSerializer::serializeResponse(getGameResultsResponse);
+		result.newHandler = const_cast<GameRequestHandler*>(this);
+		return result;
+	}
+
+	const std::map<std::string, GameData>& players = this->m_game.getPlayers();
+
+	getGameResultsResponse.status = Success;
+
+	for (std::map<std::string, GameData>::const_iterator it = players.begin(); it != players.end(); it++)
+	{
+		PlayerResults playerResults;
+
+		playerResults.username = it->first;
+		playerResults.correctAnswerCount = it->second.correctAnswerCount;
+		playerResults.wrongAnswerCount = it->second.wrongAnswerCount;
+		playerResults.averageAnswerTime = it->second.averageAnswerTime;
+
+		getGameResultsResponse.results.push_back(playerResults);
+	}
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(getGameResultsResponse);
+	result.newHandler = const_cast<GameRequestHandler*>(this);
+
+	return result;
+}
+
+
+/*
+	Function removes current user from current game.
+	Input: requestInfo (const RequestInfo&)
+	Output: Request result (RequestResult)
+*/
+
+RequestResult GameRequestHandler::leaveGame(const RequestInfo& requestInfo) const
+{
+	RequestResult result;
+	LeaveGameResponse leaveGameResponse;
+
+	GameData userGameData = this->m_game.getGameDataForUser(this->m_user);
+
+	this->m_gameManager.submitGameStatusToDB(this->m_user.getUsername(), userGameData);
+
+	m_game.removePlayer(m_user);
+
+	if (this->m_game.getPlayers().size() == 0)
+	{
+		this->m_gameManager.deleteGame(this->m_game.getGameId());
+	}
+
+	leaveGameResponse.status = Success;
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(leaveGameResponse);
+	result.newHandler = m_handlerFactory.createMenuRequestHandler(m_user);
+
+	return result;
+}
+
+
+/*
+	Method to check if the request code is valid
+	input: the request info
+	output: true if valid and false otherwise
+*/
+
+bool GameRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
+{
+	if (requestInfo.buffer.size() == 0)
+	{
+		return false;
+	}
+
+	if (requestInfo.id == SUBMIT_ANSWER_REQUEST || requestInfo.id == GET_GAME_RESULT_REQUEST || requestInfo.id == LEAVE_GAME_REQUEST || requestInfo.id == GET_QUESTION_REQUEST)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+/*
+	Method to handle the request (send it and return the result)
+	input: the request info
+	output: the request result
+*/
+
+RequestResult GameRequestHandler::handleRequest(const RequestInfo& requestInfo) const
+{
+	// first check if the request is valid
+	if (!isRequestRelevant(requestInfo))
+	{
+		return getErrorResponse("error: Invalid request!");
+	}
+
+
+	// then sort by request id to handle each request
+	try
+	{
+		switch (requestInfo.id)
+		{
+		case SUBMIT_ANSWER_REQUEST:
+			return submitAnswer(requestInfo);
+
+		case GET_GAME_RESULT_REQUEST:
+			return getGameResults(requestInfo);
+
+		case LEAVE_GAME_REQUEST:
+			return leaveGame(requestInfo);
+
+		case GET_QUESTION_REQUEST:
+			return getQuestion(requestInfo);
+
+		default:
+			return getErrorResponse("error: Wrong request format!");
+		}
+	}
+	catch (const std::exception& error)
+	{
+		return getErrorResponse(error.what());
+	}
+}
+
+
+/*
+	method serializes and returns error response.
+	input: the errorMsg
+	output: Request result
+*/
+
+RequestResult GameRequestHandler::getErrorResponse(const std::string& errorMsg) const
+{
+	RequestResult result;
+
+	ErrorResponse errorResponse;
+	errorResponse.error = errorMsg;
+
+	result.response = JsonResponsePacketSerializer::serializeResponse(errorResponse);
+	result.newHandler = const_cast<GameRequestHandler*>(this);
+
+	return result;
+}

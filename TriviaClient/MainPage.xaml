@@ -1,0 +1,13 @@
+<Page x:Class="TriviaClient.MainPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="MainPage" Background="Transparent">
+ <Grid Margin="42">
+  <Border Width="620" Padding="54,46" Background="#DF160E17" BorderBrush="#C8FFBF32" BorderThickness="1.5" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+   <StackPanel>
+    <TextBlock Text="MACHSHILIM // TRIVIA" FontSize="42" FontWeight="Black" TextAlignment="Center"/>
+    <TextBlock Text="SECURE KNOWLEDGE NETWORK" FontFamily="Consolas" FontSize="13" Foreground="#FFFFBF32" TextAlignment="Center" Margin="0,8,0,38"/>
+    <Button Content="LOG IN" Width="260" Height="52" FontSize="18" Click="LoginButton_Click"/>
+    <Grid Margin="0,20"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition/></Grid.ColumnDefinitions><Border BorderBrush="#55FFBF32" BorderThickness="0,1,0,0" VerticalAlignment="Center"/><TextBlock Grid.Column="1" Text="OR" FontFamily="Consolas" Foreground="#FFFFBF32" Margin="14,0"/><Border Grid.Column="2" BorderBrush="#55FFBF32" BorderThickness="0,1,0,0" VerticalAlignment="Center"/></Grid>
+    <Button Content="SIGN UP" Width="260" Height="52" FontSize="18" Click="SignUpButton_Click"/>
+   </StackPanel>
+  </Border>
+ </Grid>
+</Page>
