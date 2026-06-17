@@ -108,7 +108,7 @@ namespace TriviaClient
                         uint timePerQuestion = getRoomState.TimePerQuestion;
                         this.Dispatcher.Invoke(() =>
                         {
-                            this.NavigationService.Navigate(new GamePage(questionsCount, timePerQuestion, this.username));
+                            this.NavigationService.Navigate(new GamePage(questionsCount, timePerQuestion, this.username, this.isAdmin));
                         });
                         break;
                     }
@@ -177,7 +177,7 @@ namespace TriviaClient
                 this.stopThread = true;
                 if (this.NavigationService != null)
                 {
-                    this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion, this.username));
+                    this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion, this.username, true));
                 }
                 else
                 {

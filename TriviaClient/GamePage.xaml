@@ -63,6 +63,15 @@
             </Button>
 
         </Grid>
+        <Button x:Name="leaveButton" Content="Leave" Width="24" Height="24" FontSize="12" FontWeight="Bold" Grid.Row="2" HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" Margin="0,0,15,10" Background="#FFE52B35" Foreground="White" 
+                BorderBrush="#FFFFE9AA" BorderThickness="1.5" Click="LeaveGameButton_Click">
 
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="12"/>
+                </Style>
+            </Button.Resources>
+        </Button>
     </Grid>
 </Page>

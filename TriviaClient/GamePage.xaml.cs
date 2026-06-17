@@ -36,6 +36,7 @@ namespace TriviaClient
         private List<TextBlock> answerTextBlocks;
         private string username;
         private int correctAnswersCounter;
+        private bool isAdmin;
 
 
         /*
@@ -44,18 +45,26 @@ namespace TriviaClient
             Output: None (constructor)
         */
 
-        public GamePage(uint questionCount, uint timePerQuestion, string username)
+        public GamePage(uint questionCount, uint timePerQuestion, string username, bool isAdmin)
         {
             InitializeComponent();
 
             this.questionCount = questionCount;
             this.timePerQuestion = timePerQuestion;
             this.questionNumber = 0;
+            this.isAdmin = isAdmin;
             this.username = username;
             this.correctAnswersCounter = 0;
             this.answered = false;
             this.waitingForAnswerResult = false;
             this.scoreTextBlock.Text = "Correct Answers: " + "0/" + this.questionCount.ToString();
+
+            if(this.isAdmin)
+            {
+                leaveButton.IsEnabled = false;
+                leaveButton.Background = new SolidColorBrush(Colors.DarkGray);
+                leaveButton.Content = "";
+            }
 
             this.answerButtons = new List<Button>
             {
@@ -405,6 +414,33 @@ namespace TriviaClient
             this.timer.Stop();
 
             this.NavigationService.Navigate(new GameResultsPage(this.username));
+        }
+
+        private void LeaveGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.timer.Stop();
+            LeaveGame();
+            this.NavigationService.Navigate(new MenuPage(this.username));
+        }
+
+        public void CleanUpOnClose()
+        {
+            LeaveGame();
+        }
+        public void LeaveGame()
+        {
+            try
+            {
+                // tell the server to transition back to MenuRequestHandler
+                byte[] leaveBuffer = Serializer.SerializeLeaveGameRequest();
+                LeaveGameResponse response = ClientSession.Communicator.SendEncryptedRequest<LeaveGameResponse>(leaveBuffer);
+
+                if (response.Status == 0)
+                {
+                    MessageBox.Show("Failed to leave the game.");
+                }
+            }
+            catch { }
         }
     }
 }

@@ -7,6 +7,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 using System.Security.Cryptography;
+using System.Windows;
 
 
 namespace TriviaClient
@@ -21,7 +22,6 @@ namespace TriviaClient
         {
             string senderEmail = Environment.GetEnvironmentVariable("TRIVIA_EMAIL");
             string appPassword = Environment.GetEnvironmentVariable("TRIVIA_EMAIL_PASSWORD");
-
             if (senderEmail == null || appPassword == null)
             {
                 throw new Exception("Email environment variables are missing.");
