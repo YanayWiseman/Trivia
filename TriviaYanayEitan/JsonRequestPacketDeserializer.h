@@ -34,6 +34,7 @@ public:
 
 	//V4.0.1
 	static AddQuestionRequest deserializeAddQuestionRequest(const Buffer& buffer);
+	static StartGameRequest deserializeStartGameRequest(const Buffer& buffer);
 
 private:
 	// helper methods

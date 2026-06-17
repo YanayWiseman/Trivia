@@ -83,4 +83,10 @@ namespace TriviaClient
         public int CorrectAnswerId { get; set; }
     }
 
+    public class StartGameRequest
+    {
+        [JsonProperty("questionCount")]
+        public uint QuestionCount { get; set; }
+    }
+
 }

@@ -59,3 +59,8 @@ struct AddQuestionRequest
     std::vector<std::string> answers;
     std::string imageBase64;  // empty means no image
 };
+
+struct StartGameRequest
+{
+    unsigned int questionCount;
+};

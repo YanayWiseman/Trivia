@@ -152,9 +152,9 @@ namespace TriviaClient
             return SerializeJson(new { }, (int)RequestCode.CloseRoomRequestCode);
         }
 
-        public static byte[] SerializeStartGameRequest()
+        public static byte[] SerializeStartGameRequest(StartGameRequest startGameRequest)
         {
-            return SerializeJson(new { }, (int)RequestCode.StartGameRequestCode);
+            return SerializeJson(startGameRequest, (int)RequestCode.StartGameRequestCode);
         }
 
         public static byte[] SerializeGetQuestionRequest()
