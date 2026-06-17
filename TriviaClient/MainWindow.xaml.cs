@@ -72,9 +72,13 @@ namespace TriviaClient
             {
                 waitingPage.CleanupOnClose();
             }
-            if (currentPage is GameResultsPage resultsPage)
+            else if (currentPage is GameResultsPage resultsPage)
             {
                 resultsPage.CleanupOnClose();
+            }
+            else if(currentPage is GamePage gamePage)
+            {
+                gamePage.CleanUpOnClose();
             }
 
             // then always logout

@@ -63,6 +63,18 @@ namespace TriviaClient
         public void CleanupOnClose()
         {
             this.stopPolling = true;
+                        try
+            {
+                // tell the server to transition back to MenuRequestHandler
+                byte[] leaveBuffer = Serializer.SerializeLeaveGameRequest();
+                LeaveGameResponse response = ClientSession.Communicator.SendEncryptedRequest<LeaveGameResponse>(leaveBuffer);
+
+                if (response.Status == 0)
+                {
+                    MessageBox.Show("Failed to leave the game.");
+                }
+            }
+            catch { }
         }
 
         private List<PlayerResult>? FetchGameResults(List<ServerPlayerResult>? playersResults)
