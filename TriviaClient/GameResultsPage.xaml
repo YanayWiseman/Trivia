@@ -11,7 +11,7 @@
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,10">
             <Border Background="#DC160E17" BorderBrush="#B8FFBF32" BorderThickness="1.5" CornerRadius="15" Width="540" HorizontalAlignment="Center" Padding="15">
-                <ItemsControl ItemsSource="{Binding leaderboard}">
+                <ItemsControl x:Name="ResultsList" ItemsSource="{Binding leaderboard}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top"/>

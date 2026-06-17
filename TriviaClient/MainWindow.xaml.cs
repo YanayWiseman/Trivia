@@ -65,18 +65,32 @@ namespace TriviaClient
             if (currentPage is LoginPage || currentPage is SignUpPage || currentPage is MainPage)
             {
                 // not logged in yet, just close
+                ClientSession.Communicator.Disconnect();
                 return;
             }
             if (currentPage is WaitingPage waitingPage)
             {
                 waitingPage.CleanupOnClose();
             }
+            if (currentPage is GameResultsPage resultsPage)
+            {
+                resultsPage.CleanupOnClose();
+            }
 
             // then always logout
-            byte[] requestBuffer = Serializer.SerializeLogoutRequest();
-            ClientSession.Communicator.SendRequest<LogoutResponse>(requestBuffer);
-
-            ClientSession.Communicator.Disconnect();
+            try
+            {
+                byte[] requestBuffer = Serializer.SerializeLogoutRequest();
+                ClientSession.Communicator.SendEncryptedRequest<LogoutResponse>(requestBuffer);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Logout failed: " + ex);
+            }
+            finally
+            {
+                ClientSession.Communicator.Disconnect();
+            }
         }
     }
 }

@@ -217,7 +217,7 @@ namespace TriviaClient
             this.lastSubmitResponse = await Task.Run(() =>
             {
                 byte[] requestBuffer = Serializer.SerializeSubmitAnswerRequest(request);
-                return ClientSession.Communicator.SendRequest<SubmitAnswerResponse>(requestBuffer);
+                return ClientSession.Communicator.SendEncryptedRequest<SubmitAnswerResponse>(requestBuffer);
             });
 
             if (this.lastSubmitResponse.CorrectAnswerId == answerId)

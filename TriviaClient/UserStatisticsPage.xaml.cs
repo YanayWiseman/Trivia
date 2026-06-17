@@ -30,7 +30,7 @@ namespace TriviaClient
             {
                 byte[] requestBuffer = Serializer.SerializeGetPersonalStatsRequest();
 
-                GetPersonalStatsResponse response = ClientSession.Communicator.SendRequest<GetPersonalStatsResponse>(requestBuffer);
+                GetPersonalStatsResponse response = ClientSession.Communicator.SendEncryptedRequest<GetPersonalStatsResponse>(requestBuffer);
 
                 if (response.Status != 1)
                 {

@@ -56,7 +56,7 @@ namespace TriviaClient
                     OneVsOneStatusResponse response = await Task.Run(() =>
                     {
                         byte[] requestBuffer = Serializer.SerializeGetOneVsOneStatusRequest();
-                        return ClientSession.Communicator.SendRequest<OneVsOneStatusResponse>(requestBuffer);
+                        return ClientSession.Communicator.SendEncryptedRequest<OneVsOneStatusResponse>(requestBuffer);
                     });
 
                     if (response.Status != 1)
@@ -104,7 +104,7 @@ namespace TriviaClient
             try
             {
                 byte[] requestBuffer = Serializer.SerializeCancelOneVsOneQueueRequest();
-                ClientSession.Communicator.SendRequest<OneVsOneStatusResponse>(requestBuffer);
+                ClientSession.Communicator.SendEncryptedRequest<OneVsOneStatusResponse>(requestBuffer);
             }
             catch
             {
