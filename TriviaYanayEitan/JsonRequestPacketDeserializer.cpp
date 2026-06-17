@@ -264,6 +264,32 @@ AddQuestionRequest JsonRequestPacketDeserializer::deserializeAddQuestionRequest(
 		request.correctAnswerId = jsonData.at("correctAnswerId").get<int>();
 		request.question = jsonData.at("question").get<std::string>();
 		request.answers = jsonData.at("answers").get <std::vector<std::string>>();
+		request.imageBase64 = jsonData.value("imageBase64", "");  // optional field, default to empty string if not present
+	}
+	catch (const std::exception& error)
+	{
+		throw std::runtime_error("JsonRequestPacketDeserializer::deserializeAddQuestionRequest: error parsing json");
+	}
+
+	return request;
+}
+
+
+/*
+	Method to deserialize a start game request given the buffer
+	input: the buffer
+	output: the built submit answer request struct
+*/
+
+StartGameRequest JsonRequestPacketDeserializer::deserializeStartGameRequest(const Buffer& buffer)
+{
+	StartGameRequest request;
+
+	json jsonData = JsonRequestPacketDeserializer::extractJson(buffer, START_GAME_REQUEST);
+
+	try
+	{
+		request.questionCount = jsonData.at("questionCount").get<unsigned int>();
 	}
 	catch (const std::exception& error)
 	{

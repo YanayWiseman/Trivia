@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace TriviaClient
 {
@@ -18,17 +19,15 @@ namespace TriviaClient
         public static T DeserializeResponse<T>(byte[] buffer)
         {
             string json = GetJson(buffer);
-            // ? makes T a nullable type
+
             T? returnValue = JsonConvert.DeserializeObject<T>(json);
 
-            if(returnValue == null)
+            if (returnValue == null)
             {
                 throw new Exception("Failed to deserialize response.");
             }
-            else
-            {
-                return returnValue;
-            }
+
+            return returnValue;
         }
 
         /*

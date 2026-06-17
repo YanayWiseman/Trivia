@@ -53,7 +53,7 @@ namespace TriviaClient
                 {
                     byte[] requestBuffer = Serializer.SerializeGetRoomsRequest();
 
-                    GetRoomsResponse response = ClientSession.Communicator.SendRequest<GetRoomsResponse>(requestBuffer);
+                    GetRoomsResponse response = ClientSession.Communicator.SendEncryptedRequest<GetRoomsResponse>(requestBuffer);
 
                     if (response.Status == 1)
                     {
@@ -120,13 +120,13 @@ namespace TriviaClient
             {
                 byte[] requestBuffer = Serializer.serializeJoinRoomRequest(request);
 
-                JoinRoomResponse response = ClientSession.Communicator.SendRequest<JoinRoomResponse>(requestBuffer);
+                JoinRoomResponse response = ClientSession.Communicator.SendEncryptedRequest<JoinRoomResponse>(requestBuffer);
 
                 if (response.Status == 1)
                 {
                     byte[] getRoomStateRequestBuffer = { (byte)RequestCode.GetRoomStateRequestCode  };
 
-                    GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
+                    GetRoomStateResponse getRoomState = ClientSession.Communicator.SendEncryptedRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
 
                     this.stopThread = true;
                     this.NavigationService.Navigate(new WaitingPage(request.RoomId, selectedRoom.Name, username, isAdmin: false));

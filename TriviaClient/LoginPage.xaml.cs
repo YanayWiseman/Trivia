@@ -11,7 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System;
+
 
 namespace TriviaClient
 {
@@ -30,14 +31,31 @@ namespace TriviaClient
             }
         }
 
+        /*
+            Function attempts to log the user into the server.
+            Input: sender (object), e (RoutedEventArgs)
+            Output: None
+        */
+
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            string username = UsernameTextBox.Text;
+            string username = UsernameTextBox.Text.Trim();
             string password = PasswordBox.Password;
 
             if (username == "" || password == "")
             {
                 MessageBox.Show("Username and password cannot be empty.");
+                return;
+            }
+
+            /*
+                The user must already have saved OTP pads on this device.
+                The pads were received and saved during signup.
+            */
+
+            if (!CryptoSession.Load(username))
+            {
+                MessageBox.Show("No encryption keys were found for this user. This user must sign up on this device first.");
                 return;
             }
 
@@ -50,8 +68,7 @@ namespace TriviaClient
             try
             {
                 byte[] requestBuffer = Serializer.SerializeLoginRequest(request);
-
-                LoginResponse response = ClientSession.Communicator.SendRequest<LoginResponse>(requestBuffer);
+                LoginResponse response = ClientSession.Communicator.SendEncryptedRequest<LoginResponse>(requestBuffer);
 
                 if (response.Status == 1)
                 {
@@ -64,7 +81,7 @@ namespace TriviaClient
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Server error: " + ex.Message);
+                MessageBox.Show("Encrypted login failed: " + ex.Message);
             }
         }
     }

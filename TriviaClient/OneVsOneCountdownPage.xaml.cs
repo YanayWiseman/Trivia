@@ -71,7 +71,7 @@ namespace TriviaClient
             this.timer.Stop();
 
             this.NavigationService.Navigate(
-                new GamePage(this.questionCount, this.timePerQuestion, this.username)
+                new GamePage(this.questionCount, this.timePerQuestion, this.username, true)  // cant leave game
             );
         }
     }

@@ -20,20 +20,61 @@ namespace TriviaClient
     {
         public List<PlayerResult>? leaderboard { get; set; }
         private string username;
+        private bool stopPolling;
+
         public GameResultsPage(string username)
         {
             InitializeComponent();
-            byte[] getGameResultsRequestBuffer = Serializer.SerializeGetGameResultsRequest();
-            GetGameResultResponse getGameResultsResponse = ClientSession.Communicator.SendRequest<GetGameResultResponse>(getGameResultsRequestBuffer);
-
-            if (getGameResultsResponse.Status == 1)
-            {
-                this.leaderboard = FetchGameResults(getGameResultsResponse.results);
-            }
-
+            
             // tell the xaml to look at this class for data bindings
             this.DataContext = this;
             this.username = username;
+            Loaded += GameResultsPage_Loaded;
+        }
+
+        private async void GameResultsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            stopPolling = false;
+
+            while(!this.stopPolling)
+            {
+                try
+                {
+                    byte[] getGameResultsRequestBuffer = Serializer.SerializeGetGameResultsRequest();
+                    GetGameResultResponse getGameResultsResponse =ClientSession.Communicator.SendEncryptedRequest<GetGameResultResponse>(getGameResultsRequestBuffer);
+
+                    if (getGameResultsResponse.Status == 1)
+                    {
+                        this.leaderboard = FetchGameResults(getGameResultsResponse.results);
+                        ResultsList.ItemsSource = leaderboard;
+                        break;
+                    }
+                    MessageBox.Show("The server says the game has not ended yet.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Server error: " + ex.Message);
+                }
+
+                await Task.Delay(300);
+            }
+        }
+
+        public void CleanupOnClose()
+        {
+            this.stopPolling = true;
+                        try
+            {
+                // tell the server to transition back to MenuRequestHandler
+                byte[] leaveBuffer = Serializer.SerializeLeaveGameRequest();
+                LeaveGameResponse response = ClientSession.Communicator.SendEncryptedRequest<LeaveGameResponse>(leaveBuffer);
+
+                if (response.Status == 0)
+                {
+                    MessageBox.Show("Failed to leave the game.");
+                }
+            }
+            catch { }
         }
 
         private List<PlayerResult>? FetchGameResults(List<ServerPlayerResult>? playersResults)
@@ -74,7 +115,7 @@ namespace TriviaClient
             {
                 // tell the server to transition back to MenuRequestHandler
                 byte[] leaveBuffer = Serializer.SerializeLeaveGameRequest();
-                ClientSession.Communicator.SendRequest<LeaveGameResponse>(leaveBuffer);
+                ClientSession.Communicator.SendEncryptedRequest<LeaveGameResponse>(leaveBuffer);
             }
             catch { }
             this.NavigationService.Navigate(new MenuPage(username));

@@ -34,8 +34,9 @@ namespace TriviaClient
             string roomName = RoomNameTextBox.Text;
             string questionTimeText = QuestionTimeTextBox.Text;
             string maxPlayersText = MaxPlayersTextBox.Text;
+            string questionCountText = QuestionsCountTextBox.Text;
 
-            if (roomName == "" || questionTimeText == "" || maxPlayersText == "")
+            if (roomName == "" || questionTimeText == "" || maxPlayersText == "" || questionCountText == "")
             {
                 MessageBox.Show("Please fill all fields");
                 return;
@@ -43,6 +44,7 @@ namespace TriviaClient
 
             int questionTime;
             int maxPlayers;
+            int questionCount;
 
             if (!int.TryParse(questionTimeText, out questionTime))
             {
@@ -56,9 +58,21 @@ namespace TriviaClient
                 return;
             }
 
-            if (questionTime <= 0 || maxPlayers <= 0)
+            if (!int.TryParse(questionCountText, out questionCount))
             {
-                MessageBox.Show("Values must be positive.");
+                MessageBox.Show("Question count must be a number");
+                return;
+            }
+
+            if (questionTime <= 0 || maxPlayers <= 0 || questionCount <= 0)
+            {
+                MessageBox.Show("Values must be positive");
+                return;
+            }
+
+            if (questionCount > 20)
+            {
+                MessageBox.Show("Question count must be less than 20");
                 return;
             }
 
@@ -66,7 +80,7 @@ namespace TriviaClient
             {
                 RoomName = roomName,
                 MaxUsers = (uint)maxPlayers,
-                QuestionsCount = 10,
+                QuestionsCount = (uint)questionCount,
                 AnswerTimeout = (uint)questionTime
             };
 
@@ -74,13 +88,12 @@ namespace TriviaClient
             {
                 byte[] requestBuffer = Serializer.serializeCreateRoomRequest(request);
 
-                CreateRoomResponse response = ClientSession.Communicator.SendRequest<CreateRoomResponse>(requestBuffer);
+                CreateRoomResponse response = ClientSession.Communicator.SendEncryptedRequest<CreateRoomResponse>(requestBuffer);
 
                 uint id = response.RoomId;
 
                 if (response.Status == 1)
                 {
-                    MessageBox.Show("Room created successfully.");
                     this.NavigationService.Navigate(new WaitingPage(id, roomName, this.username, request.AnswerTimeout, request.QuestionsCount, isAdmin: true));
                 }
                 else

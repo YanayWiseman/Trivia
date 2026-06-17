@@ -92,6 +92,53 @@ Features:
 - The trivia game automatically starts for both participants simultaneously
 
 This mode provides a fast competitive experience without requiring players to create or join rooms manually.
+
+### Bonus 5.0.0 - One-Time Pad (OTP) Encryption
+All client-server communication (requests and responses) is encrypted using a One-Time Pad (OTP) encryption.
+
+- Every message is encrypted
+- Keys are unique and are generated in the signup proccess.
+- Ensures unbreakable communication.
+
+This applies to the entire protocol layer, not just specific messages.
+
+### Bonus - Email Verification System
+During signup, users must verify their account using a 6-digit one-time verification code sent via email.
+
+- Accounts will not be created until verification is completed
+- Prevents fake or automated account creation
+- Ensures valid email ownership before login access
+
+### Bonus - Thread Pooling
+The server uses a thread pool (size 20) instead of spawning a thread per client.
+
+Benefits:
+- predictable resource usage
+- improved scalability under load
+
+### Bonus - Custom Trivia Questions System
+Room admins can add new trivia questions through a dedicated GUI screen.
+
+Each question supports:
+- question text  
+- correct answer  
+- three incorrect answers  
+
+New questions are immediately integrated into the active question.
+
+### Bonus - Questions With Pictures
+When a room admin adds a new question he is presented with the option of adding an image.
+
+- The file must be an image.
+- The question can be about the image, making the game more interactive.
+
+### GUI Improvements - Animated WPF Interface
+The client features an enhanced animated GUI with improved transitions making the gameplay experience much more fun!
+
+#### Room Configuration Control
+Room admins can configure the number of questions per game session, allowing customizable game length.
+
+
 ---
 
 ## Running the Project

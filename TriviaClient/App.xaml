@@ -1,9 +1,114 @@
-﻿<Application x:Class="TriviaClient.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:TriviaClient"
-             StartupUri="MainWindow.xaml">
-    <Application.Resources>
-         
-    </Application.Resources>
+<Application x:Class="TriviaClient.App"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ StartupUri="MainWindow.xaml">
+ <Application.Resources>
+  <SolidColorBrush x:Key="CyberRed" Color="#E52B35"/>
+  <SolidColorBrush x:Key="CyberRedDark" Color="#8F101B"/>
+  <SolidColorBrush x:Key="CyberYellow" Color="#FFBF32"/>
+  <SolidColorBrush x:Key="CyberCream" Color="#FFF4D6"/>
+  <SolidColorBrush x:Key="CyberPanel" Color="#E0150E17"/>
+  <SolidColorBrush x:Key="CyberPanelSoft" Color="#C5221018"/>
+  <SolidColorBrush x:Key="CyberMuted" Color="#FFC96B"/>
+
+  <Style TargetType="Page">
+   <Setter Property="Background" Value="Transparent"/>
+   <Setter Property="FontFamily" Value="Segoe UI"/>
+   <Setter Property="Foreground" Value="{StaticResource CyberCream}"/>
+  </Style>
+
+  <Style TargetType="TextBlock">
+   <Setter Property="Foreground" Value="{StaticResource CyberCream}"/>
+   <Setter Property="FontFamily" Value="Segoe UI Semibold"/>
+  </Style>
+
+  <Style TargetType="Button">
+   <Setter Property="Foreground" Value="#FF17090C"/>
+   <Setter Property="Background" Value="{StaticResource CyberYellow}"/>
+   <Setter Property="BorderBrush" Value="#FFFFE7A2"/>
+   <Setter Property="BorderThickness" Value="1"/>
+   <Setter Property="FontFamily" Value="Segoe UI Semibold"/>
+   <Setter Property="FontWeight" Value="Bold"/>
+   <Setter Property="Cursor" Value="Hand"/>
+   <Setter Property="Padding" Value="14,6"/>
+   <Setter Property="MinHeight" Value="40"/>
+   <Setter Property="MinWidth" Value="105"/>
+   <Setter Property="Template">
+    <Setter.Value>
+     <ControlTemplate TargetType="Button">
+      <Border x:Name="Shell" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+       <Grid>
+        <Border BorderBrush="#55FFFFFF" BorderThickness="1,1,0,0" CornerRadius="3"/>
+        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+       </Grid>
+      </Border>
+      <ControlTemplate.Triggers>
+       <Trigger Property="IsMouseOver" Value="True">
+        <Setter TargetName="Shell" Property="Background" Value="#FFFFD15A"/>
+        <Setter TargetName="Shell" Property="BorderBrush" Value="#FFFFFFFF"/>
+       </Trigger>
+       <Trigger Property="IsPressed" Value="True">
+        <Setter TargetName="Shell" Property="Background" Value="#FFE52B35"/>
+        <Setter Property="Foreground" Value="White"/>
+       </Trigger>
+       <Trigger Property="IsEnabled" Value="False">
+        <Setter TargetName="Shell" Property="Opacity" Value="0.45"/>
+       </Trigger>
+      </ControlTemplate.Triggers>
+     </ControlTemplate>
+    </Setter.Value>
+   </Setter>
+  </Style>
+
+  <Style TargetType="TextBox">
+   <Setter Property="Background" Value="#E50D080B"/>
+   <Setter Property="Foreground" Value="{StaticResource CyberCream}"/>
+   <Setter Property="CaretBrush" Value="{StaticResource CyberYellow}"/>
+   <Setter Property="BorderBrush" Value="#A8FFBF32"/>
+   <Setter Property="BorderThickness" Value="1"/>
+   <Setter Property="Padding" Value="10,6"/>
+   <Setter Property="FontFamily" Value="Consolas"/>
+   <Setter Property="VerticalContentAlignment" Value="Center"/>
+  </Style>
+
+
+
+
+
+  <Style TargetType="PasswordBox">
+   <Setter Property="Background" Value="#E50D080B"/>
+   <Setter Property="Foreground" Value="{StaticResource CyberCream}"/>
+   <Setter Property="BorderBrush" Value="#A8FFBF32"/>
+   <Setter Property="BorderThickness" Value="1"/>
+   <Setter Property="Padding" Value="10,6"/>
+   <Setter Property="FontFamily" Value="Consolas"/>
+   <Setter Property="VerticalContentAlignment" Value="Center"/>
+  </Style>
+
+  <Style TargetType="ListBox">
+   <Setter Property="Background" Value="#D90B070A"/>
+   <Setter Property="Foreground" Value="{StaticResource CyberCream}"/>
+   <Setter Property="BorderBrush" Value="#99FFBF32"/>
+   <Setter Property="BorderThickness" Value="1"/>
+   <Setter Property="Padding" Value="6"/>
+  </Style>
+  <Style TargetType="ListBoxItem">
+   <Setter Property="Padding" Value="10,7"/>
+   <Setter Property="Margin" Value="0,2"/>
+   <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+   <Style.Triggers>
+    <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#55FFBF32"/></Trigger>
+    <Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#B8E52B35"/><Setter Property="Foreground" Value="White"/></Trigger>
+   </Style.Triggers>
+  </Style>
+  <Style TargetType="ProgressBar">
+   <Setter Property="Foreground" Value="{StaticResource CyberYellow}"/>
+   <Setter Property="Background" Value="#66100008"/>
+  </Style>
+  <Style TargetType="DatePicker">
+   <Setter Property="Background" Value="#E50D080B"/>
+   <Setter Property="Foreground" Value="{StaticResource CyberCream}"/>
+   <Setter Property="BorderBrush" Value="#A8FFBF32"/>
+  </Style>
+ </Application.Resources>
 </Application>

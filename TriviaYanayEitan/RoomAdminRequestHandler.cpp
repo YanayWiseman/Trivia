@@ -79,6 +79,7 @@ RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestI
 	}
 	catch (const std::exception& error)
 	{
+		std::cerr << error.what() << std::endl;
 		return getErrorResponse(error.what());
 	}
 }
@@ -114,8 +115,9 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 {
 	RequestResult result;
 	StartGameResponse response;
+	StartGameRequest request = JsonRequestPacketDeserializer::deserializeStartGameRequest(requestInfo.buffer);
 
-	Game& game = GameManager::getInstance().createGame(this->m_room, this->m_newQuestions);
+	Game& game = GameManager::getInstance().createGame(this->m_room, request.questionCount, this->m_newQuestions);
 
 	this->m_room.setStatus(InGame);
 	response.status = Success;
@@ -138,7 +140,7 @@ RequestResult RoomAdminRequestHandler::addQuestion(const RequestInfo& requestInf
 	AddQuestionResponse response;
 
 	AddQuestionRequest request = JsonRequestPacketDeserializer::deserializeAddQuestionRequest(requestInfo.buffer);
-	Question question(request.question, request.answers, request.correctAnswerId);
+	Question question(request.question, request.answers, request.correctAnswerId, request.imageBase64);
 	this->m_newQuestions.push_back(question);  // will be added to the default 10 questions when creating the game
 	this->m_room.incrementQuestion();
 	response.status = Success;
