@@ -168,7 +168,9 @@ namespace TriviaClient
 
         private void StartGame_Click(object sender, RoutedEventArgs e)
         {
-            byte[] requestBuffer = Serializer.SerializeStartGameRequest();
+            StartGameRequest request = new StartGameRequest();
+            request.QuestionCount = this.questionCount;
+            byte[] requestBuffer = Serializer.SerializeStartGameRequest(request);
 
             StartGameResponse response = ClientSession.Communicator.SendEncryptedRequest<StartGameResponse>(requestBuffer);
             Console.WriteLine(response.Status);
