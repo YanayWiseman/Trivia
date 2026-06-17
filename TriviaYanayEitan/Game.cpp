@@ -3,9 +3,7 @@
 
 float Game::calculateAnswerTime(const GameData& gameData) const
 {
-	float answerTime = std::chrono::duration<float>(
-		std::chrono::steady_clock::now() - gameData.questionStartTime
-	).count();
+	float answerTime = std::chrono::duration<float>(std::chrono::steady_clock::now() - gameData.questionStartTime).count();
 
 	if (answerTime > m_timePerQuestion)
 	{
