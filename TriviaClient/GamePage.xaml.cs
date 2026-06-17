@@ -1,0 +1,498 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Threading;
+
+namespace TriviaClient
+{
+
+    public partial class GamePage : Page
+    {
+        private DispatcherTimer timer;
+
+        private bool isLeaving;
+        private uint timeLeft;
+        private uint questionNumber;
+        private uint questionCount;
+        private uint timePerQuestion;
+
+        private bool answered;
+        private bool waitingForAnswerResult;
+
+        private SubmitAnswerResponse? lastSubmitResponse;
+        private Button? clickedButton;
+
+        private List<Button> answerButtons;
+        private List<TextBlock> answerTextBlocks;
+        private string username;
+        private int correctAnswersCounter;
+        private bool isAdmin;
+        private static Random rnd = new Random();
+
+        /*
+            Function constructs a GamePage object
+            Input: questionCount (uint), timePerQuestion (uint)
+            Output: None (constructor)
+        */
+
+        public GamePage(uint questionCount, uint timePerQuestion, string username, bool isAdmin)
+        {
+            InitializeComponent();
+
+            this.questionCount = questionCount;
+            this.timePerQuestion = timePerQuestion;
+            this.questionNumber = 0;
+            this.isAdmin = isAdmin;
+            this.username = username;
+            this.correctAnswersCounter = 0;
+            this.answered = false;
+            this.isLeaving = false;
+            this.waitingForAnswerResult = false;
+            this.scoreTextBlock.Text = "Correct Answers: " + "0/" + this.questionCount.ToString();
+
+            this.answerButtons = new List<Button>
+            {
+                answerButton1,
+                answerButton2,
+                answerButton3,
+                answerButton4
+            };
+
+           this.answerTextBlocks = new List<TextBlock>
+           {
+                answerTextBlock1,
+                answerTextBlock2,
+                answerTextBlock3,
+                answerTextBlock4
+           };
+
+            this.timer = new DispatcherTimer();
+            this.timer.Interval = TimeSpan.FromSeconds(1);
+            this.timer.Tick += TimerTick;
+
+            LoadNextQuestion();
+        }
+
+
+        /*
+            Function displays the answer options on the answer buttons
+            Input: answers (List<KeyValuePair<uint, string>>)
+            Output: None (void)
+        */
+
+        private void DisplayAnswers(List<KeyValuePair<uint, string>> answerList)
+        {
+            for (int i = 0; i < this.answerButtons.Count; i++)
+            {
+                if (i < answerList.Count)
+                {
+                    this.answerButtons[i].Tag = answerList[i].Key;
+                    this.answerTextBlocks[i].Text = answerList[i].Value;
+                    this.answerButtons[i].Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    this.answerButtons[i].Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
+
+        /*
+            Function loads the next question from the server and displays it on the game page
+            Input: None
+            Output: None (void)
+        */
+
+        private void LoadNextQuestion()
+        {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+            this.answered = false;
+            this.waitingForAnswerResult = false;
+            this.lastSubmitResponse = null;
+            this.clickedButton = null;
+
+            ResetButtonColors();
+            EnableAnswerButtons();
+
+            byte[] request = Serializer.SerializeGetQuestionRequest();
+            GetQuestionResponse response = ClientSession.Communicator.SendEncryptedRequest<GetQuestionResponse>(request);
+
+            if (response.Status != 1)
+            {
+                ShowResultsPage();
+                return;
+            }
+
+            this.questionNumber++;
+
+            questionNumberTextBlock.Text = "Question " + this.questionNumber + " / " + this.questionCount;
+            questionTextBlock.Text = response.Question;
+            DisplayQuestionImage(response.ImageBase64);
+
+            DisplayAnswers(ShuffleAnswers(response.Answers));
+
+            this.timeLeft = this.timePerQuestion;
+            timerTextBlock.Text = this.timeLeft.ToString();
+
+            this.timer.Stop();
+            this.timer.Start();
+        }
+
+
+        private List<KeyValuePair<uint, string>> ShuffleAnswers(Dictionary<uint, string> answers)
+        {
+            var list = answers.ToList();
+
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = rnd.Next(i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+
+            return list;
+        }
+
+        /*
+            Function updates the game timer and submits an empty answer when time runs out
+            Input: sender (object), e (EventArgs)
+            Output: None (void)
+        */
+
+        private async void TimerTick(object? sender, EventArgs e)
+        {
+            if (this.isLeaving)
+            {
+                this.timer.Stop();
+                return;
+            }
+
+            if (this.timeLeft > 0)
+            {
+                this.timeLeft--;
+                timerTextBlock.Text = this.timeLeft.ToString();
+                return;
+            }
+
+            this.timer.Stop();
+
+            if (!this.answered)
+            {
+                this.answered = true;
+                this.waitingForAnswerResult = true;
+
+                MarkWaitingForResult(0);
+
+                SubmitAnswerRequest request = new SubmitAnswerRequest();
+                request.AnswerId = 0;
+
+                this.lastSubmitResponse = await Task.Run(() =>
+                {
+                    byte[] requestBuffer = Serializer.SerializeSubmitAnswerRequest(request);
+
+                    return ClientSession.Communicator.SendEncryptedRequest<SubmitAnswerResponse>(requestBuffer);
+                });
+
+                if (this.isLeaving)
+                {
+                    return;
+                }
+
+                this.waitingForAnswerResult = false;
+            }
+
+            if (!this.waitingForAnswerResult)
+            {
+                await ShowAnswerResult();
+            }
+        }
+
+
+        /*
+             Function handles an answer button click and sends the selected answer to the server
+             Input: sender (object), e (RoutedEventArgs)
+             Output: None (void)
+        */
+
+        private async void AnswerButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.answered)
+            {
+                return;
+            }
+
+            this.answered = true;
+            this.waitingForAnswerResult = true;
+
+            this.clickedButton = (Button)sender;
+            uint answerId = Convert.ToUInt32(this.clickedButton.Tag);
+            MarkWaitingForResult(answerId);
+
+            SubmitAnswerRequest request = new SubmitAnswerRequest { AnswerId = answerId };
+
+            this.lastSubmitResponse = await Task.Run(() =>
+            {
+                byte[] requestBuffer = Serializer.SerializeSubmitAnswerRequest(request);
+                return ClientSession.Communicator.SendEncryptedRequest<SubmitAnswerResponse>(requestBuffer);
+            });
+
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+            if (this.lastSubmitResponse.CorrectAnswerId == answerId)
+            {
+                this.correctAnswersCounter++;
+                this.scoreTextBlock.Text = "Correct Answers: " + this.correctAnswersCounter + "/" + this.questionCount;
+            }
+
+            this.waitingForAnswerResult = false;
+            await ShowAnswerResult();
+        }
+
+
+        /*
+            Function marks the buttons while waiting for the server's correct answer response
+            Input: selectedAnswerId (uint)
+            Output: None (void)
+        */
+
+        private void MarkWaitingForResult(uint selectedAnswerId)
+        {
+            for (int i = 0; i < this.answerButtons.Count; i++)
+            {
+                if (this.answerButtons[i].Tag == null)
+                {
+                    continue;
+                }
+
+                uint buttonAnswerId = Convert.ToUInt32(this.answerButtons[i].Tag);
+
+                if (selectedAnswerId != 0 && buttonAnswerId == selectedAnswerId)
+                {
+                    this.answerButtons[i].Background = Brushes.DarkOrange;
+                }
+                else
+                {
+                    this.answerButtons[i].Background = Brushes.LightGray;
+                }
+
+                this.answerButtons[i].IsHitTestVisible = false;
+                this.answerButtons[i].Focusable = false;
+            }
+        }
+
+
+        /*
+            Function displays the answer result after the server returns the correct answer
+            Input: None
+            Output: None (void)
+        */
+
+        private async Task ShowAnswerResult()
+        {
+            if (this.lastSubmitResponse == null)
+            {
+                return;
+            }
+
+            this.timer.Stop();
+
+            uint clickedAnswerId = 0;
+            if (this.clickedButton != null)
+            {
+                clickedAnswerId = Convert.ToUInt32(this.clickedButton.Tag);
+            }
+
+            MarkAnswer(this.lastSubmitResponse.CorrectAnswerId);
+
+            await Task.Delay(1200);
+
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+
+            if (this.questionNumber >= this.questionCount)
+            {
+                ShowResultsPage();
+            }
+            else
+            {
+                LoadNextQuestion();
+            }
+        }
+
+
+        /*
+            Function marks the correct answer and the selected wrong answer using different colors
+            Input: clickedAnswerId (uint), correctAnswerId (uint)
+            Output: None (void)
+        */
+
+        private void MarkAnswer(uint correctAnswerId)
+        {
+            for (int i = 0; i < this.answerButtons.Count; i++)
+            {
+                if (this.answerButtons[i].Tag == null)
+                {
+                    continue;
+                }
+
+                uint buttonAnswerId = Convert.ToUInt32(this.answerButtons[i].Tag);
+
+                if (buttonAnswerId == correctAnswerId)
+                {
+                    this.answerButtons[i].Background = Brushes.Green;
+                }
+                else
+                {
+                    this.answerButtons[i].Background = Brushes.Red;
+                }
+
+                this.answerButtons[i].IsHitTestVisible = false;
+                this.answerButtons[i].Focusable = false;
+            }
+        }
+
+
+        /*
+            Function resets the answer buttons to their original colors
+            Input: None
+            Output: None (void)
+        */
+
+        private void ResetButtonColors()
+        {
+            answerButton1.Background = (Brush)new BrushConverter().ConvertFrom("#E53935")!;
+            answerButton2.Background = (Brush)new BrushConverter().ConvertFrom("#FB8C00")!;
+            answerButton3.Background = (Brush)new BrushConverter().ConvertFrom("#FDD835")!;
+            answerButton4.Background = (Brush)new BrushConverter().ConvertFrom("#8D2C00")!;
+        }
+
+
+        /*
+            Function enables answer button clicks
+            Input: None
+            Output: None (void)
+        */
+
+        private void EnableAnswerButtons()
+        {
+            for (int i = 0; i < this.answerButtons.Count; i++)
+            {
+                this.answerButtons[i].IsHitTestVisible = true;
+                this.answerButtons[i].Focusable = true;
+            }
+        }
+        /*
+            Method displays the question image if one was provided, hides it otherwise.
+            input: base64 string (empty means no image)
+            output: None
+           */
+        private void DisplayQuestionImage(string imageBase64)
+        {
+            if (string.IsNullOrEmpty(imageBase64))
+            {
+                questionImage.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            try
+            {
+                byte[] imageBytes = Convert.FromBase64String(imageBase64);
+                using (var ms = new System.IO.MemoryStream(imageBytes))
+                {
+                    var bitmapImage = new BitmapImage();
+                    bitmapImage.BeginInit();
+                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapImage.StreamSource = ms;
+                    bitmapImage.EndInit();
+                    questionImage.Source = bitmapImage;
+                    questionImage.Visibility = Visibility.Visible;
+                }
+            }
+            catch
+            {
+                // if image is corrupt or invalid just hide it
+                questionImage.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        /*
+            Function stops the game timer and moves the user to the results page
+            Input: None
+            Output: None (void)
+        */
+
+        private void ShowResultsPage()
+        {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+            this.timer.Stop();
+            this.NavigationService.Navigate(new GameResultsPage(this.username));
+        }
+
+        private void LeaveGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+            this.isLeaving = true;
+            this.timer.Stop();
+
+            LeaveGame();
+
+            this.NavigationService.Navigate(new MenuPage(this.username));
+        }
+
+        public void CleanUpOnClose()
+        {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+            this.isLeaving = true;
+            this.timer.Stop();
+            LeaveGame();
+        }
+
+        public bool LeaveGame()
+        {
+            try
+            {
+                byte[] leaveBuffer = Serializer.SerializeLeaveGameRequest();
+                LeaveGameResponse response = ClientSession.Communicator.SendEncryptedRequest<LeaveGameResponse>(leaveBuffer);
+                return response.Status == 1;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Leave game failed: " + ex);
+                return false;
+            }
+        }
+    }
+}

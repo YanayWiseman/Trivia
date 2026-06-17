@@ -1,0 +1,25 @@
+<Window x:Class="TriviaClient.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="Machshilim Trivia" Height="650" Width="1050" MinHeight="560" MinWidth="900"
+ Background="#14070A" WindowStartupLocation="CenterScreen">
+ <Grid Background="#14070A">
+        <MediaElement x:Name="BackgroundVideo"
+              LoadedBehavior="Manual"
+              UnloadedBehavior="Manual"
+              Stretch="UniformToFill"
+              IsHitTestVisible="False"
+              MediaEnded="BackgroundVideo_MediaEnded"
+              MediaFailed="BackgroundVideo_MediaFailed"/>
+        <Rectangle Fill="#991A050B" IsHitTestVisible="False"/>
+  <Rectangle IsHitTestVisible="False">
+   <Rectangle.Fill>
+    <RadialGradientBrush Center="0.5,0.45" GradientOrigin="0.5,0.45" RadiusX="0.75" RadiusY="0.75">
+     <GradientStop Color="#00100008" Offset="0"/>
+     <GradientStop Color="#B8100008" Offset="1"/>
+    </RadialGradientBrush>
+   </Rectangle.Fill>
+  </Rectangle>
+  <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Source="MainPage.xaml" Background="Transparent"/>
+ </Grid>
+</Window>
