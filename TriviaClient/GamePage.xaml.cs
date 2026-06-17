@@ -21,6 +21,7 @@ namespace TriviaClient
     {
         private DispatcherTimer timer;
 
+        private bool isLeaving;
         private uint timeLeft;
         private uint questionNumber;
         private uint questionCount;
@@ -56,15 +57,9 @@ namespace TriviaClient
             this.username = username;
             this.correctAnswersCounter = 0;
             this.answered = false;
+            this.isLeaving = false;
             this.waitingForAnswerResult = false;
             this.scoreTextBlock.Text = "Correct Answers: " + "0/" + this.questionCount.ToString();
-
-            if(this.isAdmin)
-            {
-                leaveButton.IsEnabled = false;
-                leaveButton.Background = new SolidColorBrush(Colors.DarkGray);
-                leaveButton.Content = "";
-            }
 
             this.answerButtons = new List<Button>
             {
@@ -122,6 +117,11 @@ namespace TriviaClient
 
         private void LoadNextQuestion()
         {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
             this.answered = false;
             this.waitingForAnswerResult = false;
             this.lastSubmitResponse = null;
@@ -176,6 +176,12 @@ namespace TriviaClient
 
         private async void TimerTick(object? sender, EventArgs e)
         {
+            if (this.isLeaving)
+            {
+                this.timer.Stop();
+                return;
+            }
+
             if (this.timeLeft > 0)
             {
                 this.timeLeft--;
@@ -201,6 +207,11 @@ namespace TriviaClient
 
                     return ClientSession.Communicator.SendEncryptedRequest<SubmitAnswerResponse>(requestBuffer);
                 });
+
+                if (this.isLeaving)
+                {
+                    return;
+                }
 
                 this.waitingForAnswerResult = false;
             }
@@ -239,6 +250,11 @@ namespace TriviaClient
                 byte[] requestBuffer = Serializer.SerializeSubmitAnswerRequest(request);
                 return ClientSession.Communicator.SendEncryptedRequest<SubmitAnswerResponse>(requestBuffer);
             });
+
+            if (this.isLeaving)
+            {
+                return;
+            }
 
             if (this.lastSubmitResponse.CorrectAnswerId == answerId)
             {
@@ -307,6 +323,12 @@ namespace TriviaClient
             MarkAnswer(this.lastSubmitResponse.CorrectAnswerId);
 
             await Task.Delay(1200);
+
+            if (this.isLeaving)
+            {
+                return;
+            }
+
 
             if (this.questionNumber >= this.questionCount)
             {
@@ -422,36 +444,55 @@ namespace TriviaClient
 
         private void ShowResultsPage()
         {
-            this.timer.Stop();
+            if (this.isLeaving)
+            {
+                return;
+            }
 
+            this.timer.Stop();
             this.NavigationService.Navigate(new GameResultsPage(this.username));
         }
 
         private void LeaveGameButton_Click(object sender, RoutedEventArgs e)
         {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+            this.isLeaving = true;
             this.timer.Stop();
+
             LeaveGame();
+
             this.NavigationService.Navigate(new MenuPage(this.username));
         }
 
         public void CleanUpOnClose()
         {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+            this.isLeaving = true;
+            this.timer.Stop();
             LeaveGame();
         }
-        public void LeaveGame()
+
+        public bool LeaveGame()
         {
             try
             {
-                // tell the server to transition back to MenuRequestHandler
                 byte[] leaveBuffer = Serializer.SerializeLeaveGameRequest();
                 LeaveGameResponse response = ClientSession.Communicator.SendEncryptedRequest<LeaveGameResponse>(leaveBuffer);
-
-                if (response.Status == 0)
-                {
-                    MessageBox.Show("Failed to leave the game.");
-                }
+                return response.Status == 1;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Leave game failed: " + ex);
+                return false;
+            }
         }
     }
 }

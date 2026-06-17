@@ -9,7 +9,7 @@
         <Button Height="40" Width="110" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,25,25,0" Click="GoBack_Click" FontSize="15">
             </Button>
 
-        <TextBlock Text="your statistics" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,30,0"/>
+        <TextBlock Text="Your Statistics" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0,30,0"/>
 
         <ListBox x:Name="UserStatsListBox" Width="350" Height="250" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
     </Grid>
