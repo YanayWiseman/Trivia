@@ -35,7 +35,7 @@ namespace TriviaClient
             {
                 byte[] requestBuffer = Serializer.SerializeHighScoreRequest();
 
-                GetHighScoreResponse response = ClientSession.Communicator.SendRequest<GetHighScoreResponse>(requestBuffer);
+                GetHighScoreResponse response = ClientSession.Communicator.SendEncryptedRequest<GetHighScoreResponse>(requestBuffer);
 
                 if (response.Status != 1)
                 {

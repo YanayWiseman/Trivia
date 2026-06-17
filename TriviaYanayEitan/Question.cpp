@@ -37,12 +37,26 @@ int Question::getCorrectAnswerId() const
 }
 
 /*
+    Getter method to get the image in base64 field
+    input: No input values
+    output: The question in base64 format
+*/
+
+std::string Question::getImageBase64() const
+{
+    return this->m_imageBase64;
+}
+
+/*
     Function constructs Question object.
     Input: qText (std::string), answers (std::vector<std::string>), correctAnsId (int)
     Output: None (constructor)
 */
 
-Question::Question(const std::string& qText, const std::vector<std::string>& answers, int correctAnsId) : m_question(qText), m_possibleAnswers(answers), m_correctAnswerId(correctAnsId) 
-{}
+Question::Question(const std::string& qText, const std::vector<std::string>& answers, int correctAnsId, const std::string& imageBase64)
+    : m_question(qText), m_possibleAnswers(answers), m_correctAnswerId(correctAnsId), m_imageBase64(imageBase64)
+{
+
+}
 
 

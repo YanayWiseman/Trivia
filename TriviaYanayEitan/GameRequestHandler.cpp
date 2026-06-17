@@ -73,6 +73,7 @@ RequestResult GameRequestHandler::getQuestion(const RequestInfo& requestInfo) co
 	std::vector<std::string> answers = question.getPossibleAnswers();
 
 	getQuestionResponse.status = Success;
+	getQuestionResponse.imageBase64 = question.getImageBase64();
 	getQuestionResponse.question = question.getQuestion();
 
 	for (unsigned int i = 0; i < answers.size(); i++)

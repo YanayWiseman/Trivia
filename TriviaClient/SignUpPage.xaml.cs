@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace TriviaClient
 {
     public partial class SignUpPage : Page
@@ -21,6 +22,7 @@ namespace TriviaClient
         {
             InitializeComponent();
         }
+
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
             if (this.NavigationService.CanGoBack)
@@ -29,8 +31,22 @@ namespace TriviaClient
             }
         }
 
-        private void GoToMenu_Click(object sender, RoutedEventArgs e)
+        /*
+            Function signs the user up and saves the OTP pads received from the server.
+            Input: sender (object), e (RoutedEventArgs)
+            Output: None
+        */
+
+        private async void GoToMenu_Click(object sender, RoutedEventArgs e)
         {
+            NavigationService navigation = this.NavigationService;
+
+            if (navigation == null)
+            {
+                MessageBox.Show("Navigation service is unavailable.");
+                return;
+            }
+
             string username = UsernameTextBox.Text;
             string password = PasswordTextBox.Text;
             string email = EmailTextBox.Text;
@@ -46,6 +62,13 @@ namespace TriviaClient
             if (username == "" || password == "" || email == "" || address == "" || phone == "" || birthdate == "")
             {
                 MessageBox.Show("Please fill all fields.");
+                return;
+            }
+
+            bool verified = await VerifyEmail(email, navigation);
+
+            if (!verified)
+            {
                 return;
             }
 
@@ -67,17 +90,46 @@ namespace TriviaClient
 
                 if (response.Status == 1)
                 {
-                    this.NavigationService.Navigate(new MainPage());
+                    byte[] clientToServerPad = Convert.FromBase64String(response.ClientToServerKey);
+                    byte[] serverToClientPad = Convert.FromBase64String(response.ServerToClientKey);
+
+                    CryptoSession.Initialize(username, response.ClientToServerKeyId, response.ServerToClientKeyId, clientToServerPad, serverToClientPad);
+                    CryptoSession.Save();
+
+                    navigation.Navigate(new LoginPage());
                 }
                 else
                 {
                     MessageBox.Show("Signup failed.");
+
+                    if (navigation.CanGoBack)
+                    {
+                        navigation.GoBack();
+                    }
+
+                    return;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Server error: " + ex.Message);
             }
+        }
+
+        private async Task<bool> VerifyEmail(string email, NavigationService navigation)
+        {
+            VerificationPage verificationPage = new VerificationPage(email);
+
+            navigation.Navigate(verificationPage);
+
+            bool verified = await verificationPage.WaitForResultAsync();
+
+            if (!verified && navigation.CanGoBack)
+            {
+                navigation.GoBack();
+            }
+
+            return verified;
         }
     }
 }

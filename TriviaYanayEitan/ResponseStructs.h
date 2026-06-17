@@ -15,6 +15,10 @@ struct LoginResponse
 struct SignupResponse
 {
 	unsigned int status;
+	std::string clientToServerKeyId;
+	std::string serverToClientKeyId;
+	std::string clientToServerKey;
+	std::string serverToClientKey;
 };
 
 struct ErrorResponse
@@ -118,6 +122,7 @@ struct GetQuestionResponse
 	unsigned int status;
 	std::string question;
 	std::map<unsigned int, std::string> answers;
+	std::string imageBase64;  // empty means no image
 };
 
 struct LeaveGameResponse

@@ -30,4 +30,8 @@ public:
 
     // QUESTIONS operations
     virtual std::list<Question> getQuestions(int amount) const = 0;
+
+    // CRYPTO_KEYS operations
+    virtual void storeKey(const std::string& keyId, const std::string& keyValue) = 0;
+    virtual std::string loadKey(const std::string& keyId) const = 0;
 };

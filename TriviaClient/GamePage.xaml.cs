@@ -21,6 +21,7 @@ namespace TriviaClient
     {
         private DispatcherTimer timer;
 
+        private bool isLeaving;
         private uint timeLeft;
         private uint questionNumber;
         private uint questionCount;
@@ -36,7 +37,8 @@ namespace TriviaClient
         private List<TextBlock> answerTextBlocks;
         private string username;
         private int correctAnswersCounter;
-
+        private bool isAdmin;
+        private static Random rnd = new Random();
 
         /*
             Function constructs a GamePage object
@@ -44,16 +46,18 @@ namespace TriviaClient
             Output: None (constructor)
         */
 
-        public GamePage(uint questionCount, uint timePerQuestion, string username)
+        public GamePage(uint questionCount, uint timePerQuestion, string username, bool isAdmin)
         {
             InitializeComponent();
 
             this.questionCount = questionCount;
             this.timePerQuestion = timePerQuestion;
             this.questionNumber = 0;
+            this.isAdmin = isAdmin;
             this.username = username;
             this.correctAnswersCounter = 0;
             this.answered = false;
+            this.isLeaving = false;
             this.waitingForAnswerResult = false;
             this.scoreTextBlock.Text = "Correct Answers: " + "0/" + this.questionCount.ToString();
 
@@ -83,14 +87,12 @@ namespace TriviaClient
 
         /*
             Function displays the answer options on the answer buttons
-            Input: answers (Dictionary<uint, string>)
+            Input: answers (List<KeyValuePair<uint, string>>)
             Output: None (void)
         */
 
-        private void DisplayAnswers(Dictionary<uint, string> answers)
+        private void DisplayAnswers(List<KeyValuePair<uint, string>> answerList)
         {
-            List<KeyValuePair<uint, string>> answerList = answers.ToList();
-
             for (int i = 0; i < this.answerButtons.Count; i++)
             {
                 if (i < answerList.Count)
@@ -115,6 +117,11 @@ namespace TriviaClient
 
         private void LoadNextQuestion()
         {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
             this.answered = false;
             this.waitingForAnswerResult = false;
             this.lastSubmitResponse = null;
@@ -124,7 +131,7 @@ namespace TriviaClient
             EnableAnswerButtons();
 
             byte[] request = Serializer.SerializeGetQuestionRequest();
-            GetQuestionResponse response = ClientSession.Communicator.SendRequest<GetQuestionResponse>(request);
+            GetQuestionResponse response = ClientSession.Communicator.SendEncryptedRequest<GetQuestionResponse>(request);
 
             if (response.Status != 1)
             {
@@ -136,8 +143,9 @@ namespace TriviaClient
 
             questionNumberTextBlock.Text = "Question " + this.questionNumber + " / " + this.questionCount;
             questionTextBlock.Text = response.Question;
+            DisplayQuestionImage(response.ImageBase64);
 
-            DisplayAnswers(response.Answers);
+            DisplayAnswers(ShuffleAnswers(response.Answers));
 
             this.timeLeft = this.timePerQuestion;
             timerTextBlock.Text = this.timeLeft.ToString();
@@ -147,6 +155,19 @@ namespace TriviaClient
         }
 
 
+        private List<KeyValuePair<uint, string>> ShuffleAnswers(Dictionary<uint, string> answers)
+        {
+            var list = answers.ToList();
+
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = rnd.Next(i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+
+            return list;
+        }
+
         /*
             Function updates the game timer and submits an empty answer when time runs out
             Input: sender (object), e (EventArgs)
@@ -155,6 +176,12 @@ namespace TriviaClient
 
         private async void TimerTick(object? sender, EventArgs e)
         {
+            if (this.isLeaving)
+            {
+                this.timer.Stop();
+                return;
+            }
+
             if (this.timeLeft > 0)
             {
                 this.timeLeft--;
@@ -178,8 +205,13 @@ namespace TriviaClient
                 {
                     byte[] requestBuffer = Serializer.SerializeSubmitAnswerRequest(request);
 
-                    return ClientSession.Communicator.SendRequest<SubmitAnswerResponse>(requestBuffer);
+                    return ClientSession.Communicator.SendEncryptedRequest<SubmitAnswerResponse>(requestBuffer);
                 });
+
+                if (this.isLeaving)
+                {
+                    return;
+                }
 
                 this.waitingForAnswerResult = false;
             }
@@ -216,8 +248,13 @@ namespace TriviaClient
             this.lastSubmitResponse = await Task.Run(() =>
             {
                 byte[] requestBuffer = Serializer.SerializeSubmitAnswerRequest(request);
-                return ClientSession.Communicator.SendRequest<SubmitAnswerResponse>(requestBuffer);
+                return ClientSession.Communicator.SendEncryptedRequest<SubmitAnswerResponse>(requestBuffer);
             });
+
+            if (this.isLeaving)
+            {
+                return;
+            }
 
             if (this.lastSubmitResponse.CorrectAnswerId == answerId)
             {
@@ -286,6 +323,12 @@ namespace TriviaClient
             MarkAnswer(this.lastSubmitResponse.CorrectAnswerId);
 
             await Task.Delay(1200);
+
+            if (this.isLeaving)
+            {
+                return;
+            }
+
 
             if (this.questionNumber >= this.questionCount)
             {
@@ -359,7 +402,39 @@ namespace TriviaClient
                 this.answerButtons[i].Focusable = true;
             }
         }
+        /*
+            Method displays the question image if one was provided, hides it otherwise.
+            input: base64 string (empty means no image)
+            output: None
+           */
+        private void DisplayQuestionImage(string imageBase64)
+        {
+            if (string.IsNullOrEmpty(imageBase64))
+            {
+                questionImage.Visibility = Visibility.Collapsed;
+                return;
+            }
 
+            try
+            {
+                byte[] imageBytes = Convert.FromBase64String(imageBase64);
+                using (var ms = new System.IO.MemoryStream(imageBytes))
+                {
+                    var bitmapImage = new BitmapImage();
+                    bitmapImage.BeginInit();
+                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapImage.StreamSource = ms;
+                    bitmapImage.EndInit();
+                    questionImage.Source = bitmapImage;
+                    questionImage.Visibility = Visibility.Visible;
+                }
+            }
+            catch
+            {
+                // if image is corrupt or invalid just hide it
+                questionImage.Visibility = Visibility.Collapsed;
+            }
+        }
 
         /*
             Function stops the game timer and moves the user to the results page
@@ -369,9 +444,55 @@ namespace TriviaClient
 
         private void ShowResultsPage()
         {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+            this.timer.Stop();
+            this.NavigationService.Navigate(new GameResultsPage(this.username));
+        }
+
+        private void LeaveGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+            this.isLeaving = true;
             this.timer.Stop();
 
-            this.NavigationService.Navigate(new GameResultsPage(this.username));
+            LeaveGame();
+
+            this.NavigationService.Navigate(new MenuPage(this.username));
+        }
+
+        public void CleanUpOnClose()
+        {
+            if (this.isLeaving)
+            {
+                return;
+            }
+
+            this.isLeaving = true;
+            this.timer.Stop();
+            LeaveGame();
+        }
+
+        public bool LeaveGame()
+        {
+            try
+            {
+                byte[] leaveBuffer = Serializer.SerializeLeaveGameRequest();
+                LeaveGameResponse response = ClientSession.Communicator.SendEncryptedRequest<LeaveGameResponse>(leaveBuffer);
+                return response.Status == 1;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Leave game failed: " + ex);
+                return false;
+            }
         }
     }
 }

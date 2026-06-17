@@ -87,7 +87,7 @@ namespace TriviaClient
                 try
                 {
                     byte[] getRoomStateRequestBuffer = Serializer.SerializeGetRoomStateRequest();
-                    GetRoomStateResponse getRoomState = ClientSession.Communicator.SendRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
+                    GetRoomStateResponse getRoomState = ClientSession.Communicator.SendEncryptedRequest<GetRoomStateResponse>(getRoomStateRequestBuffer);
 
                     if (getRoomState.Status == 0 || getRoomState.roomStatus == RoomStatus.Closed)
                     {
@@ -108,7 +108,7 @@ namespace TriviaClient
                         uint timePerQuestion = getRoomState.TimePerQuestion;
                         this.Dispatcher.Invoke(() =>
                         {
-                            this.NavigationService.Navigate(new GamePage(questionsCount, timePerQuestion, this.username));
+                            this.NavigationService.Navigate(new GamePage(questionsCount, timePerQuestion, this.username, this.isAdmin));
                         });
                         break;
                     }
@@ -117,7 +117,7 @@ namespace TriviaClient
                     request.RoomId = this.roomId;
 
                     byte[] requestBuffer = Serializer.serializeGetPlayersRequest(request);
-                    GetPlayersInRoomResponse response = ClientSession.Communicator.SendRequest<GetPlayersInRoomResponse>(requestBuffer);
+                    GetPlayersInRoomResponse response = ClientSession.Communicator.SendEncryptedRequest<GetPlayersInRoomResponse>(requestBuffer);
 
                     if (response.Status == 1)
                     {
@@ -136,7 +136,7 @@ namespace TriviaClient
                         this.Dispatcher.Invoke(() => MessageBox.Show("Server error: " + ex.Message));
                     }
                 }
-                Thread.Sleep(3000);
+                Thread.Sleep(500);
             }
         }
         private void UpdateUiWithPlayers(List<string> players)
@@ -154,7 +154,7 @@ namespace TriviaClient
         {
             byte[] requestBuffer = { (byte)RequestCode.LeaveRoomRequestCode };
 
-            LeaveRoomResponse response = ClientSession.Communicator.SendRequest<LeaveRoomResponse>(requestBuffer);
+            LeaveRoomResponse response = ClientSession.Communicator.SendEncryptedRequest<LeaveRoomResponse>(requestBuffer);
             if (response.Status == 1)
             {
                 this.stopThread = true;
@@ -168,16 +168,18 @@ namespace TriviaClient
 
         private void StartGame_Click(object sender, RoutedEventArgs e)
         {
-            byte[] requestBuffer = Serializer.SerializeStartGameRequest();
+            StartGameRequest request = new StartGameRequest();
+            request.QuestionCount = this.questionCount;
+            byte[] requestBuffer = Serializer.SerializeStartGameRequest(request);
 
-            StartGameResponse response = ClientSession.Communicator.SendRequest<StartGameResponse>(requestBuffer);
+            StartGameResponse response = ClientSession.Communicator.SendEncryptedRequest<StartGameResponse>(requestBuffer);
+            Console.WriteLine(response.Status);
             if (response.Status == 1)
             {
                 this.stopThread = true;
                 if (this.NavigationService != null)
                 {
-                    MessageBox.Show(this.questionCount.ToString());
-                    this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion, this.username));
+                    this.NavigationService.Navigate(new GamePage(this.questionCount, this.timePerQuestion, this.username, true));
                 }
                 else
                 {
@@ -196,7 +198,7 @@ namespace TriviaClient
 
             byte[] requestBuffer = { (byte)RequestCode.CloseRoomRequestCode };
 
-            CloseRoomResponse response = ClientSession.Communicator.SendRequest<CloseRoomResponse>(requestBuffer);
+            CloseRoomResponse response = ClientSession.Communicator.SendEncryptedRequest<CloseRoomResponse>(requestBuffer);
 
             if (response.Status == 1)
             {
@@ -219,12 +221,12 @@ namespace TriviaClient
             if (isAdmin)
             {
                 byte[] requestBuffer = { (byte)RequestCode.CloseRoomRequestCode };
-                ClientSession.Communicator.SendRequest<CloseRoomResponse>(requestBuffer);
+                ClientSession.Communicator.SendEncryptedRequest<CloseRoomResponse>(requestBuffer);
             }
             else
             {
                 byte[] requestBuffer = { (byte)RequestCode.LeaveRoomRequestCode };
-                ClientSession.Communicator.SendRequest<LeaveRoomResponse>(requestBuffer);
+                ClientSession.Communicator.SendEncryptedRequest<LeaveRoomResponse>(requestBuffer);
             }
         }
         private void AddQuestion_Click(object sender, RoutedEventArgs e)

@@ -74,11 +74,19 @@ namespace TriviaClient
         [JsonProperty("question")]
         public string? Question { get; set; }
 
+        [JsonProperty("imageBase64")]
+        public string ImageBase64 { get; set; } = "";  // empty means no image
         [JsonProperty("answers")]
         public List<string>? Answers { get; set; }
 
         [JsonProperty("correctAnswerId")]
         public int CorrectAnswerId { get; set; }
+    }
+
+    public class StartGameRequest
+    {
+        [JsonProperty("questionCount")]
+        public uint QuestionCount { get; set; }
     }
 
 }

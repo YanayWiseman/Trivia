@@ -1,5 +1,19 @@
 #include "Game.h"
 
+
+float Game::calculateAnswerTime(const GameData& gameData) const
+{
+	float answerTime = std::chrono::duration<float>(std::chrono::steady_clock::now() - gameData.questionStartTime).count();
+
+	if (answerTime > m_timePerQuestion)
+	{
+		answerTime = static_cast<float>(m_timePerQuestion);
+	}
+
+	return answerTime;
+}
+
+
 /*
 	Constructor for the Game object
 	input: no input values
@@ -18,6 +32,8 @@ Game::Game(unsigned int gameId, unsigned int timePerQuestion) : m_gameId(gameId)
 
 bool Game::hasGameEnded() const
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	for (std::map<std::string, GameData>::const_iterator it = this->m_players.begin(); it != this->m_players.end(); it++)
 	{
 		if (!it->second.finished)
@@ -38,6 +54,8 @@ bool Game::hasGameEnded() const
 
 Question Game::getQuestionsForUser(const LoggedUser& user)
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	auto it = this->m_players.find(user.getUsername());
 
 	if (it == this->m_players.end())
@@ -60,6 +78,8 @@ Question Game::getQuestionsForUser(const LoggedUser& user)
 
 void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, float answerTime)
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	auto it = this->m_players.find(user.getUsername());
 
 	if (it == this->m_players.end())
@@ -103,6 +123,8 @@ void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, float ans
 
 void Game::removePlayer(const LoggedUser& user)
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	auto it = this->m_players.find(user.getUsername());
 
 	if (it != this->m_players.end())
@@ -119,6 +141,8 @@ void Game::removePlayer(const LoggedUser& user)
 
 void Game::setPlayers(const std::vector<LoggedUser>& players)
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	if (this->m_questions.empty())
 	{
 		throw std::runtime_error("error: No questions in game");
@@ -149,6 +173,8 @@ void Game::setPlayers(const std::vector<LoggedUser>& players)
 
 std::map<std::string, GameData> Game::getPlayers()
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	return this->m_players;
 }
 
@@ -160,6 +186,8 @@ std::map<std::string, GameData> Game::getPlayers()
 
 void Game::setQuestions(const std::vector<Question>& questions)
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	this->m_questions = questions;
 }
 
@@ -184,25 +212,16 @@ unsigned int Game::getGameId() const
 
 float Game::getAnswerTime(const LoggedUser& user) const
 {
-	auto it = this->m_players.find(user.getUsername());
+	std::lock_guard<std::mutex> lock(m_mutex);
 
-	if (it == this->m_players.end())
+	auto it = m_players.find(user.getUsername());
+
+	if (it == m_players.end())
 	{
 		throw std::runtime_error("error: User not found");
 	}
 
-	const GameData& gameData = it->second;
-
-	auto now = std::chrono::steady_clock::now();
-
-	float answerTime = std::chrono::duration<float>(now - gameData.questionStartTime).count();
-
-	if (answerTime > this->m_timePerQuestion)
-	{
-		answerTime = (float)this->m_timePerQuestion;
-	}
-
-	return answerTime;
+	return calculateAnswerTime(it->second);
 }
 
 
@@ -214,14 +233,18 @@ float Game::getAnswerTime(const LoggedUser& user) const
 
 float Game::getRemainingTime(const LoggedUser& user) const
 {
-	float answerTime = this->getAnswerTime(user);
+	std::lock_guard<std::mutex> lock(m_mutex);
 
-	if (answerTime >= this->m_timePerQuestion)
+	auto it = m_players.find(user.getUsername());
+
+	if (it == m_players.end())
 	{
-		return 0;
+		throw std::runtime_error("error: User not found");
 	}
 
-	return this->m_timePerQuestion - answerTime;
+	float answerTime = calculateAnswerTime(it->second);
+
+	return static_cast<float>(m_timePerQuestion) - answerTime;
 }
 
 
@@ -233,6 +256,8 @@ float Game::getRemainingTime(const LoggedUser& user) const
 
 unsigned int Game::getCurrentCorrectAnswerId(const LoggedUser& user) const
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	auto it = this->m_players.find(user.getUsername());
 
 	if (it == this->m_players.end())
@@ -263,6 +288,8 @@ unsigned int Game::getTimePerQuestion() const
 
 GameData Game::getGameDataForUser(const LoggedUser& user) const
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	auto it = this->m_players.find(user.getUsername());
 
 	if (it == this->m_players.end())
@@ -281,5 +308,7 @@ GameData Game::getGameDataForUser(const LoggedUser& user) const
 
 void Game::addQuestion(const Question& question)
 {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	this->m_questions.push_back(question);
 }

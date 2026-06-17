@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace TriviaClient
 {
@@ -22,6 +26,7 @@ namespace TriviaClient
         private uint timePerQuestion;
         private uint questionCount;
         private string roomName;
+        private string selectedImageBase64 = "";
         const int MAX_ANSWER_ID = 4;
 
         public AddQuestionPage(uint roomId, string roomName, string username, uint timePerQuestion, uint questionCount)
@@ -34,12 +39,35 @@ namespace TriviaClient
 
             InitializeComponent();
         }
+        private void PickImage_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "ImageFiles|*.png;*.jpg;*.jpeg;*.bmp;*.gif";
+            dialog.Title = "Select a Question Image (Optional)";
 
+            if(dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    // get input and convert to base64
+                    byte[] imageBytes = File.ReadAllBytes(dialog.FileName);
+                    this.selectedImageBase64 = Convert.ToBase64String(imageBytes);
+
+                    ImageStatusText.Text = "Image Selected: " + System.IO.Path.GetFileName(dialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to load image: " + ex.Message);
+                    this.selectedImageBase64 = "";
+                    ImageStatusText.Text = "No image selected";
+                }
+            }
+        }
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(new WaitingPage(this.roomId, this.roomName, this.username, this.timePerQuestion, this.questionCount, true));
         }
-        private void Submit_Click(object sender, RoutedEventArgs e)
+        private void SubmitQuestion_Click(object sender, RoutedEventArgs e)
         {
             // input validation
             int correctAnswerId = 0;
@@ -76,10 +104,11 @@ namespace TriviaClient
             {
                 Question = question,
                 Answers = userAnswers,
-                CorrectAnswerId = correctAnswerId
+                CorrectAnswerId = correctAnswerId,
+                ImageBase64 = this.selectedImageBase64
             };
             byte[] addQuestionRequestBuffer = Serializer.SerializeAddQuestionRequest(addQuestioRequest);
-            AddQuestionResponse addQuestionResponse = ClientSession.Communicator.SendRequest<AddQuestionResponse>(addQuestionRequestBuffer);
+            AddQuestionResponse addQuestionResponse = ClientSession.Communicator.SendEncryptedRequest<AddQuestionResponse>(addQuestionRequestBuffer);
             if(addQuestionResponse.Status == 0)
             {
                 MessageBox.Show("Failed adding question!");
